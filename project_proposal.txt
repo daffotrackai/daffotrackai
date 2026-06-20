@@ -1,0 +1,112 @@
+﻿Project Proposal: DaffoTrack AI
+Subtitle: Performance Optimizer for Smart Academic Planning
+Submitted to:
+Department of Computing & Information System (CIS)
+Daffodil International University (DIU)
+Submitted by:
+Metamorph X
+Submission Date: 30th April, 2026
+Executive Summary
+DaffoTrack AI is an intelligent, Android-based academic companion designed to address the lack of personalized academic guidance at Daffodil International University (DIU). With a large student body, consistent one-on-one faculty counseling is challenging, often leading to suboptimal academic planning. Our proposed solution is a Minimum Viable Product (MVP) that leverages Artificial Intelligence to track student performance, predict future grades, and provide a real-time chat advisor for administrative queries. This project aims to significantly improve student CGPA trajectories while reducing the administrative burden on faculty members. We are requesting a minimal budget of BDT 8,000 to cover secure cloud hosting and premium AI API processing during the MVP phase.
+Organizational Background and Profile
+Metamorph X is an innovative, student-led technology team based at DIU, specializing in software engineering, Android development, and full-stack solutions. Our mission is to bridge the gap between everyday challenges and digital solutions through advanced computing and AI. The team possesses strong, proven capabilities in Native Android (Java), backend architecture (PHP/MySQL), and secure API integrations, positioning us to execute the DaffoTrack AI project efficiently within the strict 1.5-month competition timeline.
+________________
+
+
+The Team
+Our leadership and development team consists of five dedicated DIU students with specialized technical expertise:
+1. Kaium Ahmed (Project Lead & Core Android Developer): [ID: 242-15-211] - Overseeing the system architecture, core Java logic for the Android application, and Retrofit network integrations.
+2. Md. Moktadur Rahman (Backend & Database Engineer): [ID: 242-15-754] - Responsible for designing the MySQL database schema, developing secure PHP proxy APIs, and managing cloud server deployment.
+3. Md Tofayel Ahmed (AI Integration & Prompt Engineer): [ID: 242-15-762] - Focused on securely connecting the LLM API, crafting precise prompts tailored to DIU's academic policies, and mitigating AI hallucinations.
+4. Shahriar Ahmed (UI/UX Specialist & Frontend Developer): [ID: 242-15-253] - Tasked with designing an intuitive Material Design 3 interface, building the Smart Dashboard, and ensuring a seamless user experience.
+5. Md. Toybur Rahman (QA Analyst & Data Manager): [ID: 242-15-042] - In charge of conducting rigorous beta testing, managing dummy academic data for the MVP demonstration, and preparing final presentation materials.
+Stakeholder Analysis
+* Primary Stakeholders (Students): High interest. They will directly benefit from personalized study plans, grade predictions, and instant answers to university queries, resulting in improved academic performance and reduced anxiety.
+* Secondary Stakeholders (Faculty & Advisors): High interest. The AI will handle repetitive inquiries (e.g., waiver rules, makeup class routines), freeing up valuable time for complex student counseling and research.
+* Tertiary Stakeholders (DIU Administration): Medium interest. The project supports enhanced digital transformation and operational efficiency across the campus.
+Our Partners
+While Metamorph X operates independently, we consider the Department of CIS, DIU as our academic mentor and institutional partner for this specific initiative, providing the platform and guidelines necessary to bring this MVP to life.
+________________
+Problem Statement / Needs Assessment
+At Daffodil International University, the student-to-advisor ratio makes it virtually impossible for faculty members to provide continuous, personalized academic roadmaps for every individual. Students frequently struggle to calculate the necessary marks required in upcoming finals to achieve their target CGPA. Furthermore, administrative friction exists where students waste valuable time seeking answers to standard policy questions (e.g., prerequisite course requirements, retake/improvement policies, or mid-term absence rules). Without data-driven insights and instant support, many students make uninformed course selections, leading to academic burnout and lower overall graduation grades.
+Project Goals and Objectives (SMART)
+* Specific: Develop an Android-based AI MVP capable of analyzing course data and answering DIU-specific administrative queries.
+* Measurable: Achieve a 90% accuracy rate in AI responses to standard university policy questions during the beta testing phase.
+* Achievable: Utilize the team's existing skills in Java, PHP, and LLM API integration to build the system within 45 days.
+* Relevant: Directly aligns with DIU's initiative to bridge the AI implementation gap in academic administration.
+* Time-bound: Deliver a fully functional MVP for final assessment by June 10, 2026.
+Theory of Change (ToC)
+* Inputs: Technical expertise (Java/PHP), development time, and Cloud/API funding (BDT 8,000).
+* Activities: Database schema design, PHP proxy creation, Android UI development, and AI prompt engineering.
+* Outputs: A functional MVP of "DaffoTrack AI" featuring a Smart Dashboard and an AI Chat Advisor.
+* Outcomes: Students receive instant, accurate academic pathways and policy answers without waiting for physical appointments.
+* Long-term Impact: A self-sustaining, tech-driven student body with higher average CGPAs and a modernized, efficient university administration.
+________________
+Project Activities / Timeline
+Phase
+	Dates
+	Activities & Output
+	Foundation
+	May 5 – May 15
+	Design UI/UX and establish MySQL Database schemas. Output: Complete system blueprint and ready database.
+	Backend
+	May 16 – May 25
+	Develop PHP proxy servers and integrate the AI API securely. Output: Functional backend capable of processing text prompts.
+	Frontend
+	May 26 – June 5
+	Build Native Android screens (Chat, Dashboard) and connect via Retrofit. Output: Working application prototype.
+	Testing
+	June 6 – June 10
+	Conduct beta testing, bug fixing, and final polishing. Output: The final MVP ready for the Gala Round.
+	Sustainability and Other Relevant Impacts
+Beyond the initial competition, DaffoTrack AI is designed for long-term scalability. The application can be officially adopted by DIU and seamlessly integrated into the existing student portal (Smart Edu). Ongoing server maintenance costs are negligible and can be absorbed by the university's central IT budget. Environmentally, the project promotes a paperless administrative workflow by digitizing routine inquiries and academic tracking.
+Budget and Finance
+Budget Summary
+Source
+	Amount (BDT)
+	Total Fund Requested
+	8,000
+	Fund from Other Sources
+	0
+	Total Project Cost
+	8,000
+	Detailed Budget Breakdown
+Budget Item
+	Estimated Amount (BDT)
+	Description
+	Personnel
+	0
+	Voluntary student effort for the MVP phase.
+	Domain & Hosting
+	5,000
+	1-year basic Cloud VPS to host the PHP proxy and MySQL Database securely.
+	AI API Usage
+	1,500
+	Premium tier API credits for fast, reliable LLM processing during testing and demo.
+	Admin & Logistics
+	1,500
+	Testing devices data, minor development tools, and printing materials for the Gala round.
+	Total
+	8,000
+	
+
+	Risk Analysis and Mitigation Plan
+1. Risk: AI Hallucinations (Providing incorrect university rules).
+   * Mitigation: We will implement strict prompt engineering and context-binding in the backend API to restrict the AI to authorized DIU data only.
+2. Risk: Data Privacy Concerns.
+   * Mitigation: The mobile app will not communicate directly with the AI. All requests will pass through our secure PHP proxy, which will strip personally identifiable information (PII) before sending data to the LLM.
+3. Risk: API Downtime during Presentation.
+   * Mitigation: We will implement a local caching system and fallback default responses within the app to ensure it remains stable during the live demonstration.
+Monitoring and Evaluation
+* Weekly Code Reviews: Internal team evaluations to ensure development remains aligned with the projected timeline.
+* Mid-Term API Test (May 25): Stress testing the PHP proxy to ensure it can successfully handle multiple simultaneous queries.
+* Beta Testing (June 6-8): Distributing the application to 10-15 classmates to evaluate the accuracy of the AI advisor and the user-friendliness of the Material Design UI, refining the system based on direct feedback prior to the final assessment.
+Call to Action
+We are seeking an initial MVP grant of BDT 8,000 from the organizing committee to support the technical infrastructure of this project. These funds are critical for securing reliable cloud hosting and premium AI API access, ensuring we deliver a high-performance, lag-free prototype at the final Gala Round.
+Contact Information
+* Organization: Metamorph X
+* Contact Person: Jihad (Project Lead & Core Developer)
+* Address: Ashulia, Savar, Dhaka, Bangladesh
+* Phone: 01868002915
+* Email: programmerjihad@gmail.com
+* GitHub/Portfolio: jihadjp
