@@ -3,9 +3,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Cpu, ArrowRight, Shield, User, Lock, Sparkles } from 'lucide-react';
 import { apiRequest } from '../lib/api';
 import { setCurrentUser } from '../lib/session';
+import NavigationDrawer from '../components/NavigationDrawer';
 
 export default function Login() {
   const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -58,6 +60,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-[#0B1A30] text-white flex flex-col justify-center relative px-4 sm:px-6 lg:px-8">
+      <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
       {/* Glow Ambient Lights */}
       <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-gradient-to-bl from-[#00E5FF]/10 to-transparent rounded-full filter blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-gradient-to-tr from-indigo-500/5 to-transparent rounded-full filter blur-3xl pointer-events-none" />

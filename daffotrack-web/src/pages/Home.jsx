@@ -22,9 +22,11 @@ import {
     BookMarked,
     MessageSquareCode
 } from 'lucide-react';
+import NavigationDrawer from '../components/NavigationDrawer';
 
 export default function Home() {
     const navigate = useNavigate();
+    const [drawerOpen, setDrawerOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('advisor');
     const [simulatedChat, setSimulatedChat] = useState([
@@ -88,6 +90,7 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-[#0B1A30] text-white selection:bg-[#00E5FF]/20 selection:text-[#00E5FF]">
+            <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
 
             {/* GLOWING AMBIENT LIGHTS (Tailwind v4) */}
             <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-[#00E5FF]/10 to-transparent rounded-full filter blur-3xl pointer-events-none -z-10" />

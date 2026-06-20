@@ -56,7 +56,7 @@ public class StudentProfile {
     private String nationality;
 
     @Lob
-    @Column(name = "profile_image")
+    @Column(name = "profile_image", columnDefinition = "LONGBLOB")
     private byte[] profileImage;
 
     private String profileImageContentType;

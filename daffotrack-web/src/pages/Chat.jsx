@@ -14,9 +14,11 @@ import {
   History
 } from 'lucide-react';
 import { apiRequest } from '../lib/api';
+import NavigationDrawer from '../components/NavigationDrawer';
 
 export default function Chat() {
   const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [messages, setMessages] = useState([
     { sender: 'ai', text: 'Hello! I am DaffoTrack AI, your smart academic companion at Daffodil International University. Created by Metamorph X, I can help you with course catalogs, tuition waiver guidelines, GPA improvement rules, makeup exams, and more.\n\nWhat can I clarify for you today?' }
   ]);
@@ -67,6 +69,7 @@ export default function Chat() {
 
   return (
     <div className="min-h-screen bg-[#0B1A30] text-white flex flex-col font-sans h-screen overflow-hidden">
+      <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
       
       {/* HEADER SECTION */}
       <header className="bg-[#13253F] border-b border-[#1E3A5F] px-4 py-3 flex items-center justify-between shrink-0">

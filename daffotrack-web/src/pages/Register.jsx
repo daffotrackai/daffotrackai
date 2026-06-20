@@ -3,9 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Camera, Cpu, Sparkles, User, Mail, Lock, IdCard, BookUser, Phone, CalendarDays, MapPin, Users, BadgeInfo, VenusAndMars, Earth } from 'lucide-react';
 import { apiRequest } from '../lib/api';
 import { setCurrentUser } from '../lib/session';
+import NavigationDrawer from '../components/NavigationDrawer';
 
 export default function Register() {
   const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -62,6 +64,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-[#0B1A30] text-white px-4 py-10 sm:px-6 lg:px-8 relative overflow-hidden">
+      <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
       <div className="absolute top-0 left-1/4 w-[520px] h-[520px] bg-gradient-to-tr from-[#00E5FF]/10 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute bottom-0 right-1/4 w-[460px] h-[460px] bg-gradient-to-bl from-indigo-500/10 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
 

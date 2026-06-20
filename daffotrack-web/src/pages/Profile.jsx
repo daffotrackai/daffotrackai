@@ -3,10 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Camera, Cpu, Mail, User, IdCard, BookUser, Phone, CalendarDays, MapPin, Users, BadgeInfo, VenusAndMars, Earth, Edit3 } from 'lucide-react';
 import { apiRequest, buildApiUrl } from '../lib/api';
 import { getCurrentUser, setCurrentUser } from '../lib/session';
+import NavigationDrawer from '../components/NavigationDrawer';
 
 export default function Profile() {
   const navigate = useNavigate();
   const currentUser = useMemo(() => getCurrentUser(), []);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [profile, setProfile] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
   const [error, setError] = useState('');
@@ -87,6 +89,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-[#0B1A30] text-white px-4 py-8 sm:px-6 lg:px-8">
+      <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex items-center justify-between gap-4">
           <Link to="/dashboard" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-[#00E5FF]">

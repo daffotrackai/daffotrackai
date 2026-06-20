@@ -19,10 +19,12 @@ import {
 } from 'lucide-react';
 import { apiRequest } from '../lib/api';
 import { getCurrentUser } from '../lib/session';
+import NavigationDrawer from '../components/NavigationDrawer';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const currentUser = getCurrentUser();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
   const [loadingSummary, setLoadingSummary] = useState(true);
   const [summaryError, setSummaryError] = useState('');
@@ -92,6 +94,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#0B1A30] text-white flex flex-col md:flex-row font-sans">
+      <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
       
       {/* SIDEBAR NAVIGATION */}
       <aside className="w-full md:w-64 bg-[#13253F] border-r border-[#1E3A5F] flex flex-col shrink-0">
