@@ -15,10 +15,12 @@ import {
 } from 'lucide-react';
 import { apiRequest } from '../lib/api';
 import NavigationDrawer from '../components/NavigationDrawer';
+import PageTopBar from '../components/PageTopBar';
+import useLocalStorageState from '../lib/useLocalStorageState';
 
 export default function Chat() {
   const navigate = useNavigate();
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useLocalStorageState('daffotrack.drawerOpen', false);
   const [messages, setMessages] = useState([
     { sender: 'ai', text: 'Hello! I am DaffoTrack AI, your smart academic companion at Daffodil International University. Created by Metamorph X, I can help you with course catalogs, tuition waiver guidelines, GPA improvement rules, makeup exams, and more.\n\nWhat can I clarify for you today?' }
   ]);
@@ -70,35 +72,14 @@ export default function Chat() {
   return (
     <div className="min-h-screen bg-[#0B1A30] text-white flex flex-col font-sans h-screen overflow-hidden">
       <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
-      
-      {/* HEADER SECTION */}
-      <header className="bg-[#13253F] border-b border-[#1E3A5F] px-4 py-3 flex items-center justify-between shrink-0">
-        <div className="flex items-center space-x-3">
-          <Link to="/dashboard" className="p-2 rounded-lg bg-[#0B1A30] hover:bg-[#1C365C] border border-[#1E3A5F] text-slate-300 hover:text-[#00E5FF] transition-all">
-            <ArrowLeft className="w-4 h-4" />
-          </Link>
-          
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00E5FF] to-blue-500 flex items-center justify-center">
-              <Cpu className="w-4.5 h-4.5 text-[#0B1A30] font-bold" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-1.5">
-                <span className="font-bold text-white text-sm">DaffoTrack AI Advisor</span>
-                <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.2 rounded font-semibold animate-pulse">LIVE</span>
-              </div>
-              <span className="block text-[8px] text-slate-400 font-medium">Built by Metamorph X for DIU Students</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="hidden sm:flex items-center space-x-3">
-          <div className="bg-[#0B1A30] px-3 py-1 rounded-md text-[10px] text-[#00E5FF] font-mono tracking-wider flex items-center space-x-1.5 border border-[#00E5FF]/15">
-            <Terminal className="w-3 h-3" />
-            <span>MODEL_SWE_4.2.1</span>
-          </div>
-        </div>
-      </header>
+      <PageTopBar
+        title="AI Advisor Chat"
+        subtitle="Ask DIU policy and academic questions"
+        backLabel="Dashboard"
+        backTo="/dashboard"
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+      />
 
       {/* CORE CHAT WINDOW */}
       <div className="flex-1 flex overflow-hidden">

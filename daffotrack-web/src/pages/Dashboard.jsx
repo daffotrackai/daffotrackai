@@ -20,11 +20,13 @@ import {
 import { apiRequest } from '../lib/api';
 import { getCurrentUser } from '../lib/session';
 import NavigationDrawer from '../components/NavigationDrawer';
+import PageTopBar from '../components/PageTopBar';
+import useLocalStorageState from '../lib/useLocalStorageState';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const currentUser = getCurrentUser();
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useLocalStorageState('daffotrack.drawerOpen', false);
   const [summary, setSummary] = useState(null);
   const [loadingSummary, setLoadingSummary] = useState(true);
   const [summaryError, setSummaryError] = useState('');
@@ -93,11 +95,19 @@ export default function Dashboard() {
   const { grade, points, color } = getDIUGrade(totalMarks);
 
   return (
-    <div className="min-h-screen bg-[#0B1A30] text-white flex flex-col md:flex-row font-sans">
+    <div className="min-h-screen bg-[#0B1A30] text-white flex flex-col xl:flex-row font-sans">
       <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
+      <PageTopBar
+        title="Academic Dashboard"
+        subtitle="Your GPA, attendance and quick actions"
+        backLabel="Profile"
+        backTo="/profile"
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+      />
       
       {/* SIDEBAR NAVIGATION */}
-      <aside className="w-full md:w-64 bg-[#13253F] border-r border-[#1E3A5F] flex flex-col shrink-0">
+      <aside className="hidden xl:flex xl:w-64 bg-[#13253F] border-r border-[#1E3A5F] flex-col shrink-0 xl:sticky xl:top-0 xl:h-screen">
         {/* Branding */}
         <div className="p-6 border-b border-[#1E3A5F] flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00E5FF] to-blue-500 flex items-center justify-center shadow-[0_0_10px_rgba(0,229,255,0.3)]">
@@ -181,7 +191,7 @@ export default function Dashboard() {
         {/* OVERVIEW STATS ROW */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           
-          <div className="bg-[#13253F] border border-[#1E3A5F] p-5 rounded-xl space-y-2">
+          <div className="bg-[#13253F] border border-[#1E3A5F] p-5 rounded-xl space-y-2 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex justify-between text-xs text-slate-400">
               <span>Overall CGPA</span>
               <Award className="w-4 h-4 text-[#00E5FF]" />
@@ -190,7 +200,7 @@ export default function Dashboard() {
             <p className="text-[10px] text-[#00E5FF]">Eligibility: {summary?.waiverStatus || '40% Waiver'}</p>
           </div>
 
-          <div className="bg-[#13253F] border border-[#1E3A5F] p-5 rounded-xl space-y-2">
+          <div className="bg-[#13253F] border border-[#1E3A5F] p-5 rounded-xl space-y-2 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex justify-between text-xs text-slate-400">
               <span>Completed Credits</span>
               <BookOpen className="w-4 h-4 text-[#00E5FF]" />
@@ -199,7 +209,7 @@ export default function Dashboard() {
             <p className="text-[10px] text-slate-400">Total Req: {summary?.totalCredits ?? 139.0} Credits</p>
           </div>
 
-          <div className="bg-[#13253F] border border-[#1E3A5F] p-5 rounded-xl space-y-2">
+          <div className="bg-[#13253F] border border-[#1E3A5F] p-5 rounded-xl space-y-2 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex justify-between text-xs text-slate-400">
               <span>Class Attendance</span>
               <Clock className="w-4 h-4 text-emerald-400" />
@@ -208,7 +218,7 @@ export default function Dashboard() {
             <p className="text-[10px] text-emerald-400">Safe (&gt; 75% required)</p>
           </div>
 
-          <div className="bg-[#13253F] border border-[#1E3A5F] p-5 rounded-xl space-y-2">
+          <div className="bg-[#13253F] border border-[#1E3A5F] p-5 rounded-xl space-y-2 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex justify-between text-xs text-slate-400">
               <span>Missing Exams / Backlogs</span>
               <Bell className="w-4 h-4 text-amber-400" />

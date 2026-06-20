@@ -4,10 +4,12 @@ import { ArrowRight, Camera, Cpu, Sparkles, User, Mail, Lock, IdCard, BookUser, 
 import { apiRequest } from '../lib/api';
 import { setCurrentUser } from '../lib/session';
 import NavigationDrawer from '../components/NavigationDrawer';
+import PageTopBar from '../components/PageTopBar';
+import useLocalStorageState from '../lib/useLocalStorageState';
 
 export default function Register() {
   const navigate = useNavigate();
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useLocalStorageState('daffotrack.drawerOpen', false);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -63,8 +65,17 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1A30] text-white px-4 py-10 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-[#0B1A30] text-white px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
+      <PageTopBar
+        title="Create Profile"
+        subtitle="Register your student information"
+        backLabel="Login"
+        backTo="/login"
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+      />
+      <div className="py-10">
       <div className="absolute top-0 left-1/4 w-[520px] h-[520px] bg-gradient-to-tr from-[#00E5FF]/10 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute bottom-0 right-1/4 w-[460px] h-[460px] bg-gradient-to-bl from-indigo-500/10 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
 
@@ -156,6 +167,7 @@ export default function Register() {
             </button>
           </form>
         </section>
+      </div>
       </div>
     </div>
   );

@@ -4,11 +4,13 @@ import { ArrowLeft, Camera, Cpu, Mail, User, IdCard, BookUser, Phone, CalendarDa
 import { apiRequest, buildApiUrl } from '../lib/api';
 import { getCurrentUser, setCurrentUser } from '../lib/session';
 import NavigationDrawer from '../components/NavigationDrawer';
+import PageTopBar from '../components/PageTopBar';
+import useLocalStorageState from '../lib/useLocalStorageState';
 
 export default function Profile() {
   const navigate = useNavigate();
   const currentUser = useMemo(() => getCurrentUser(), []);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useLocalStorageState('daffotrack.drawerOpen', false);
   const [profile, setProfile] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
   const [error, setError] = useState('');
@@ -88,19 +90,17 @@ export default function Profile() {
   const imageUrl = displayedProfile.profileImageUrl ? buildApiUrl(displayedProfile.profileImageUrl) : null;
 
   return (
-    <div className="min-h-screen bg-[#0B1A30] text-white px-4 py-8 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#0B1A30] text-white px-4 sm:px-6 lg:px-8">
       <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <Link to="/dashboard" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-[#00E5FF]">
-            <ArrowLeft className="h-4 w-4" />
-            Back to dashboard
-          </Link>
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#1E3A5F] bg-[#13253F] px-4 py-2 text-xs font-semibold text-[#00E5FF]">
-            <Cpu className="h-4 w-4" />
-            Profile view
-          </div>
-        </div>
+      <PageTopBar
+        title="My Profile"
+        subtitle="View and manage your saved student information"
+        backLabel="Dashboard"
+        backTo="/dashboard"
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+      />
+      <div className="mx-auto max-w-6xl py-8">
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[360px_minmax(0,1fr)]">
           <aside className="rounded-[28px] border border-[#1E3A5F] bg-[#13253F] p-6 shadow-2xl shadow-black/30">

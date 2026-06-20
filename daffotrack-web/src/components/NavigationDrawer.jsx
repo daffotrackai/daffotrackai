@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Cpu, Home, LogIn, UserPlus, LayoutDashboard, MessageSquare, User, LogOut } from 'lucide-react';
+import { X, Cpu, Home, LogIn, UserPlus, LayoutDashboard, MessageSquare, User, LogOut } from 'lucide-react';
 import { clearCurrentUser, getCurrentUser } from '../lib/session';
 
 export default function NavigationDrawer({ open, setOpen }) {
@@ -25,15 +25,6 @@ export default function NavigationDrawer({ open, setOpen }) {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        className="fixed left-4 top-4 z-[80] inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-[#1E3A5F] bg-[#13253F] text-[#00E5FF] shadow-2xl shadow-black/25 transition-transform hover:scale-105"
-        aria-label={open ? 'Close navigation drawer' : 'Open navigation drawer'}
-      >
-        {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-      </button>
-
       {open && (
         <button
           type="button"
@@ -48,7 +39,8 @@ export default function NavigationDrawer({ open, setOpen }) {
       >
         <div className="flex h-full flex-col">
           <div className="border-b border-[#1E3A5F] p-6 pt-8">
-            <div className="flex items-center gap-3">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00E5FF] to-blue-600 p-[2px]">
                 <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-[#0B1A30]">
                   <Cpu className="h-5 w-5 text-[#00E5FF]" />
@@ -58,6 +50,16 @@ export default function NavigationDrawer({ open, setOpen }) {
                 <p className="text-sm font-bold text-white">DaffoTrack AI</p>
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-[#00E5FF]">by Metamorph X</p>
               </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[#1E3A5F] bg-[#0B1A30] text-slate-300 transition-colors hover:border-[#00E5FF]/30 hover:text-[#00E5FF]"
+                aria-label="Hide navigation drawer"
+              >
+                <X className="h-4 w-4" />
+              </button>
             </div>
 
             <div className="mt-5 rounded-2xl border border-[#1E3A5F] bg-[#0B1A30]/70 p-4">
