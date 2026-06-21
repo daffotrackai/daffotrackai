@@ -1,21 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  Cpu, 
-  User, 
-  TrendingUp, 
-  BookOpen, 
-  Bell, 
-  LogOut, 
-  Award, 
-  HelpCircle, 
-  ChevronRight, 
-  Sliders, 
-  CheckCircle, 
-  Clock, 
-  MessageSquare,
-  Sparkles,
-  Bot
+import {
+  Cpu, User, TrendingUp, BookOpen, Bell, LogOut, Award,
+  ChevronRight, Sliders, CheckCircle, Clock, MessageSquare,
+  Sparkles, Bot, AlertTriangle, BarChart3, Target, Zap
 } from 'lucide-react';
 import { apiRequest } from '../lib/api';
 import { getCurrentUser } from '../lib/session';
@@ -31,367 +19,320 @@ export default function Dashboard() {
   const [loadingSummary, setLoadingSummary] = useState(true);
   const [summaryError, setSummaryError] = useState('');
   const [profileSummary, setProfileSummary] = useState(null);
-  
-  // Interactive GPA Predictor state
-  const [midterm, setMidterm] = useState(20); // out of 25
-  const [quiz, setQuiz] = useState(12); // out of 15
-  const [assignment, setAssignment] = useState(8); // out of 10
-  const [attendance, setAttendance] = useState(10); // out of 10
-  const [finalExam, setFinalExam] = useState(30); // out of 40
 
+  const [midterm, setMidterm] = useState(20);
+  const [quiz, setQuiz] = useState(12);
+  const [assignment, setAssignment] = useState(8);
+  const [attendance, setAttendance] = useState(10);
+  const [finalExam, setFinalExam] = useState(30);
   const totalMarks = midterm + quiz + assignment + attendance + finalExam;
 
   useEffect(() => {
-    let isMounted = true;
-
+    let mounted = true;
     apiRequest('/api/dashboard/summary')
-      .then((data) => {
-        if (isMounted) {
-          setSummary(data);
-        }
-      })
-      .catch((requestError) => {
-        if (isMounted) {
-          setSummaryError(requestError.message || 'Failed to load dashboard summary.');
-        }
-      })
-      .finally(() => {
-        if (isMounted) {
-          setLoadingSummary(false);
-        }
-      });
-
+      .then(data => { if (mounted) setSummary(data); })
+      .catch(err => { if (mounted) setSummaryError(err.message || 'Failed to load summary.'); })
+      .finally(() => { if (mounted) setLoadingSummary(false); });
     if (currentUser?.userId) {
       apiRequest(`/api/users/${currentUser.userId}`)
-        .then((data) => {
-          if (isMounted) {
-            setProfileSummary(data);
-          }
-        })
-        .catch(() => {
-          // fallback to dashboard summary data
-        });
+        .then(data => { if (mounted) setProfileSummary(data); })
+        .catch(() => {});
     }
-
-    return () => {
-      isMounted = false;
-    };
+    return () => { mounted = false; };
   }, [currentUser?.userId]);
 
-  // DIU grading system
   const getDIUGrade = (marks) => {
-    if (marks >= 80) return { grade: 'A+', points: 4.00, color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' };
-    if (marks >= 75) return { grade: 'A', points: 3.75, color: 'text-emerald-300 bg-emerald-400/10 border-emerald-400/30' };
-    if (marks >= 70) return { grade: 'A-', points: 3.50, color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30' };
-    if (marks >= 65) return { grade: 'B+', points: 3.25, color: 'text-teal-400 bg-teal-500/10 border-teal-500/30' };
-    if (marks >= 60) return { grade: 'B', points: 3.00, color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30' };
-    if (marks >= 55) return { grade: 'B-', points: 2.75, color: 'text-blue-400 bg-blue-500/10 border-blue-500/30' };
-    if (marks >= 50) return { grade: 'C+', points: 2.50, color: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30' };
-    if (marks >= 45) return { grade: 'C', points: 2.25, color: 'text-amber-500 bg-amber-500/10 border-amber-500/30' };
-    if (marks >= 40) return { grade: 'D', points: 2.00, color: 'text-orange-500 bg-orange-500/10 border-orange-500/30' };
-    return { grade: 'F', points: 0.00, color: 'text-red-500 bg-red-500/10 border-red-500/30' };
+    if (marks >= 80) return { grade: 'A+', points: 4.00, label: 'Outstanding', ring: 'ring-emerald-500/40', text: 'text-emerald-400', bg: 'bg-emerald-500/10', bar: 'from-emerald-400 to-teal-400' };
+    if (marks >= 75) return { grade: 'A',  points: 3.75, label: 'Excellent',   ring: 'ring-emerald-400/30', text: 'text-emerald-300', bg: 'bg-emerald-400/10', bar: 'from-emerald-300 to-cyan-400' };
+    if (marks >= 70) return { grade: 'A-', points: 3.50, label: 'Very Good',   ring: 'ring-cyan-500/30',   text: 'text-cyan-400',   bg: 'bg-cyan-500/10',   bar: 'from-cyan-400 to-indigo-400' };
+    if (marks >= 65) return { grade: 'B+', points: 3.25, label: 'Good',        ring: 'ring-teal-500/30',   text: 'text-teal-400',   bg: 'bg-teal-500/10',   bar: 'from-teal-400 to-blue-400' };
+    if (marks >= 60) return { grade: 'B',  points: 3.00, label: 'Satisfactory',ring: 'ring-indigo-500/30', text: 'text-indigo-400', bg: 'bg-indigo-500/10', bar: 'from-indigo-400 to-blue-500' };
+    if (marks >= 55) return { grade: 'B-', points: 2.75, label: 'Average',     ring: 'ring-blue-500/30',   text: 'text-blue-400',   bg: 'bg-blue-500/10',   bar: 'from-blue-400 to-slate-400' };
+    if (marks >= 50) return { grade: 'C+', points: 2.50, label: 'Below Avg',   ring: 'ring-yellow-500/30', text: 'text-yellow-400', bg: 'bg-yellow-500/10', bar: 'from-yellow-400 to-orange-400' };
+    if (marks >= 45) return { grade: 'C',  points: 2.25, label: 'Poor',        ring: 'ring-amber-500/30',  text: 'text-amber-500',  bg: 'bg-amber-500/10',  bar: 'from-amber-500 to-orange-500' };
+    if (marks >= 40) return { grade: 'D',  points: 2.00, label: 'Very Poor',   ring: 'ring-orange-500/30', text: 'text-orange-500', bg: 'bg-orange-500/10', bar: 'from-orange-500 to-red-500' };
+    return               { grade: 'F',  points: 0.00, label: 'Fail',         ring: 'ring-red-500/30',    text: 'text-red-500',    bg: 'bg-red-500/10',    bar: 'from-red-600 to-rose-500' };
   };
 
-  const { grade, points, color } = getDIUGrade(totalMarks);
+  const gradeInfo = getDIUGrade(totalMarks);
+  const cgpa = summary?.cgpa?.toFixed?.(2) ?? '3.88';
+  const cgpaPercent = ((parseFloat(cgpa) / 4.0) * 100).toFixed(0);
 
   return (
-    <div className="min-h-screen bg-[#0B1A30] text-white flex flex-col xl:flex-row font-sans">
+    <div className="min-h-screen bg-[#060e1a] text-white flex flex-col xl:flex-row">
       <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
       <PageTopBar
         title="Academic Dashboard"
-        subtitle="Your GPA, attendance and quick actions"
+        subtitle="CGPA, attendance and grade predictor"
         backLabel="Profile"
         backTo="/profile"
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
       />
-      
-      {/* SIDEBAR NAVIGATION */}
-      <aside className="hidden xl:flex xl:w-64 bg-[#13253F] border-r border-[#1E3A5F] flex-col shrink-0 xl:sticky xl:top-0 xl:h-screen">
-        {/* Branding */}
-        <div className="p-6 border-b border-[#1E3A5F] flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00E5FF] to-blue-500 flex items-center justify-center shadow-[0_0_10px_rgba(0,229,255,0.3)]">
-            <Cpu className="w-4.5 h-4.5 text-[#0B1A30] font-bold" />
+
+      {/* Sidebar */}
+      <aside className="hidden xl:flex xl:w-64 bg-[#0a1525] border-r border-white/6 flex-col shrink-0 xl:sticky xl:top-0 xl:h-screen pt-16">
+        <div className="p-5 border-b border-white/6 flex items-center gap-3 cursor-pointer hover:bg-white/3 transition-colors" onClick={() => navigate('/')}>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 p-[1.5px] shadow-[0_0_15px_rgba(45,212,191,0.3)]">
+            <div className="w-full h-full bg-[#060e1a] rounded-[10px] flex items-center justify-center">
+              <Cpu className="w-4 h-4 text-teal-400" />
+            </div>
           </div>
           <div>
-            <span className="font-bold text-white tracking-wide text-base">DaffoTrack AI</span>
-            <span className="block text-[8px] text-[#00E5FF] font-semibold uppercase tracking-wider">by Metamorph X</span>
+            <span className="font-bold text-white text-sm">DaffoTrack AI</span>
+            <span className="block text-[9px] text-teal-400 font-semibold uppercase tracking-widest">by Metamorph X</span>
           </div>
         </div>
 
-        {/* User Info Card */}
-        <div className="p-5 border-b border-[#1E3A5F]/60 bg-[#0B1A30]/30">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/20 flex items-center justify-center text-[#00E5FF]">
-              <User className="w-5 h-5" />
+        <div className="p-4 border-b border-white/5 bg-white/2">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
+              <User className="w-4.5 h-4.5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-white">{profileSummary?.fullName || summary?.studentName || 'Guest DIU Student'}</h4>
-              <p className="text-[10px] text-slate-400">ID: {profileSummary?.studentId || summary?.studentId || '221-15-XXXX'} ({profileSummary?.department || summary?.department || 'SWE'})</p>
+              <p className="text-xs font-bold text-white truncate max-w-[140px]">
+                {profileSummary?.fullName || summary?.studentName || 'Guest Student'}
+              </p>
+              <p className="text-[10px] text-slate-500">{profileSummary?.studentId || '221-15-XXXX'}</p>
             </div>
           </div>
         </div>
 
-        {/* Navigation links */}
-        <nav className="flex-1 p-4 space-y-2">
-          <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-[#0B1A30]/75 border border-[#1E3A5F] text-[#00E5FF] text-xs font-bold transition-all">
-            <TrendingUp className="w-4 h-4" />
-            <span>Academic Dashboard</span>
-          </button>
-          
-          <Link to="/chat" className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/30 text-xs font-medium transition-all">
-            <Bot className="w-4 h-4 text-[#00E5FF]" />
-            <span>AI Advisor Chat</span>
-          </Link>
-
-          <Link to="/profile" className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/30 text-xs font-medium transition-all">
-            <User className="w-4 h-4 text-[#00E5FF]" />
-            <span>My Profile</span>
-          </Link>
-
-          <a href="/#diu-rules" className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/30 text-xs font-medium transition-all">
-            <BookOpen className="w-4 h-4 text-[#00E5FF]" />
-            <span>DIU Academic Policies</span>
-          </a>
+        <nav className="flex-1 p-4 space-y-1">
+          {[
+            { to: '/dashboard', icon: BarChart3, label: 'Dashboard', active: true },
+            { to: '/chat', icon: Bot, label: 'AI Advisor Chat', active: false },
+            { to: '/profile', icon: User, label: 'My Profile', active: false },
+            { to: '/#diu-rules', icon: BookOpen, label: 'DIU Policies', active: false },
+          ].map(({ to, icon: Icon, label, active }) => (
+            <Link key={to} to={to}
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                active
+                  ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20'
+                  : 'text-slate-400 hover:text-white hover:bg-white/4'
+              }`}>
+              <Icon className="w-4 h-4" />
+              {label}
+            </Link>
+          ))}
         </nav>
 
-        {/* Logout */}
-        <div className="p-4 border-t border-[#1E3A5F]">
-          <Link to="/" className="w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-xl text-xs font-semibold bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-all">
-            <LogOut className="w-4 h-4" />
-            <span>Sign Out</span>
+        <div className="p-4 border-t border-white/6">
+          <Link to="/" className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-red-500/8 hover:bg-red-500/15 text-red-400 border border-red-500/15 transition-all">
+            <LogOut className="w-4 h-4" /> Sign Out
           </Link>
         </div>
       </aside>
 
-      {/* MAIN CONTENT AREA */}
-      <main className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10 space-y-8">
-        
-        {/* TOP STATUS ROW */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-[#1E3A5F]/40">
+      {/* Main */}
+      <main className="flex-1 overflow-y-auto p-5 md:p-8 space-y-7 pt-20 xl:pt-8">
+
+        {/* Header row */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/6">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white flex items-center">
-              Welcome back! <Sparkles className="w-5 h-5 text-[#00E5FF] ml-2 animate-pulse" />
+            <h1 className="text-2xl font-black text-white flex items-center gap-2 tracking-tight">
+              Welcome back! <Sparkles className="w-5 h-5 text-teal-400" />
             </h1>
-            <p className="text-xs text-slate-400">Department of Software Engineering • Daffodil International University</p>
+            <p className="text-xs text-slate-500 mt-1">Software Engineering · Daffodil International University</p>
           </div>
-          
-          <div className="flex items-center space-x-3 bg-[#13253F] p-2.5 rounded-xl border border-[#1E3A5F]">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs font-mono text-slate-300">{summary?.syncStatus || 'DIU API SYNC ACTIVE'}</span>
+          <div className="flex items-center gap-2 bg-teal-500/8 border border-teal-500/20 px-3 py-2 rounded-xl">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[11px] font-mono text-teal-400">DIU API SYNC ACTIVE</span>
           </div>
         </div>
 
         {summaryError && (
-          <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-xs text-red-300">
+          <div className="rounded-xl border border-red-500/20 bg-red-500/8 px-4 py-3 text-xs text-red-400">
             {summaryError}
           </div>
         )}
 
-        {/* OVERVIEW STATS ROW */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          
-          <div className="bg-[#13253F] border border-[#1E3A5F] p-5 rounded-xl space-y-2 shadow-sm transition-shadow hover:shadow-md">
-            <div className="flex justify-between text-xs text-slate-400">
-              <span>Overall CGPA</span>
-              <Award className="w-4 h-4 text-[#00E5FF]" />
+        {/* Stat cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            {
+              label: 'Overall CGPA', icon: Award,
+              value: loadingSummary ? '—' : `${cgpa} / 4.00`,
+              sub: summary?.waiverStatus || '40% Waiver Active',
+              subColor: 'text-teal-400',
+              accent: 'border-teal-500/20',
+              bar: { w: cgpaPercent, color: 'from-teal-500 to-cyan-400' }
+            },
+            {
+              label: 'Completed Credits', icon: BookOpen,
+              value: loadingSummary ? '—' : `${summary?.completedCredits ?? 78}`,
+              sub: `Total required: ${summary?.totalCredits ?? 139} credits`,
+              subColor: 'text-slate-500',
+              accent: 'border-indigo-500/15',
+              bar: { w: Math.round(((summary?.completedCredits ?? 78) / (summary?.totalCredits ?? 139)) * 100), color: 'from-indigo-400 to-purple-500' }
+            },
+            {
+              label: 'Attendance Rate', icon: Clock,
+              value: loadingSummary ? '—' : `${summary?.attendance ?? 86.2}%`,
+              sub: '>75% required for finals',
+              subColor: 'text-emerald-400',
+              accent: 'border-emerald-500/15',
+              bar: { w: summary?.attendance ?? 86.2, color: 'from-emerald-400 to-teal-400' }
+            },
+            {
+              label: 'Pending Backlogs', icon: Bell,
+              value: loadingSummary ? '—' : `${summary?.backlogs ?? 0}`,
+              sub: 'All registered exams cleared',
+              subColor: 'text-slate-500',
+              accent: 'border-amber-500/15',
+              bar: { w: 0, color: 'from-amber-400 to-orange-400' }
+            },
+          ].map(({ label, icon: Icon, value, sub, subColor, accent, bar }) => (
+            <div key={label} className={`bg-[#0a1525] border ${accent} rounded-2xl p-5 space-y-3 hover:shadow-lg transition-all`}>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-500 font-medium">{label}</span>
+                <Icon className="w-4 h-4 text-slate-600" />
+              </div>
+              <p className="text-2xl font-black text-white tracking-tight">{value}</p>
+              <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                <div className={`h-full bg-gradient-to-r ${bar.color} rounded-full transition-all duration-700`} style={{ width: `${bar.w}%` }} />
+              </div>
+              <p className={`text-[10px] font-medium ${subColor}`}>{sub}</p>
             </div>
-            <div className="text-2xl font-extrabold">{loadingSummary ? 'Loading...' : `${summary?.cgpa?.toFixed?.(2) ?? '3.88'} / 4.00`}</div>
-            <p className="text-[10px] text-[#00E5FF]">Eligibility: {summary?.waiverStatus || '40% Waiver'}</p>
-          </div>
-
-          <div className="bg-[#13253F] border border-[#1E3A5F] p-5 rounded-xl space-y-2 shadow-sm transition-shadow hover:shadow-md">
-            <div className="flex justify-between text-xs text-slate-400">
-              <span>Completed Credits</span>
-              <BookOpen className="w-4 h-4 text-[#00E5FF]" />
-            </div>
-            <div className="text-2xl font-extrabold">{loadingSummary ? 'Loading...' : `${summary?.completedCredits ?? 78.0} Credits`}</div>
-            <p className="text-[10px] text-slate-400">Total Req: {summary?.totalCredits ?? 139.0} Credits</p>
-          </div>
-
-          <div className="bg-[#13253F] border border-[#1E3A5F] p-5 rounded-xl space-y-2 shadow-sm transition-shadow hover:shadow-md">
-            <div className="flex justify-between text-xs text-slate-400">
-              <span>Class Attendance</span>
-              <Clock className="w-4 h-4 text-emerald-400" />
-            </div>
-            <div className="text-2xl font-extrabold text-emerald-400">{loadingSummary ? 'Loading...' : `${summary?.attendance ?? 86.2}%`}</div>
-            <p className="text-[10px] text-emerald-400">Safe (&gt; 75% required)</p>
-          </div>
-
-          <div className="bg-[#13253F] border border-[#1E3A5F] p-5 rounded-xl space-y-2 shadow-sm transition-shadow hover:shadow-md">
-            <div className="flex justify-between text-xs text-slate-400">
-              <span>Missing Exams / Backlogs</span>
-              <Bell className="w-4 h-4 text-amber-400" />
-            </div>
-            <div className="text-2xl font-extrabold text-amber-400">{loadingSummary ? 'Loading...' : `${summary?.backlogs ?? 0} Backlogs`}</div>
-            <p className="text-[10px] text-slate-400">All registered exams passed</p>
-          </div>
-
+          ))}
         </div>
 
-        {/* DYNAMIC TWO-COLUMN LAYOUT */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
-          {/* Left: Interactive Sliders GPA Predictor (7 Cols) */}
-          <div className="lg:col-span-7 bg-[#13253F] border border-[#1E3A5F] rounded-2xl p-6 space-y-6">
-            
-            <div className="flex items-center justify-between border-b border-[#1E3A5F]/60 pb-4">
-              <h3 className="text-base font-bold text-white flex items-center">
-                <Sliders className="w-5 h-5 text-[#00E5FF] mr-2" />
-                Live Course Grade Predictor
+        {/* Predictor + Results */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+          {/* Sliders */}
+          <div className="lg:col-span-7 bg-[#0a1525] border border-white/6 rounded-2xl p-6 space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-white/6">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-teal-400" /> Live Grade Predictor
               </h3>
-              <span className="text-[10px] bg-[#0B1A30] border border-[#1E3A5F] px-2 py-1 rounded text-slate-400 font-mono">
-                DIU_CALC_SWE_4.0
+              <span className="text-[10px] font-mono text-slate-600 bg-white/3 border border-white/6 px-2.5 py-1 rounded-lg">
+                DIU_SWE v4.0
               </span>
             </div>
-
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Use these interactive sliders to calculate final grade points for any individual course. Adjust midterms, quizzes, and see the grade letter shift immediately.
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Drag sliders to simulate your marks. Grade letter and GPA points update instantly using DIU's official grading rubric.
             </p>
 
-            <div className="space-y-4 pt-2">
-              {/* Midterm */}
-              <div>
-                <div className="flex justify-between text-xs font-semibold mb-1">
-                  <span className="text-slate-300">Midterm Exam Score (Max 25)</span>
-                  <span className="text-[#00E5FF] font-bold">{midterm} / 25</span>
+            <div className="space-y-5">
+              {[
+                { label: 'Midterm Exam', max: 25, val: midterm, set: setMidterm },
+                { label: 'Quizzes & Class Tests', max: 15, val: quiz, set: setQuiz },
+                { label: 'Assignments & Presentations', max: 10, val: assignment, set: setAssignment },
+                { label: 'Attendance Record', max: 10, val: attendance, set: setAttendance },
+                { label: 'Final Semester Exam', max: 40, val: finalExam, set: setFinalExam },
+              ].map(({ label, max, val, set }) => (
+                <div key={label}>
+                  <div className="flex justify-between text-xs mb-2">
+                    <span className="text-slate-300 font-medium">{label}</span>
+                    <span className="font-bold text-teal-400">{val} <span className="text-slate-600 font-normal">/ {max}</span></span>
+                  </div>
+                  <div className="relative h-2 bg-white/5 rounded-full overflow-visible">
+                    <div
+                      className="absolute top-0 left-0 h-full bg-gradient-to-r from-teal-500 to-cyan-400 rounded-full transition-all"
+                      style={{ width: `${(val / max) * 100}%` }}
+                    />
+                    <input
+                      type="range" min={0} max={max} value={val}
+                      onChange={e => set(Number(e.target.value))}
+                      className="absolute inset-0 w-full opacity-0 cursor-pointer h-full"
+                    />
+                  </div>
                 </div>
-                <input 
-                  type="range" 
-                  min="0" 
-                  max="25" 
-                  value={midterm} 
-                  onChange={(e) => setMidterm(Number(e.target.value))} 
-                  className="w-full accent-[#00E5FF] bg-[#0B1A30] h-1.5 rounded-lg appearance-none cursor-pointer"
-                />
-              </div>
-
-              {/* Quiz & Assessment */}
-              <div>
-                <div className="flex justify-between text-xs font-semibold mb-1">
-                  <span className="text-slate-300">Quizzes, Class Test & Class Performance (Max 15)</span>
-                  <span className="text-[#00E5FF] font-bold">{quiz} / 15</span>
-                </div>
-                <input 
-                  type="range" 
-                  min="0" 
-                  max="15" 
-                  value={quiz} 
-                  onChange={(e) => setQuiz(Number(e.target.value))} 
-                  className="w-full accent-[#00E5FF] bg-[#0B1A30] h-1.5 rounded-lg appearance-none cursor-pointer"
-                />
-              </div>
-
-              {/* Assignments / presentation */}
-              <div>
-                <div className="flex justify-between text-xs font-semibold mb-1">
-                  <span className="text-slate-300">Presentations & Hand-in Assignments (Max 10)</span>
-                  <span className="text-[#00E5FF] font-bold">{assignment} / 10</span>
-                </div>
-                <input 
-                  type="range" 
-                  min="0" 
-                  max="10" 
-                  value={assignment} 
-                  onChange={(e) => setAssignment(Number(e.target.value))} 
-                  className="w-full accent-[#00E5FF] bg-[#0B1A30] h-1.5 rounded-lg appearance-none cursor-pointer"
-                />
-              </div>
-
-              {/* Attendance */}
-              <div>
-                <div className="flex justify-between text-xs font-semibold mb-1">
-                  <span className="text-slate-300">Continuous Attendance Record (Max 10)</span>
-                  <span className="text-[#00E5FF] font-bold">{attendance} / 10</span>
-                </div>
-                <input 
-                  type="range" 
-                  min="0" 
-                  max="10" 
-                  value={attendance} 
-                  onChange={(e) => setAttendance(Number(e.target.value))} 
-                  className="w-full accent-[#00E5FF] bg-[#0B1A30] h-1.5 rounded-lg appearance-none cursor-pointer"
-                />
-              </div>
-
-              {/* Final Exam */}
-              <div>
-                <div className="flex justify-between text-xs font-semibold mb-1">
-                  <span className="text-slate-300">Semester Final Examination Target (Max 40)</span>
-                  <span className="text-[#00E5FF] font-bold">{finalExam} / 40</span>
-                </div>
-                <input 
-                  type="range" 
-                  min="0" 
-                  max="40" 
-                  value={finalExam} 
-                  onChange={(e) => setFinalExam(Number(e.target.value))} 
-                  className="w-full accent-[#00E5FF] bg-[#0B1A30] h-1.5 rounded-lg appearance-none cursor-pointer"
-                />
-              </div>
-
+              ))}
             </div>
 
+            <div className="pt-4 border-t border-white/5 grid grid-cols-3 text-center gap-3">
+              {[
+                ['Total Marks', `${totalMarks} / 100`],
+                ['Grade Points', `${gradeInfo.points.toFixed(2)} / 4.00`],
+                ['Percentage', `${totalMarks}%`],
+              ].map(([k, v]) => (
+                <div key={k} className="bg-white/3 rounded-xl py-3 border border-white/5">
+                  <p className="text-[10px] text-slate-500 mb-1">{k}</p>
+                  <p className="text-sm font-black text-white">{v}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Right: Dynamic Grading Result & Mini-Advising Box (5 Cols) */}
-          <div className="lg:col-span-5 flex flex-col space-y-6">
-            
-            {/* Realtime Grade Card */}
-            <div className="bg-[#13253F] border border-[#1E3A5F] rounded-2xl p-6 flex flex-col justify-between flex-1 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#00E5FF]/5 rounded-full filter blur-2xl pointer-events-none" />
-              
-              <div className="space-y-4">
-                <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block">Calculated Course Grade</span>
-                
-                <div className="flex items-center space-x-6">
-                  {/* Big Grade Box */}
-                  <div className={`w-24 h-24 rounded-2xl border flex flex-col items-center justify-center font-extrabold text-4xl ${color} shadow-lg shadow-black/10`}>
-                    {grade}
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-sm font-semibold text-white">Points: <span className="text-[#00E5FF]">{points.toFixed(2)} / 4.00</span></div>
-                    <div className="text-xs text-slate-300">Marks: <span className="text-white font-bold">{totalMarks} / 100</span></div>
-                    <div className="text-[10px] text-slate-400 leading-tight">DIU Continuous Assessment System v4.0</div>
-                  </div>
-                </div>
+          {/* Right column */}
+          <div className="lg:col-span-5 flex flex-col gap-5">
+            {/* Grade card */}
+            <div className={`bg-[#0a1525] border border-white/6 rounded-2xl p-6 flex flex-col gap-5 flex-1 relative overflow-hidden`}>
+              <div className={`absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl pointer-events-none ${gradeInfo.bg} opacity-40`} />
 
-                <div className="pt-4 border-t border-[#1E3A5F]/50">
-                  <div className="text-xs font-semibold text-slate-300 mb-1.5 flex items-center">
-                    <CheckCircle className="w-4 h-4 text-emerald-400 mr-1.5" />
-                    Waiver Security Check:
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Projected Grade</span>
+                <Target className="w-4 h-4 text-slate-600" />
+              </div>
+
+              <div className="flex items-center gap-5">
+                <div className={`w-24 h-24 rounded-2xl flex flex-col items-center justify-center ring-2 ${gradeInfo.ring} ${gradeInfo.bg} shadow-xl`}>
+                  <span className={`text-4xl font-black ${gradeInfo.text}`}>{gradeInfo.grade}</span>
+                  <span className={`text-[10px] font-bold ${gradeInfo.text} opacity-80 mt-0.5`}>{gradeInfo.label}</span>
+                </div>
+                <div className="space-y-1.5">
+                  <p className="text-xs text-slate-400">Grade Points</p>
+                  <p className={`text-2xl font-black ${gradeInfo.text}`}>{gradeInfo.points.toFixed(2)}</p>
+                  <p className="text-xs text-slate-500">Score: <span className="text-white font-bold">{totalMarks}/100</span></p>
+                  <div className="h-1.5 w-32 bg-white/5 rounded-full overflow-hidden mt-2">
+                    <div className={`h-full bg-gradient-to-r ${gradeInfo.bar} rounded-full transition-all duration-500`} style={{ width: `${totalMarks}%` }} />
                   </div>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">
-                    {points >= 3.00 
-                      ? "Excellent! This course grade maintains your minimum 3.00 requirement for scholarship waivers. Keep up the high standards." 
-                      : "Warning! Getting below B (3.00 GP) may risk losing your consecutive term waiver. Try raising your final exam target to compensate."}
-                  </p>
                 </div>
               </div>
 
-              <div className="mt-6">
-                <Link to="/chat" className="w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-xl bg-[#0B1A30] hover:bg-[#1E3A5F] border border-[#1E3A5F] text-xs font-semibold text-slate-300 transition-all">
-                  <span>Consult AI Advisor Bot</span>
-                  <ChevronRight className="w-4 h-4 text-[#00E5FF]" />
-                </Link>
+              <div className={`rounded-xl p-3.5 text-xs leading-relaxed border ${
+                gradeInfo.points >= 3.0
+                  ? 'bg-emerald-500/6 border-emerald-500/15 text-emerald-300'
+                  : 'bg-amber-500/6 border-amber-500/15 text-amber-300'
+              }`}>
+                <div className="flex items-center gap-1.5 font-bold mb-1">
+                  {gradeInfo.points >= 3.0
+                    ? <><CheckCircle className="w-3.5 h-3.5" /> Waiver Safe</>
+                    : <><AlertTriangle className="w-3.5 h-3.5" /> Waiver at Risk</>
+                  }
+                </div>
+                {gradeInfo.points >= 3.0
+                  ? 'This grade meets the minimum 3.00 GPA requirement for semester waivers. Excellent academic standing!'
+                  : 'Scoring below B (3.00 GP) may jeopardize your waiver eligibility. Try boosting final exam marks to compensate.'
+                }
               </div>
+
+              <Link to="/chat" className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/4 border border-white/8 hover:bg-white/7 text-xs font-semibold text-slate-300 transition-all">
+                Consult AI Advisor Bot <ChevronRight className="w-3.5 h-3.5 text-teal-400" />
+              </Link>
             </div>
 
-            {/* AI Warning widget */}
-            <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl flex items-start space-x-3">
-              <Bot className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+            {/* Quick actions */}
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { to: '/chat', icon: Bot, label: 'AI Chat', sub: 'Ask policy questions', color: 'teal' },
+                { to: '/profile', icon: User, label: 'Profile', sub: 'View student info', color: 'indigo' },
+              ].map(({ to, icon: Icon, label, sub, color }) => (
+                <Link key={to} to={to}
+                  className={`bg-[#0a1525] border border-${color}-500/15 rounded-2xl p-4 hover:border-${color}-500/35 hover:bg-${color}-500/5 transition-all group`}>
+                  <div className={`w-8 h-8 rounded-lg bg-${color}-500/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
+                    <Icon className={`w-4 h-4 text-${color}-400`} />
+                  </div>
+                  <p className="text-xs font-bold text-white">{label}</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">{sub}</p>
+                </Link>
+              ))}
+            </div>
+
+            {/* Alert */}
+            <div className="flex items-start gap-3 bg-amber-500/6 border border-amber-500/20 rounded-xl p-4">
+              <Bell className="w-4 h-4 text-amber-400 shrink-0 mt-0.5 animate-pulse" />
               <div>
-                <h5 className="text-xs font-bold text-amber-300">Waiver Renewal Deadline</h5>
-                <p className="text-[10px] text-slate-300 mt-1">
-                  Tuition waiver applications for Fall 2026 open in 3 days. Make sure your previous CGPA is locked and any "Incomplete" grades have been cleared.
+                <p className="text-xs font-bold text-amber-300">Waiver Renewal in 3 Days</p>
+                <p className="text-[10px] text-slate-400 mt-1 leading-relaxed">
+                  Fall 2026 tuition waiver applications open soon. Clear all "I" (Incomplete) grades before submission.
                 </p>
               </div>
             </div>
-
           </div>
-
         </div>
-
       </main>
     </div>
   );

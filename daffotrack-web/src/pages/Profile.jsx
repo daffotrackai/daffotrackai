@@ -1,6 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Camera, Cpu, Mail, User, IdCard, BookUser, Phone, CalendarDays, MapPin, Users, BadgeInfo, VenusAndMars, Earth, Edit3 } from 'lucide-react';
+import {
+  Camera, Cpu, Mail, User, IdCard, BookUser, Phone,
+  CalendarDays, MapPin, Users, BadgeInfo, VenusAndMars,
+  Earth, Edit3, Upload, CheckCircle2, Shield
+} from 'lucide-react';
 import { apiRequest, buildApiUrl } from '../lib/api';
 import { getCurrentUser, setCurrentUser } from '../lib/session';
 import NavigationDrawer from '../components/NavigationDrawer';
@@ -13,47 +17,47 @@ export default function Profile() {
   const [drawerOpen, setDrawerOpen] = useLocalStorageState('daffotrack.drawerOpen', false);
   const [profile, setProfile] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [savingImage, setSavingImage] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (!currentUser?.userId) {
-      setLoading(false);
-      return;
-    }
-
+    if (!currentUser?.userId) { setLoading(false); return; }
     apiRequest(`/api/users/${currentUser.userId}`)
-      .then((data) => setProfile(data))
-      .catch((requestError) => setError(requestError.message || 'Unable to load profile.'))
+      .then(data => setProfile(data))
+      .catch(err => setError(err.message || 'Unable to load profile.'))
       .finally(() => setLoading(false));
   }, [currentUser?.userId]);
 
   const displayedProfile = profile || currentUser;
 
-  const handleImageUpdate = async (event) => {
-    event.preventDefault();
-    if (!currentUser?.userId || !profileImage) {
-      return;
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfileImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
     }
+  };
 
+  const handleImageUpdate = async (e) => {
+    e.preventDefault();
+    if (!currentUser?.userId || !profileImage) return;
     setSavingImage(true);
     setError('');
-
     const payload = new FormData();
     payload.append('profileImage', profileImage);
-
     try {
-      const updatedProfile = await apiRequest(`/api/users/${currentUser.userId}/image`, {
-        method: 'PUT',
-        body: payload,
-      });
-
-      setProfile(updatedProfile);
-      setCurrentUser({ ...currentUser, ...updatedProfile });
+      const updated = await apiRequest(`/api/users/${currentUser.userId}/image`, { method: 'PUT', body: payload });
+      setProfile(updated);
+      setCurrentUser({ ...currentUser, ...updated });
       setProfileImage(null);
-    } catch (requestError) {
-      setError(requestError.message || 'Failed to update profile image.');
+      setPreviewUrl(null);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      setError(err.message || 'Failed to update profile image.');
     } finally {
       setSavingImage(false);
     }
@@ -61,9 +65,10 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0B1A30] text-white grid place-items-center px-4">
-        <div className="rounded-3xl border border-[#1E3A5F] bg-[#13253F] px-6 py-5 text-sm text-slate-300 shadow-2xl">
-          Loading profile...
+      <div className="min-h-screen bg-[#060e1a] text-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-slate-400">Loading profile...</p>
         </div>
       </div>
     );
@@ -71,16 +76,16 @@ export default function Profile() {
 
   if (!displayedProfile?.userId) {
     return (
-      <div className="min-h-screen bg-[#0B1A30] text-white grid place-items-center px-4">
-        <div className="max-w-lg rounded-[28px] border border-[#1E3A5F] bg-[#13253F] p-8 text-center shadow-2xl">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#00E5FF]/10 text-[#00E5FF]">
-            <User className="h-7 w-7" />
+      <div className="min-h-screen bg-[#060e1a] text-white flex items-center justify-center px-4">
+        <div className="max-w-md text-center bg-[#0a1525] border border-white/8 rounded-2xl p-10 shadow-2xl">
+          <div className="w-14 h-14 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 mx-auto mb-5">
+            <User className="w-7 h-7" />
           </div>
-          <h1 className="text-2xl font-bold">No profile found</h1>
-          <p className="mt-3 text-sm text-slate-300">Please register or log in first so we can load your saved student profile.</p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Link to="/register" className="rounded-xl bg-[#00E5FF] px-5 py-3 text-sm font-bold text-[#0B1A30]">Create profile</Link>
-            <Link to="/login" className="rounded-xl border border-[#1E3A5F] px-5 py-3 text-sm font-semibold text-slate-200">Login</Link>
+          <h1 className="text-2xl font-black text-white mb-3">No Profile Found</h1>
+          <p className="text-sm text-slate-400 mb-7">Please register or log in first to access your student profile.</p>
+          <div className="flex flex-col sm:flex-row justify-center gap-3">
+            <Link to="/register" className="px-6 py-3 rounded-xl bg-teal-500 text-[#060e1a] font-bold text-sm hover:bg-teal-400 transition-all">Create Profile</Link>
+            <Link to="/login" className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-semibold text-sm hover:bg-white/8 transition-all">Login</Link>
           </div>
         </div>
       </div>
@@ -89,111 +94,144 @@ export default function Profile() {
 
   const imageUrl = displayedProfile.profileImageUrl ? buildApiUrl(displayedProfile.profileImageUrl) : null;
 
+  const infoFields = [
+    { icon: IdCard, label: 'Student ID', value: displayedProfile.studentId },
+    { icon: Mail, label: 'Email', value: displayedProfile.email },
+    { icon: BookUser, label: 'Department', value: displayedProfile.department },
+    { icon: Phone, label: 'Phone', value: displayedProfile.phone || 'Not provided' },
+    { icon: CalendarDays, label: 'Session', value: displayedProfile.sessionYear || 'Not provided' },
+    { icon: BadgeInfo, label: 'Semester', value: displayedProfile.semester || 'Not provided' },
+    { icon: CalendarDays, label: 'Date of Birth', value: displayedProfile.dateOfBirth || 'Not provided' },
+    { icon: MapPin, label: 'Address', value: displayedProfile.address || 'Not provided' },
+    { icon: Users, label: 'Guardian Name', value: displayedProfile.guardianName || 'Not provided' },
+    { icon: BadgeInfo, label: 'Blood Group', value: displayedProfile.bloodGroup || 'Not provided' },
+    { icon: VenusAndMars, label: 'Gender', value: displayedProfile.gender || 'Not provided' },
+    { icon: Earth, label: 'Nationality', value: displayedProfile.nationality || 'Not provided' },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#0B1A30] text-white px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#060e1a] text-white flex flex-col">
       <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
       <PageTopBar
         title="My Profile"
-        subtitle="View and manage your saved student information"
+        subtitle="View and manage your student information"
         backLabel="Dashboard"
         backTo="/dashboard"
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
       />
-      <div className="mx-auto max-w-6xl py-8">
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[360px_minmax(0,1fr)]">
-          <aside className="rounded-[28px] border border-[#1E3A5F] bg-[#13253F] p-6 shadow-2xl shadow-black/30">
-            <div className="flex flex-col items-center text-center">
-              <div className="relative">
-                <div className="flex h-36 w-36 items-center justify-center overflow-hidden rounded-[30px] border border-[#1E3A5F] bg-[#0B1A30] shadow-[0_0_30px_rgba(0,229,255,0.12)]">
-                  {imageUrl ? (
-                    <img src={imageUrl} alt={displayedProfile.fullName} className="h-full w-full object-cover" />
-                  ) : (
-                    <User className="h-16 w-16 text-[#00E5FF]" />
-                  )}
+      {/* Ambient */}
+      <div className="fixed top-1/3 right-0 w-[500px] h-[400px] bg-teal-500/4 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="flex-1 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+
+          {error && (
+            <div className="mb-6 p-3 rounded-xl bg-red-500/8 border border-red-500/20 text-xs text-red-400">{error}</div>
+          )}
+
+          <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-7">
+
+            {/* Left: Avatar & photo upload */}
+            <aside className="space-y-5">
+              <div className="bg-[#0a1525] border border-white/8 rounded-2xl p-6 space-y-5">
+
+                {/* Avatar */}
+                <div className="flex flex-col items-center gap-4">
+                  <div className="relative">
+                    <div className="w-32 h-32 rounded-2xl bg-[#060e1a] border border-white/10 flex items-center justify-center overflow-hidden shadow-[0_0_30px_rgba(45,212,191,0.1)]">
+                      {(previewUrl || imageUrl)
+                        ? <img src={previewUrl || imageUrl} alt={displayedProfile.fullName} className="w-full h-full object-cover" />
+                        : <User className="w-14 h-14 text-slate-600" />
+                      }
+                    </div>
+                    <label htmlFor="photo-update" className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center cursor-pointer hover:bg-teal-400 transition-colors shadow-lg">
+                      <Camera className="w-3.5 h-3.5 text-[#060e1a]" />
+                    </label>
+                  </div>
+                  <input id="photo-update" type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+
+                  <div className="text-center">
+                    <h2 className="text-lg font-black text-white">{displayedProfile.fullName}</h2>
+                    <p className="text-xs text-slate-400 mt-0.5">{displayedProfile.department}</p>
+                    <p className="text-[10px] text-teal-400 font-mono mt-1">{displayedProfile.studentId}</p>
+                  </div>
                 </div>
-                <div className="absolute -right-2 -bottom-2 rounded-full border border-[#1E3A5F] bg-[#0B1A30] p-2 text-[#00E5FF]">
-                  <Camera className="h-4 w-4" />
+
+                <div className="bg-[#060e1a] border border-white/6 rounded-xl p-3.5">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5">Account Email</p>
+                  <p className="text-sm font-semibold text-white break-all">{displayedProfile.email}</p>
+                </div>
+
+                {/* Photo update */}
+                <form onSubmit={handleImageUpdate} className="space-y-3">
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Update Profile Photo</p>
+                  <label htmlFor="photo-update"
+                    className="flex items-center gap-2 justify-center py-2.5 rounded-xl bg-white/4 border border-white/8 hover:bg-white/7 cursor-pointer text-xs font-semibold text-slate-300 transition-all">
+                    <Upload className="w-3.5 h-3.5 text-teal-400" />
+                    {profileImage ? profileImage.name.slice(0, 22) + '…' : 'Choose new photo'}
+                  </label>
+                  <button
+                    type="submit"
+                    disabled={!profileImage || savingImage}
+                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-teal-500 text-[#060e1a] font-bold text-sm hover:bg-teal-400 transition-all disabled:opacity-40">
+                    {savingImage
+                      ? <><div className="w-4 h-4 border-2 border-[#060e1a] border-t-transparent rounded-full animate-spin" /> Saving...</>
+                      : saved
+                        ? <><CheckCircle2 className="w-4 h-4" /> Photo Updated!</>
+                        : 'Save New Photo'
+                    }
+                  </button>
+                </form>
+              </div>
+
+              {/* Status cards */}
+              <div className="bg-[#0a1525] border border-white/8 rounded-2xl p-5 space-y-3">
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-slate-500">Profile Status</p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-400" />
+                    <p className="text-sm font-semibold text-emerald-300">
+                      {displayedProfile.hasProfileImage ? 'Photo uploaded' : 'No photo yet'}
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-3 border-t border-white/5">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-500">Registered</p>
+                  <p className="text-sm font-semibold text-white mt-1.5">{displayedProfile.createdAt || 'Just now'}</p>
+                </div>
+                <div className="pt-3 border-t border-white/5">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5">Password</p>
+                  <p className="text-lg font-bold tracking-widest text-slate-300">{maskValue(displayedProfile.password)}</p>
                 </div>
               </div>
 
-              <h1 className="mt-5 text-2xl font-extrabold tracking-tight">{displayedProfile.fullName}</h1>
-              <p className="mt-1 text-sm text-slate-300">{displayedProfile.department}</p>
-              <p className="mt-2 text-xs text-slate-400">{displayedProfile.studentId}</p>
+              <div className="flex items-center gap-2 text-[10px] text-slate-600 px-1">
+                <Shield className="w-3 h-3 text-teal-500/50" />
+                All data stored in MySQL. No third-party access.
+              </div>
+            </aside>
 
-              <div className="mt-6 w-full rounded-2xl border border-[#1E3A5F] bg-[#0B1A30]/70 p-4 text-left">
-                <p className="text-xs uppercase tracking-wider text-slate-400">Account Email</p>
-                <p className="mt-2 text-sm font-semibold">{displayedProfile.email}</p>
+            {/* Right: Detail grid */}
+            <main className="bg-[#0a1525] border border-white/8 rounded-2xl p-6 sm:p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 pb-5 border-b border-white/6">
+                <div>
+                  <h2 className="text-2xl font-black text-white tracking-tight">Student Profile Details</h2>
+                  <p className="text-sm text-slate-400 mt-1">All data loaded from MySQL database.</p>
+                </div>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/8 border border-emerald-500/15 text-xs font-semibold text-emerald-300">
+                  <Edit3 className="w-3.5 h-3.5" /> Registered Profile
+                </div>
               </div>
 
-              <form onSubmit={handleImageUpdate} className="mt-5 w-full space-y-4">
-                <label className="block text-left text-xs font-semibold uppercase tracking-wider text-slate-300">
-                  Update profile image
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) => setProfileImage(event.target.files?.[0] || null)}
-                  className="block w-full text-sm text-slate-300 file:mr-4 file:rounded-xl file:border-0 file:bg-[#00E5FF] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[#0B1A30]"
-                />
-                <button
-                  type="submit"
-                  disabled={!profileImage || savingImage}
-                  className="w-full rounded-2xl bg-[#00E5FF] px-4 py-3 text-sm font-bold text-[#0B1A30] disabled:opacity-60"
-                >
-                  {savingImage ? 'Saving...' : 'Save new photo'}
-                </button>
-              </form>
-            </div>
-          </aside>
-
-          <main className="rounded-[28px] border border-[#1E3A5F] bg-[#13253F]/70 p-6 shadow-2xl shadow-black/30 sm:p-8">
-            <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <h2 className="text-3xl font-extrabold tracking-tight">Student profile details</h2>
-                <p className="mt-2 text-sm text-slate-300">All saved registration data is loaded from MySQL.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                {infoFields.map(({ icon: Icon, label, value }) => (
+                  <DetailCard key={label} icon={<Icon className="w-3.5 h-3.5" />} label={label} value={value} />
+                ))}
               </div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-xs font-semibold text-emerald-300">
-                <Edit3 className="h-4 w-4" />
-                Registered profile
-              </div>
-            </div>
-
-            {error && (
-              <div className="mb-5 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                {error}
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-              <DetailCard icon={<IdCard className="h-4 w-4" />} label="Student ID" value={displayedProfile.studentId} />
-              <DetailCard icon={<Mail className="h-4 w-4" />} label="Email" value={displayedProfile.email} />
-              <DetailCard icon={<BookUser className="h-4 w-4" />} label="Department" value={displayedProfile.department} />
-              <DetailCard icon={<Phone className="h-4 w-4" />} label="Phone" value={displayedProfile.phone || 'Not provided'} />
-              <DetailCard icon={<CalendarDays className="h-4 w-4" />} label="Session" value={displayedProfile.sessionYear || 'Not provided'} />
-              <DetailCard icon={<BadgeInfo className="h-4 w-4" />} label="Semester" value={displayedProfile.semester || 'Not provided'} />
-              <DetailCard icon={<CalendarDays className="h-4 w-4" />} label="Date of Birth" value={displayedProfile.dateOfBirth || 'Not provided'} />
-              <DetailCard icon={<MapPin className="h-4 w-4" />} label="Address" value={displayedProfile.address || 'Not provided'} />
-              <DetailCard icon={<Users className="h-4 w-4" />} label="Guardian Name" value={displayedProfile.guardianName || 'Not provided'} />
-              <DetailCard icon={<BadgeInfo className="h-4 w-4" />} label="Blood Group" value={displayedProfile.bloodGroup || 'Not provided'} />
-              <DetailCard icon={<VenusAndMars className="h-4 w-4" />} label="Gender" value={displayedProfile.gender || 'Not provided'} />
-              <DetailCard icon={<Earth className="h-4 w-4" />} label="Nationality" value={displayedProfile.nationality || 'Not provided'} />
-            </div>
-
-            <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="rounded-3xl border border-[#1E3A5F] bg-[#0B1A30]/70 p-5">
-                <p className="text-xs uppercase tracking-wider text-slate-400">Password</p>
-                <p className="mt-2 text-sm text-slate-300">Stored in the database for the demo app.</p>
-                <p className="mt-2 text-lg font-bold tracking-widest">{maskValue(displayedProfile.password)}</p>
-              </div>
-              <div className="rounded-3xl border border-[#1E3A5F] bg-[#0B1A30]/70 p-5">
-                <p className="text-xs uppercase tracking-wider text-slate-400">Profile status</p>
-                <p className="mt-2 text-sm text-slate-300">{displayedProfile.hasProfileImage ? 'Profile photo uploaded' : 'No profile photo yet'}</p>
-                <p className="mt-2 text-lg font-bold text-[#00E5FF]">{displayedProfile.createdAt || 'Created just now'}</p>
-              </div>
-            </div>
-          </main>
+            </main>
+          </div>
         </div>
       </div>
     </div>
@@ -202,20 +240,17 @@ export default function Profile() {
 
 function DetailCard({ icon, label, value }) {
   return (
-    <div className="rounded-3xl border border-[#1E3A5F] bg-[#0B1A30]/70 p-5">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-        {icon}
+    <div className="bg-[#060e1a] border border-white/6 rounded-xl p-4 hover:border-teal-500/20 transition-all">
+      <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2.5">
+        <span className="text-slate-600">{icon}</span>
         {label}
       </div>
-      <p className="mt-3 text-sm font-semibold text-white break-words">{value}</p>
+      <p className="text-sm font-semibold text-white break-words leading-relaxed">{value}</p>
     </div>
   );
 }
 
 function maskValue(value) {
-  if (!value) {
-    return 'Not provided';
-  }
-
+  if (!value) return 'Not provided';
   return '•'.repeat(Math.min(Math.max(value.length, 6), 12));
 }

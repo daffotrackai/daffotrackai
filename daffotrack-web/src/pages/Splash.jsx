@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
 export default function Splash() {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ export default function Splash() {
         >
           {/* Atmospheric glow */}
           <div
-            className="absolute rounded-[24px] pointer-events-none"
+            className="absolute rounded-[28px] pointer-events-none"
             style={{
               inset: -20,
               background: 'radial-gradient(ellipse at center, rgba(0,210,185,0.22) 0%, transparent 65%)',
@@ -58,60 +59,53 @@ export default function Splash() {
             }}
           />
 
-          {/* Logo box */}
+          {/* Pulse ring */}
           <div
-            className="relative w-[100px] h-[100px] rounded-[24px] flex items-center justify-center"
+            className="absolute rounded-[28px] pointer-events-none"
             style={{
-              background: 'linear-gradient(145deg, rgba(0,210,185,0.10) 0%, rgba(0,0,0,0.3) 100%)',
+              inset: -4,
+              border: '1px solid rgba(0,210,185,0.18)',
+              animation: 'ringPulse 3s ease-in-out infinite',
+            }}
+          />
+
+          {/* Logo box — image fills the entire box */}
+          <div
+            className="relative w-[108px] h-[108px] rounded-[28px] overflow-hidden"
+            style={{
               border: '1px solid rgba(0,210,185,0.28)',
-              boxShadow: '0 0 0 1px rgba(255,255,255,0.04), 0 16px 48px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)',
+              boxShadow: `
+                0 0 0 1px rgba(255,255,255,0.04),
+                0 20px 60px rgba(0,0,0,0.7),
+                0 0 40px rgba(0,210,185,0.10),
+                inset 0 1px 0 rgba(255,255,255,0.08)
+              `,
             }}
           >
+            {/* Logo image — fills full box */}
+            <img
+              src={logo}
+              alt="DaffoTrack AI Logo"
+              className="w-full h-full object-cover"
+            />
+
+            {/* Subtle teal overlay on top of image */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'linear-gradient(160deg, rgba(0,210,185,0.06) 0%, transparent 60%)',
+              }}
+            />
+
             {/* Top-edge shimmer */}
             <div
               className="absolute pointer-events-none"
               style={{
-                top: 0, left: '10%', right: '10%', height: 1,
-                background: 'linear-gradient(90deg, transparent, rgba(0,255,220,0.55), transparent)',
+                top: 0, left: '8%', right: '8%', height: 1,
+                background: 'linear-gradient(90deg, transparent, rgba(0,255,220,0.5), transparent)',
                 borderRadius: '50%',
               }}
             />
-
-            <svg
-              viewBox="0 0 64 64"
-              width={48}
-              height={48}
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <defs>
-                <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#00ffe0" />
-                  <stop offset="100%" stopColor="#00a090" />
-                </linearGradient>
-                <radialGradient id="dotGrad" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#00ffea" />
-                  <stop offset="100%" stopColor="#00c8b4" />
-                </radialGradient>
-              </defs>
-              {/* D-shape outline */}
-              <rect
-                x="12" y="10" width="28" height="44" rx="8"
-                stroke="url(#logoGrad)" strokeWidth="3"
-                strokeLinecap="round" strokeLinejoin="round"
-              />
-              {/* Inner arc — the "track" curve */}
-              <path
-                d="M12 24 Q40 24 40 32 Q40 40 12 40"
-                stroke="url(#logoGrad)" strokeWidth="3"
-                strokeLinecap="round" fill="none" opacity="0.45"
-              />
-              {/* Centre dot */}
-              <circle cx="33" cy="32" r="5" fill="url(#dotGrad)" />
-            </svg>
-
-            {/* Fallback brand image — remove if not needed */}
-            {/* <img src="/src/assets/logo.png" alt="DaffoTrack AI" className="w-full h-full object-cover rounded-[20px]" /> */}
           </div>
         </div>
 
@@ -133,7 +127,7 @@ export default function Splash() {
                 backgroundClip: 'text',
               }}
             >
-              {' '}AI
+              {' '}Ai
             </span>
           </h1>
 
@@ -254,6 +248,10 @@ export default function Splash() {
           0%   { transform: translateX(-120%); }
           50%  { transform: translateX(80%); }
           100% { transform: translateX(280%); }
+        }
+        @keyframes ringPulse {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50%      { opacity: 0.7; transform: scale(1.03); }
         }
       `}</style>
     </div>

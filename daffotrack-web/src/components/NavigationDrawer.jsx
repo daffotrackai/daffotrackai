@@ -3,6 +3,15 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { X, Cpu, Home, LogIn, UserPlus, LayoutDashboard, MessageSquare, User, LogOut } from 'lucide-react';
 import { clearCurrentUser, getCurrentUser } from '../lib/session';
 
+const NAV_ITEMS = [
+  { to: '/',          label: 'Home',      icon: Home },
+  { to: '/login',     label: 'Login',     icon: LogIn },
+  { to: '/register',  label: 'Register',  icon: UserPlus },
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/chat',      label: 'AI Chat',   icon: MessageSquare },
+  { to: '/profile',   label: 'Profile',   icon: User },
+];
+
 export default function NavigationDrawer({ open, setOpen }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -14,89 +23,94 @@ export default function NavigationDrawer({ open, setOpen }) {
     navigate('/login');
   };
 
-  const navItems = [
-    { to: '/', label: 'Home', icon: Home },
-    { to: '/login', label: 'Login', icon: LogIn },
-    { to: '/register', label: 'Register', icon: UserPlus },
-    { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { to: '/chat', label: 'Chat', icon: MessageSquare },
-    { to: '/profile', label: 'Profile', icon: User },
-  ];
-
   return (
     <>
+      {/* Backdrop */}
       {open && (
         <button
           type="button"
-          aria-label="Close navigation backdrop"
+          aria-label="Close drawer"
           onClick={() => setOpen(false)}
-          className="fixed inset-0 z-[60] cursor-default bg-black/50 backdrop-blur-[2px]"
+          className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm cursor-default"
         />
       )}
 
-      <aside
-        className={`fixed left-0 top-0 z-[70] h-screen w-[290px] border-r border-[#1E3A5F] bg-[#13253F] shadow-2xl shadow-black/35 transition-transform duration-300 ${open ? 'translate-x-0' : '-translate-x-full'}`}
-      >
+      {/* Drawer */}
+      <aside className={`fixed left-0 top-0 z-[70] h-screen w-[280px] bg-[#0a1525] border-r border-white/8 shadow-2xl shadow-black/50 transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex h-full flex-col">
-          <div className="border-b border-[#1E3A5F] p-6 pt-8">
-            <div className="flex items-start justify-between gap-4">
+
+          {/* Header */}
+          <div className="p-5 pt-7 border-b border-white/6">
+            <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00E5FF] to-blue-600 p-[2px]">
-                <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-[#0B1A30]">
-                  <Cpu className="h-5 w-5 text-[#00E5FF]" />
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 p-[1.5px] shadow-[0_0_15px_rgba(45,212,191,0.3)]">
+                  <div className="w-full h-full bg-[#060e1a] rounded-[10px] flex items-center justify-center">
+                    <Cpu className="w-5 h-5 text-teal-400" />
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white">DaffoTrack AI</p>
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-teal-400">by Metamorph X</p>
                 </div>
               </div>
-              <div>
-                <p className="text-sm font-bold text-white">DaffoTrack AI</p>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#00E5FF]">by Metamorph X</p>
-              </div>
-              </div>
-
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[#1E3A5F] bg-[#0B1A30] text-slate-300 transition-colors hover:border-[#00E5FF]/30 hover:text-[#00E5FF]"
-                aria-label="Hide navigation drawer"
+                className="w-8 h-8 rounded-xl border border-white/8 bg-white/4 flex items-center justify-center text-slate-400 hover:text-white hover:border-white/15 transition-all"
               >
-                <X className="h-4 w-4" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="mt-5 rounded-2xl border border-[#1E3A5F] bg-[#0B1A30]/70 p-4">
-              <p className="text-[10px] uppercase tracking-wider text-slate-400">Current User</p>
-              <p className="mt-2 text-sm font-semibold text-white">{currentUser?.studentName || currentUser?.fullName || 'Guest DIU Student'}</p>
-              <p className="mt-1 text-xs text-slate-400">{currentUser?.studentId || '221-15-XXXX'}</p>
+            {/* User badge */}
+            <div className="mt-4 bg-white/3 border border-white/6 rounded-xl p-3.5">
+              <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-2">Logged in as</p>
+              <p className="text-sm font-bold text-white truncate">
+                {currentUser?.studentName || currentUser?.fullName || 'Guest DIU Student'}
+              </p>
+              <p className="text-[10px] text-slate-500 mt-0.5 font-mono">
+                {currentUser?.studentId || '221-15-XXXX'}
+              </p>
             </div>
           </div>
 
-          <nav className="flex-1 space-y-2 overflow-y-auto p-4">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const active = location.pathname === item.to;
-
+          {/* Nav */}
+          <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+            <p className="text-[9px] uppercase tracking-widest text-slate-600 px-2 mb-2 font-bold">Navigation</p>
+            {NAV_ITEMS.map(({ to, label, icon: Icon }) => {
+              const active = location.pathname === to;
               return (
                 <NavLink
-                  key={item.to}
-                  to={item.to}
+                  key={to}
+                  to={to}
                   onClick={() => setOpen(false)}
-                  className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-medium transition-all ${active ? 'border-[#00E5FF]/25 bg-[#0B1A30] text-[#00E5FF]' : 'border-transparent text-slate-300 hover:border-[#1E3A5F] hover:bg-[#0B1A30]/70 hover:text-white'}`}
+                  className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
+                    active
+                      ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20'
+                      : 'text-slate-400 hover:text-white hover:bg-white/4 border border-transparent'
+                  }`}
                 >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
+                  <Icon className="w-4 h-4" />
+                  {label}
+                  {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-teal-400" />}
                 </NavLink>
               );
             })}
           </nav>
 
-          <div className="border-t border-[#1E3A5F] p-4">
+          {/* Footer */}
+          <div className="p-4 border-t border-white/6 space-y-3">
             <button
               type="button"
               onClick={handleLogout}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-300 transition-all hover:bg-red-500/20"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-500/15 bg-red-500/8 px-4 py-2.5 text-sm font-semibold text-red-400 transition-all hover:bg-red-500/15"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="w-4 h-4" />
               Sign Out
             </button>
+            <p className="text-[9px] text-center text-slate-600 tracking-wider">
+              DaffoTrack AI • Metamorph X © {new Date().getFullYear()}
+            </p>
           </div>
         </div>
       </aside>
