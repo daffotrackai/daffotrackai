@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import {
   BookOpen, Bot, Bell, TrendingUp, Sparkles, Clock,
   ArrowRight, ChevronRight, Menu, X, Terminal, Cpu,
   GraduationCap, ShieldCheck, Award, BookMarked,
-  MessageSquareCode, Zap, Star
+  MessageSquareCode, Zap
 } from 'lucide-react';
-import NavigationDrawer from '../components/NavigationDrawer';
 import PageTopBar from '../components/PageTopBar';
-import useLocalStorageState from '../lib/useLocalStorageState';
+import AppLogo from '../components/AppLogo';
 
 export default function Home() {
   const navigate = useNavigate();
-  const [drawerOpen, setDrawerOpen] = useLocalStorageState('daffotrack.drawerOpen', false);
+  const { drawerOpen, setDrawerOpen } = useOutletContext();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('advisor');
   const [simulatedChat, setSimulatedChat] = useState([
@@ -58,7 +57,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#060e1a] text-white selection:bg-teal-500/20 selection:text-teal-300">
-      <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
       <PageTopBar
         title="DaffoTrack AI"
         subtitle="Smart academic companion for DIU students"
@@ -75,11 +73,7 @@ export default function Home() {
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#060e1a]/90 backdrop-blur-xl border-b border-white/5 py-3' : 'bg-transparent py-5'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 p-[1.5px] shadow-[0_0_20px_rgba(45,212,191,0.35)]">
-              <div className="w-full h-full bg-[#060e1a] rounded-[10px] flex items-center justify-center">
-                <Cpu className="w-4.5 h-4.5 text-teal-400" />
-              </div>
-            </div>
+            <AppLogo size="lg" />
             <div>
               <span className="text-[17px] font-bold tracking-tight text-white">DaffoTrack <span className="text-teal-400">AI</span></span>
               <span className="block text-[9px] text-slate-500 font-semibold tracking-widest uppercase">by Metamorph X</span>
@@ -233,16 +227,17 @@ export default function Home() {
       </section>
 
       {/* FEATURES */}
-      <section id="features" className="py-24 bg-white text-slate-900 relative">
-        <div className="absolute top-0 inset-x-0 h-20 bg-gradient-to-b from-[#060e1a] to-white pointer-events-none" />
+      <section id="features" className="py-24 bg-[#07111f] text-white relative border-t border-white/5">
+        <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-[#060e1a] to-[#07111f] pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-[#060e1a] pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 bg-slate-100 px-4 py-1.5 rounded-full mb-4">
-              <Zap className="w-3.5 h-3.5 text-teal-600" />
-              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">What DaffoTrack Does</span>
+            <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 px-4 py-1.5 rounded-full mb-4">
+              <Zap className="w-3.5 h-3.5 text-teal-400" />
+              <span className="text-xs font-bold text-teal-400 uppercase tracking-wider">What DaffoTrack Does</span>
             </div>
-            <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-4">Built for DIU. Designed for Excellence.</h2>
-            <p className="text-slate-500 text-lg">Purpose-built AI tools configured around Daffodil's semester framework, policies, and regulations.</p>
+            <h2 className="text-4xl font-black text-white tracking-tight mb-4">Built for DIU. Designed for Excellence.</h2>
+            <p className="text-slate-400 text-lg">Purpose-built AI tools configured around Daffodil's semester framework, policies, and regulations.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -252,13 +247,13 @@ export default function Home() {
               { icon: Bell, title: 'DIU Smart Policy Guide', desc: 'Instant guidance on Grade Improvement, Retakes, Makeup Midterms, Semester Drop, and tuition fee waivers.', link: 'View policies' },
               { icon: Clock, title: '75% Attendance Predictor', desc: 'Track how many absences are left before losing exam eligibility. Stay alerted before falling below critical levels.', link: 'Check calculator' }
             ].map(({ icon: Icon, title, desc, link }) => (
-              <div key={title} className="group bg-slate-50 hover:bg-white rounded-2xl p-6 border border-slate-200 hover:border-teal-400/50 hover:shadow-xl hover:shadow-teal-500/5 transition-all duration-300 flex flex-col">
-                <div className="w-11 h-11 rounded-xl bg-[#060e1a] flex items-center justify-center text-teal-400 mb-5 group-hover:scale-110 transition-transform">
+              <div key={title} className="group bg-[#0a1525]/85 hover:bg-[#0d1e35] rounded-2xl p-6 border border-white/8 hover:border-teal-400/40 hover:shadow-xl hover:shadow-teal-500/10 transition-all duration-300 flex flex-col">
+                <div className="w-11 h-11 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 mb-5 group-hover:scale-110 transition-transform">
                   <Icon className="w-5 h-5" />
                 </div>
-                <h3 className="text-base font-bold text-slate-900 mb-2">{title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed flex-1">{desc}</p>
-                <div className="mt-5 pt-4 border-t border-slate-100 flex items-center text-xs font-bold text-slate-700 group-hover:text-teal-600 transition-colors">
+                <h3 className="text-base font-bold text-white mb-2">{title}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed flex-1">{desc}</p>
+                <div className="mt-5 pt-4 border-t border-white/6 flex items-center text-xs font-bold text-slate-300 group-hover:text-teal-400 transition-colors">
                   {link} <ChevronRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
@@ -266,7 +261,7 @@ export default function Home() {
           </div>
 
           {/* Privacy banner */}
-          <div className="mt-12 bg-[#060e1a] rounded-2xl p-7 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="mt-12 bg-[#0a1525] border border-white/8 rounded-2xl p-7 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-1.5 max-w-xl">
               <h4 className="text-base font-bold text-white flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-teal-400" /> Privacy & Academic Integrity
@@ -455,9 +450,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-7 border-b border-white/4">
             <div className="flex items-center gap-3">
-              <div className="w-7 h-7 rounded-lg bg-teal-500 flex items-center justify-center">
-                <Cpu className="w-3.5 h-3.5 text-[#060e1a]" />
-              </div>
+              <AppLogo size="sm" />
               <div>
                 <span className="font-bold text-white text-sm">DaffoTrack AI</span>
                 <span className="block text-[9px] text-slate-600 uppercase tracking-widest">by Metamorph X</span>

@@ -1,7 +1,9 @@
-import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, LogIn, UserPlus, LayoutDashboard, MessageSquare, User, LogOut, Cpu, X } from 'lucide-react';
-import { clearCurrentUser, getCurrentUser } from '../lib/session';
+import { Home, LogIn, UserPlus, LayoutDashboard, MessageSquare, User, LogOut, X } from 'lucide-react';
+import { clearCurrentUser } from '../lib/session';
+import useCurrentUserProfile from '../lib/useCurrentUserProfile';
+import AppLogo from './AppLogo';
+import UserAvatar from './UserAvatar';
 
 const NAV_ITEMS = [
   { to: '/home',      label: 'Home',      icon: Home },
@@ -14,7 +16,15 @@ const NAV_ITEMS = [
 
 export default function NavigationDrawer({ open, setOpen }) {
   const navigate = useNavigate();
-  const currentUser = getCurrentUser();
+  const currentUser = useCurrentUserProfile();
+  const isLoggedIn = Boolean(currentUser?.userId);
+  const visibleNavItems = NAV_ITEMS.filter(({ to }) => {
+    if (isLoggedIn) {
+      return to !== '/login' && to !== '/register';
+    }
+
+    return true;
+  });
 
   const handleLogout = () => {
     clearCurrentUser();
@@ -41,11 +51,7 @@ export default function NavigationDrawer({ open, setOpen }) {
         {/* Header / Logo */}
         <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-white/6">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/home')}>
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 p-[1.5px] shadow-[0_0_15px_rgba(45,212,191,0.3)]">
-              <div className="w-full h-full bg-[#060e1a] rounded-[10px] flex items-center justify-center">
-                <Cpu className="w-4 h-4 text-teal-400" />
-              </div>
-            </div>
+            <AppLogo size="md" />
             <div>
               <span className="font-bold text-white text-sm">DaffoTrack AI</span>
               <span className="block text-[9px] text-teal-400 font-semibold uppercase tracking-widest">by Metamorph X</span>
@@ -62,12 +68,10 @@ export default function NavigationDrawer({ open, setOpen }) {
         </div>
 
         {/* User Info Card (If logged in) */}
-        {currentUser?.userId && (
+        {isLoggedIn && (
           <div className="p-4 border-b border-white/5 bg-white/2">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
-                <User className="w-4.5 h-4.5" />
-              </div>
+              <UserAvatar user={currentUser} size="md" />
               <div className="overflow-hidden">
                 <p className="text-xs font-bold text-white truncate">{currentUser.fullName || 'Student'}</p>
                 <p className="text-[10px] text-slate-500">{currentUser.studentId || 'DIU Portal'}</p>
@@ -78,7 +82,7 @@ export default function NavigationDrawer({ open, setOpen }) {
 
         {/* Navigation Links */}
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-          {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+          {visibleNavItems.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
@@ -101,7 +105,7 @@ export default function NavigationDrawer({ open, setOpen }) {
 
         {/* Footer actions */}
         <div className="p-4 border-t border-white/6 space-y-3">
-          {currentUser?.userId ? (
+          {isLoggedIn ? (
             <button
               type="button"
               onClick={handleLogout}

@@ -1,7 +1,13 @@
 const CURRENT_USER_KEY = 'daffotrack.currentUser';
+const CURRENT_USER_EVENT = 'daffotrack.currentUserChanged';
+
+function notifyCurrentUserChanged(user) {
+  window.dispatchEvent(new CustomEvent(CURRENT_USER_EVENT, { detail: user }));
+}
 
 export function setCurrentUser(user) {
   localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+  notifyCurrentUserChanged(user);
 }
 
 export function getCurrentUser() {
@@ -19,9 +25,24 @@ export function getCurrentUser() {
 
 export function clearCurrentUser() {
   localStorage.removeItem(CURRENT_USER_KEY);
+  notifyCurrentUserChanged(null);
 }
 
 export function getCurrentUserId() {
   const currentUser = getCurrentUser();
   return currentUser?.userId ?? null;
+}
+
+export function subscribeCurrentUser(listener) {
+  const handleChange = (event) => {
+    listener(event.detail ?? getCurrentUser());
+  };
+
+  window.addEventListener(CURRENT_USER_EVENT, handleChange);
+  window.addEventListener('storage', handleChange);
+
+  return () => {
+    window.removeEventListener(CURRENT_USER_EVENT, handleChange);
+    window.removeEventListener('storage', handleChange);
+  };
 }

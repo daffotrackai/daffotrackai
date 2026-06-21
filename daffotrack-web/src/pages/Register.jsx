@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import {
-  ArrowRight, Camera, Cpu, Sparkles, User, Mail, Lock, IdCard,
+  ArrowRight, Camera, Sparkles, User, Mail, Lock, IdCard,
   BookUser, Phone, CalendarDays, MapPin, Users, BadgeInfo,
   VenusAndMars, Earth, CheckCircle2, Upload
 } from 'lucide-react';
 import { apiRequest } from '../lib/api';
 import { setCurrentUser } from '../lib/session';
 import PageTopBar from '../components/PageTopBar';
+import AppLogo from '../components/AppLogo';
 
 const DEPARTMENTS = [
   'Software Engineering', 'Computer Science & Engineering',
@@ -91,11 +92,7 @@ export default function Register() {
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 p-[2px] shadow-[0_0_20px_rgba(45,212,191,0.35)] shrink-0">
-                <div className="w-full h-full bg-[#060e1a] rounded-[14px] flex items-center justify-center">
-                  <Cpu className="w-6 h-6 text-teal-400" />
-                </div>
-              </div>
+              <AppLogo size="xl" />
               <div>
                 <h1 className="text-2xl font-black tracking-tight">
                   Create your <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">DaffoTrack</span> Profile

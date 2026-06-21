@@ -1,13 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import {
-  Bot, Send, User, Info, History, ShieldAlert,
+  Bot, Send, User, History, ShieldAlert,
   Sparkles, BookOpen, Bell, GraduationCap, Zap, ChevronRight
 } from 'lucide-react';
 import { apiRequest } from '../lib/api';
-import NavigationDrawer from '../components/NavigationDrawer';
 import PageTopBar from '../components/PageTopBar';
-import useLocalStorageState from '../lib/useLocalStorageState';
 
 const SUGGESTED = [
   { icon: BookOpen, category: 'Finance', text: 'What is the tuition waiver policy at DIU?' },
@@ -17,8 +15,7 @@ const SUGGESTED = [
 ];
 
 export default function Chat() {
-  const navigate = useNavigate();
-  const [drawerOpen, setDrawerOpen] = useLocalStorageState('daffotrack.drawerOpen', false);
+  const { drawerOpen, setDrawerOpen } = useOutletContext();
   const [messages, setMessages] = useState([
     {
       sender: 'ai',
@@ -75,7 +72,6 @@ export default function Chat() {
 
   return (
     <div className="min-h-screen bg-[#060e1a] text-white flex flex-col h-screen overflow-hidden">
-      <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
       <PageTopBar
         title="AI Advisor Chat"
         subtitle="Ask DIU policy and academic questions"

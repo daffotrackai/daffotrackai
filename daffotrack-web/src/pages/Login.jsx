@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link, useOutletContext } from 'react-router-dom';
-import { Cpu, ArrowRight, Shield, User, Lock, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, Shield, User, Lock, Sparkles, Eye, EyeOff } from 'lucide-react';
 import { apiRequest } from '../lib/api';
 import { setCurrentUser } from '../lib/session';
 import PageTopBar from '../components/PageTopBar';
+import AppLogo from '../components/AppLogo';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -71,11 +72,7 @@ export default function Login() {
         
         {/* Logo & brand */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 p-[2px] shadow-[0_0_30px_rgba(45,212,191,0.35)] mb-5">
-            <div className="w-full h-full bg-[#060e1a] rounded-[14px] flex items-center justify-center">
-              <Cpu className="w-7 h-7 text-teal-400" />
-            </div>
-          </div>
+          <AppLogo size="2xl" className="mb-5" />
           <h1 className="text-2xl font-black tracking-tight text-white">DaffoTrack AI Portal</h1>
           <p className="mt-1 text-xs text-slate-500 font-semibold tracking-widest uppercase">by Metamorph X</p>
         </div>
