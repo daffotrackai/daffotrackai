@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useOutletContext } from 'react-router-dom';
 import { Cpu, ArrowRight, Shield, User, Lock, Sparkles, Eye, EyeOff } from 'lucide-react';
 import { apiRequest } from '../lib/api';
 import { setCurrentUser } from '../lib/session';
-import NavigationDrawer from '../components/NavigationDrawer';
 import PageTopBar from '../components/PageTopBar';
-import useLocalStorageState from '../lib/useLocalStorageState';
 
 export default function Login() {
   const navigate = useNavigate();
-  const [drawerOpen, setDrawerOpen] = useLocalStorageState('daffotrack.drawerOpen', false);
+  // MainLayout থেকে ড্রয়ারের স্টেট রিসিভ করা হচ্ছে
+  const { drawerOpen, setDrawerOpen } = useOutletContext(); 
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -52,8 +52,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060e1a] text-white flex flex-col">
-      <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
+    <>
       <PageTopBar
         title="Sign In"
         subtitle="Access your DaffoTrack student profile"
@@ -63,11 +62,13 @@ export default function Login() {
         setDrawerOpen={setDrawerOpen}
       />
 
-      {/* Ambient glows */}
+      {/* Ambient glows (পেজের নিজস্ব ডিজাইন তাই রেখে দেওয়া হলো) */}
       <div className="fixed top-1/4 right-1/4 w-[500px] h-[400px] bg-teal-500/6 rounded-full blur-[100px] pointer-events-none" />
       <div className="fixed bottom-0 left-1/4 w-[400px] h-[300px] bg-indigo-600/5 rounded-full blur-[80px] pointer-events-none" />
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+      {/* pt-24 যোগ করা হয়েছে যাতে টপ-বারের নিচে না ঢোকে */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 pt-24 pb-12 relative z-10">
+        
         {/* Logo & brand */}
         <div className="flex flex-col items-center mb-8">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 p-[2px] shadow-[0_0_30px_rgba(45,212,191,0.35)] mb-5">
@@ -188,7 +189,7 @@ export default function Login() {
             <span>Local calculations only. No portal data stored.</span>
           </div>
         </div>
-      </div>
-    </div>
+      </main>
+    </>
   );
 }

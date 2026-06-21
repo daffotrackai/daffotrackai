@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import {
   ArrowRight, Camera, Cpu, Sparkles, User, Mail, Lock, IdCard,
   BookUser, Phone, CalendarDays, MapPin, Users, BadgeInfo,
@@ -7,9 +7,7 @@ import {
 } from 'lucide-react';
 import { apiRequest } from '../lib/api';
 import { setCurrentUser } from '../lib/session';
-import NavigationDrawer from '../components/NavigationDrawer';
 import PageTopBar from '../components/PageTopBar';
-import useLocalStorageState from '../lib/useLocalStorageState';
 
 const DEPARTMENTS = [
   'Software Engineering', 'Computer Science & Engineering',
@@ -22,7 +20,9 @@ const GENDERS = ['Male', 'Female', 'Other', 'Prefer not to say'];
 
 export default function Register() {
   const navigate = useNavigate();
-  const [drawerOpen, setDrawerOpen] = useLocalStorageState('daffotrack.drawerOpen', false);
+  // MainLayout থেকে ড্রয়ারের স্টেট রিসিভ করা হচ্ছে
+  const { drawerOpen, setDrawerOpen } = useOutletContext();
+  
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     fullName: '', email: '', password: '', studentId: '',
@@ -70,8 +70,7 @@ export default function Register() {
   const steps = ['Account Info', 'Academic Details', 'Personal Info'];
 
   return (
-    <div className="min-h-screen bg-[#060e1a] text-white flex flex-col">
-      <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
+    <>
       <PageTopBar
         title="Create Profile"
         subtitle="Register your student information"
@@ -85,7 +84,8 @@ export default function Register() {
       <div className="fixed top-0 left-1/4 w-[600px] h-[500px] bg-teal-500/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="fixed bottom-0 right-1/4 w-[500px] h-[400px] bg-indigo-600/5 rounded-full blur-[100px] pointer-events-none" />
 
-      <div className="flex-1 py-10 px-4 sm:px-6 lg:px-8 relative z-10">
+      {/* pt-24 যোগ করা হয়েছে যাতে টপ-বারের নিচে না ঢোকে */}
+      <main className="flex-1 pt-24 pb-10 px-4 sm:px-6 lg:px-8 relative z-10 overflow-y-auto">
         <div className="max-w-5xl mx-auto">
 
           {/* Header */}
@@ -179,7 +179,7 @@ export default function Register() {
               </aside>
 
               {/* Right: Form panels */}
-              <main className="lg:col-span-8">
+              <div className="lg:col-span-8">
                 <div className="bg-[#0a1525] border border-white/8 rounded-2xl p-6 sm:p-8">
 
                   {error && (
@@ -294,12 +294,12 @@ export default function Register() {
                     )}
                   </div>
                 </div>
-              </main>
+              </div>
             </div>
           </form>
         </div>
-      </div>
-    </div>
+      </main>
+    </>
   );
 }
 

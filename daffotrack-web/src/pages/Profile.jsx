@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import {
   Camera, Cpu, Mail, User, IdCard, BookUser, Phone,
   CalendarDays, MapPin, Users, BadgeInfo, VenusAndMars,
@@ -7,14 +7,14 @@ import {
 } from 'lucide-react';
 import { apiRequest, buildApiUrl } from '../lib/api';
 import { getCurrentUser, setCurrentUser } from '../lib/session';
-import NavigationDrawer from '../components/NavigationDrawer';
 import PageTopBar from '../components/PageTopBar';
-import useLocalStorageState from '../lib/useLocalStorageState';
 
 export default function Profile() {
   const navigate = useNavigate();
   const currentUser = useMemo(() => getCurrentUser(), []);
-  const [drawerOpen, setDrawerOpen] = useLocalStorageState('daffotrack.drawerOpen', false);
+  // MainLayout থেকে ড্রয়ারের স্টেট রিসিভ করা হচ্ছে
+  const { drawerOpen, setDrawerOpen } = useOutletContext();
+
   const [profile, setProfile] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -65,7 +65,7 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#060e1a] text-white flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-slate-400">Loading profile...</p>
@@ -76,7 +76,7 @@ export default function Profile() {
 
   if (!displayedProfile?.userId) {
     return (
-      <div className="min-h-screen bg-[#060e1a] text-white flex items-center justify-center px-4">
+      <div className="flex-1 flex items-center justify-center px-4 pt-24 pb-12">
         <div className="max-w-md text-center bg-[#0a1525] border border-white/8 rounded-2xl p-10 shadow-2xl">
           <div className="w-14 h-14 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 mx-auto mb-5">
             <User className="w-7 h-7" />
@@ -110,8 +110,7 @@ export default function Profile() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#060e1a] text-white flex flex-col">
-      <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
+    <>
       <PageTopBar
         title="My Profile"
         subtitle="View and manage your student information"
@@ -124,7 +123,7 @@ export default function Profile() {
       {/* Ambient */}
       <div className="fixed top-1/3 right-0 w-[500px] h-[400px] bg-teal-500/4 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="flex-1 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+      <main className="flex-1 overflow-y-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-6xl mx-auto">
 
           {error && (
@@ -214,7 +213,7 @@ export default function Profile() {
             </aside>
 
             {/* Right: Detail grid */}
-            <main className="bg-[#0a1525] border border-white/8 rounded-2xl p-6 sm:p-8 space-y-6">
+            <div className="bg-[#0a1525] border border-white/8 rounded-2xl p-6 sm:p-8 space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 pb-5 border-b border-white/6">
                 <div>
                   <h2 className="text-2xl font-black text-white tracking-tight">Student Profile Details</h2>
@@ -230,11 +229,11 @@ export default function Profile() {
                   <DetailCard key={label} icon={<Icon className="w-3.5 h-3.5" />} label={label} value={value} />
                 ))}
               </div>
-            </main>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </main>
+    </>
   );
 }
 
