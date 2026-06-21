@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
-import { getCurrentUser } from '../lib/session';
+import { getCurrentUser, hasCurrentUserSession } from '../lib/session';
 
 export default function Splash() {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ export default function Splash() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const currentUser = getCurrentUser();
-      navigate(currentUser?.userId ? '/home' : '/login', { replace: true });
+      navigate(hasCurrentUserSession(currentUser) ? '/home' : '/login', { replace: true });
     }, 3000);
 
     return () => clearTimeout(timer);

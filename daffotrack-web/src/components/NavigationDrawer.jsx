@@ -1,29 +1,31 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, LogIn, UserPlus, LayoutDashboard, MessageSquare, User, LogOut, X } from 'lucide-react';
-import { clearCurrentUser } from '../lib/session';
+import { Home, LogIn, UserPlus, LayoutDashboard, MessageSquare, User, LogOut, X, BookOpenCheck, Calculator, FileText } from 'lucide-react';
+import { clearCurrentUser, hasCurrentUserSession } from '../lib/session';
 import useCurrentUserProfile from '../lib/useCurrentUserProfile';
 import AppLogo from './AppLogo';
 import UserAvatar from './UserAvatar';
 
 const NAV_ITEMS = [
-  { to: '/home',      label: 'Home',      icon: Home },
-  { to: '/login',     label: 'Login',     icon: LogIn },
-  { to: '/register',  label: 'Register',  icon: UserPlus },
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/chat',      label: 'AI Chat',   icon: MessageSquare },
-  { to: '/profile',   label: 'Profile',   icon: User },
+  { to: '/home',      label: 'Home',      icon: Home,            access: 'public' },
+  { to: '/login',     label: 'Login',     icon: LogIn,           access: 'guest' },
+  { to: '/register',  label: 'Register',  icon: UserPlus,        access: 'guest' },
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, access: 'auth' },
+  { to: '/courses',   label: 'Courses',   icon: BookOpenCheck,   access: 'auth' },
+  { to: '/planner',   label: 'Planner',   icon: Calculator,      access: 'auth' },
+  { to: '/chat',      label: 'AI Chat',   icon: MessageSquare,   access: 'auth' },
+  { to: '/policies',  label: 'Policies',  icon: FileText,        access: 'auth' },
+  { to: '/profile',   label: 'Profile',   icon: User,            access: 'auth' },
 ];
 
 export default function NavigationDrawer({ open, setOpen }) {
   const navigate = useNavigate();
   const currentUser = useCurrentUserProfile();
-  const isLoggedIn = Boolean(currentUser?.userId);
-  const visibleNavItems = NAV_ITEMS.filter(({ to }) => {
-    if (isLoggedIn) {
-      return to !== '/login' && to !== '/register';
-    }
-
-    return true;
+  const isLoggedIn = hasCurrentUserSession(currentUser);
+  const visibleNavItems = NAV_ITEMS.filter(({ access }) => {
+    if (access === 'public') return true;
+    if (access === 'auth') return isLoggedIn;
+    if (access === 'guest') return !isLoggedIn;
+    return false;
   });
 
   const handleLogout = () => {

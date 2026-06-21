@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import NavigationDrawer from '../components/NavigationDrawer';
-import PageTopBar from '../components/PageTopBar';
 
 export default function MainLayout() {
   // ডেস্কটপের জন্য ডিফল্টভাবে ড্রয়ার ওপেন থাকবে, মোবাইলে ক্লোজ থাকবে
@@ -29,8 +28,6 @@ export default function MainLayout() {
           drawerOpen ? 'lg:ml-[280px]' : 'ml-0'
         }`}
       >
-        <PageTopBar drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
-        
         {/* Main content scrollable area */}
         <main className="flex-1 overflow-y-auto relative z-10">
           <Outlet context={{ drawerOpen, setDrawerOpen }} />

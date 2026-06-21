@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import {
-  Award, BookOpen, Clock, Bell, Sliders, CheckCircle, 
-  AlertTriangle, Target, Sparkles, Bot, User, ChevronRight
+  Award, BookOpen, Clock, Bell, Sliders, CheckCircle,
+  AlertTriangle, Target, Sparkles, Bot, User, ChevronRight, Calculator, FileText
 } from 'lucide-react';
 import { apiRequest } from '../lib/api';
 import { getCurrentUser } from '../lib/session';
@@ -27,7 +27,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     let mounted = true;
-    apiRequest('/api/dashboard/summary')
+    const summaryPath = currentUser?.userId
+      ? `/api/dashboard/summary?userId=${currentUser.userId}`
+      : '/api/dashboard/summary';
+
+    apiRequest(summaryPath)
       .then(data => { if (mounted) setSummary(data); })
       .catch(err => { if (mounted) setSummaryError(err.message || 'Failed to load summary.'); })
       .finally(() => { if (mounted) setLoadingSummary(false); });
@@ -249,6 +253,9 @@ export default function Dashboard() {
               <div className="grid grid-cols-2 gap-3">
                 {[
                   { to: '/chat', icon: Bot, label: 'AI Chat', sub: 'Ask policy questions', color: 'teal' },
+                  { to: '/courses', icon: BookOpen, label: 'Courses', sub: 'Track course marks', color: 'cyan' },
+                  { to: '/planner', icon: Calculator, label: 'Planner', sub: 'Target CGPA path', color: 'emerald' },
+                  { to: '/policies', icon: FileText, label: 'Policies', sub: 'DIU rule center', color: 'amber' },
                   { to: '/profile', icon: User, label: 'Profile', sub: 'View student info', color: 'indigo' },
                 ].map(({ to, icon: Icon, label, sub, color }) => (
                   <Link key={to} to={to}

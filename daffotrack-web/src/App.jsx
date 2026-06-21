@@ -8,6 +8,9 @@ import Chat from './pages/Chat';
 import Splash from './pages/Splash';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import Courses from './pages/Courses';
+import Planner from './pages/Planner';
+import Policies from './pages/Policies';
 
 function App() {
   return (
@@ -20,7 +23,10 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/planner" element={<Planner />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/policies" element={<Policies />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>

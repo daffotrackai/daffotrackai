@@ -9,6 +9,23 @@ import { apiRequest, buildApiUrl } from '../lib/api';
 import { getCurrentUser, setCurrentUser } from '../lib/session';
 import PageTopBar from '../components/PageTopBar';
 
+const PROFILE_FIELDS = [
+  { name: 'fullName', label: 'Full Name' },
+  { name: 'email', label: 'Email', type: 'email' },
+  { name: 'password', label: 'Password', type: 'password' },
+  { name: 'studentId', label: 'Student ID' },
+  { name: 'department', label: 'Department' },
+  { name: 'phone', label: 'Phone' },
+  { name: 'sessionYear', label: 'Session' },
+  { name: 'semester', label: 'Semester' },
+  { name: 'dateOfBirth', label: 'Date of Birth', type: 'date' },
+  { name: 'address', label: 'Address' },
+  { name: 'guardianName', label: 'Guardian Name' },
+  { name: 'bloodGroup', label: 'Blood Group' },
+  { name: 'gender', label: 'Gender' },
+  { name: 'nationality', label: 'Nationality' },
+];
+
 export default function Profile() {
   const navigate = useNavigate();
   const currentUser = useMemo(() => getCurrentUser(), []);
@@ -21,17 +38,29 @@ export default function Profile() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [savingImage, setSavingImage] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState({});
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (!currentUser?.userId) { setLoading(false); return; }
     apiRequest(`/api/users/${currentUser.userId}`)
-      .then(data => setProfile(data))
+      .then(data => {
+        setProfile(data);
+        setProfileForm(toProfileForm(data));
+      })
       .catch(err => setError(err.message || 'Unable to load profile.'))
       .finally(() => setLoading(false));
   }, [currentUser?.userId]);
 
   const displayedProfile = profile || currentUser;
+
+  useEffect(() => {
+    if (displayedProfile?.userId) {
+      setProfileForm(toProfileForm(displayedProfile));
+    }
+  }, [displayedProfile?.userId]);
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
@@ -60,6 +89,34 @@ export default function Profile() {
       setError(err.message || 'Failed to update profile image.');
     } finally {
       setSavingImage(false);
+    }
+  };
+
+  const handleProfileChange = (e) => {
+    const { name, value } = e.target;
+    setProfileForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    if (!currentUser?.userId) return;
+
+    setSavingProfile(true);
+    setError('');
+    try {
+      const updated = await apiRequest(`/api/users/${currentUser.userId}`, {
+        method: 'PUT',
+        body: JSON.stringify(profileForm),
+      });
+      setProfile(updated);
+      setCurrentUser({ ...currentUser, ...updated });
+      setEditingProfile(false);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      setError(err.message || 'Failed to update profile information.');
+    } finally {
+      setSavingProfile(false);
     }
   };
 
@@ -219,16 +276,47 @@ export default function Profile() {
                   <h2 className="text-2xl font-black text-white tracking-tight">Student Profile Details</h2>
                   <p className="text-sm text-slate-400 mt-1">All data loaded from MySQL database.</p>
                 </div>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/8 border border-emerald-500/15 text-xs font-semibold text-emerald-300">
-                  <Edit3 className="w-3.5 h-3.5" /> Registered Profile
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setEditingProfile((value) => !value)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/8 border border-emerald-500/15 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/12"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  {editingProfile ? 'Cancel Edit' : 'Edit Information'}
+                </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-                {infoFields.map(({ icon: Icon, label, value }) => (
-                  <DetailCard key={label} icon={<Icon className="w-3.5 h-3.5" />} label={label} value={value} />
-                ))}
-              </div>
+              {editingProfile ? (
+                <form onSubmit={handleProfileUpdate} className="space-y-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                    {PROFILE_FIELDS.map(({ name, label, type = 'text' }) => (
+                      <label key={name} className="block">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{label}</span>
+                        <input
+                          type={type}
+                          name={name}
+                          value={profileForm[name] || ''}
+                          onChange={handleProfileChange}
+                          className="mt-2 w-full rounded-xl border border-white/8 bg-[#060e1a] px-4 py-3 text-sm text-white outline-none focus:border-teal-500/50"
+                        />
+                      </label>
+                    ))}
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={savingProfile}
+                    className="flex items-center justify-center gap-2 rounded-xl bg-teal-500 px-5 py-3 text-sm font-bold text-[#060e1a] hover:bg-teal-400 disabled:opacity-50"
+                  >
+                    {savingProfile ? 'Saving...' : saved ? 'Saved' : 'Save Information'}
+                  </button>
+                </form>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {infoFields.map(({ icon: Icon, label, value }) => (
+                    <DetailCard key={label} icon={<Icon className="w-3.5 h-3.5" />} label={label} value={value} />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -252,4 +340,11 @@ function DetailCard({ icon, label, value }) {
 function maskValue(value) {
   if (!value) return 'Not provided';
   return '•'.repeat(Math.min(Math.max(value.length, 6), 12));
+}
+
+function toProfileForm(profile) {
+  return PROFILE_FIELDS.reduce((form, field) => {
+    form[field.name] = profile?.[field.name] || '';
+    return form;
+  }, {});
 }

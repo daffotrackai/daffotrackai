@@ -1,6 +1,7 @@
 package com.metamorphx.daffotrackai.controller;
 
 import com.metamorphx.daffotrackai.dto.ProfileResponse;
+import com.metamorphx.daffotrackai.dto.ProfileUpdateRequest;
 import com.metamorphx.daffotrackai.dto.RegisterResponse;
 import com.metamorphx.daffotrackai.service.StudentProfileService;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,6 +68,11 @@ public class StudentProfileController {
     @GetMapping("/{id}")
     public ProfileResponse getProfile(@PathVariable Long id) {
         return studentProfileService.getProfile(id);
+    }
+
+    @PutMapping("/{id}")
+    public ProfileResponse updateProfile(@PathVariable Long id, @RequestBody ProfileUpdateRequest request) {
+        return studentProfileService.updateProfile(id, request);
     }
 
     @GetMapping("/by-email")

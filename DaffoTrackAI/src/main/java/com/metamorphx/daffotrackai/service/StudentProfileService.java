@@ -1,6 +1,7 @@
 package com.metamorphx.daffotrackai.service;
 
 import com.metamorphx.daffotrackai.dto.ProfileResponse;
+import com.metamorphx.daffotrackai.dto.ProfileUpdateRequest;
 import com.metamorphx.daffotrackai.dto.RegisterResponse;
 import com.metamorphx.daffotrackai.model.StudentProfile;
 import com.metamorphx.daffotrackai.repository.StudentProfileRepository;
@@ -104,6 +105,46 @@ public class StudentProfileService {
     public StudentProfile getRequiredProfileByEmail(String email) {
         return studentProfileRepository.findByEmailIgnoreCase(normalizeRequired(email, "Email is required"))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    @Transactional
+    public ProfileResponse updateProfile(Long id, ProfileUpdateRequest request) {
+        if (request == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profile payload is required");
+        }
+
+        StudentProfile profile = getRequiredProfile(id);
+        String normalizedEmail = normalizeRequired(request.email(), "Email is required");
+        String normalizedStudentId = normalizeRequired(request.studentId(), "Student ID is required");
+
+        studentProfileRepository.findByEmailIgnoreCase(normalizedEmail)
+                .filter(existing -> !existing.getId().equals(id))
+                .ifPresent(existing -> {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "A user with this email already exists");
+                });
+
+        studentProfileRepository.findByStudentIdIgnoreCase(normalizedStudentId)
+                .filter(existing -> !existing.getId().equals(id))
+                .ifPresent(existing -> {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "A user with this student ID already exists");
+                });
+
+        profile.setFullName(normalizeRequired(request.fullName(), "Full name is required"));
+        profile.setEmail(normalizedEmail);
+        profile.setPassword(StringUtils.hasText(request.password()) ? request.password().trim() : profile.getPassword());
+        profile.setStudentId(normalizedStudentId);
+        profile.setDepartment(normalizeRequired(request.department(), "Department is required"));
+        profile.setPhone(emptyToNull(request.phone()));
+        profile.setSessionYear(emptyToNull(request.sessionYear()));
+        profile.setSemester(emptyToNull(request.semester()));
+        profile.setDateOfBirth(parseDate(request.dateOfBirth()));
+        profile.setAddress(emptyToNull(request.address()));
+        profile.setGuardianName(emptyToNull(request.guardianName()));
+        profile.setBloodGroup(emptyToNull(request.bloodGroup()));
+        profile.setGender(emptyToNull(request.gender()));
+        profile.setNationality(emptyToNull(request.nationality()));
+
+        return toProfileResponse(studentProfileRepository.save(profile));
     }
 
     @Transactional(readOnly = true)

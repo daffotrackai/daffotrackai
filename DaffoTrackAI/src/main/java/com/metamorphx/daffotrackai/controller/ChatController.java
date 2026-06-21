@@ -2,12 +2,24 @@ package com.metamorphx.daffotrackai.controller;
 
 import com.metamorphx.daffotrackai.dto.ChatRequest;
 import com.metamorphx.daffotrackai.dto.ChatResponse;
+import com.metamorphx.daffotrackai.dto.ChatConversationRequest;
+import com.metamorphx.daffotrackai.dto.ChatConversationResponse;
+import com.metamorphx.daffotrackai.dto.FileExtractionResponse;
+import com.metamorphx.daffotrackai.service.ChatHistoryService;
 import com.metamorphx.daffotrackai.service.ChatService;
+import com.metamorphx.daffotrackai.service.FileExtractionService;
+import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
@@ -16,9 +28,13 @@ import org.springframework.http.ResponseEntity;
 public class ChatController {
 
     private final ChatService chatService;
+    private final ChatHistoryService chatHistoryService;
+    private final FileExtractionService fileExtractionService;
 
-    public ChatController(ChatService chatService) {
+    public ChatController(ChatService chatService, ChatHistoryService chatHistoryService, FileExtractionService fileExtractionService) {
         this.chatService = chatService;
+        this.chatHistoryService = chatHistoryService;
+        this.fileExtractionService = fileExtractionService;
     }
 
     @GetMapping("/ask")
@@ -64,5 +80,42 @@ Content-Type: application/json
     @PostMapping("/ask")
     public ChatResponse getAiResponse(@RequestBody ChatRequest request) {
         return chatService.ask(request);
+    }
+
+    @PostMapping(value = "/files/extract", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public FileExtractionResponse extractFile(@RequestParam("file") MultipartFile file) {
+        return fileExtractionService.extract(file);
+    }
+
+    @GetMapping("/conversations")
+    public List<ChatConversationResponse> conversations(
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) String studentId
+    ) {
+        return chatHistoryService.listConversations(userId, studentId);
+    }
+
+    @PostMapping("/conversations")
+    public ChatConversationResponse createConversation(@RequestBody ChatConversationRequest request) {
+        return chatHistoryService.createConversation(request);
+    }
+
+    @GetMapping("/conversations/{id}")
+    public ChatConversationResponse getConversation(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) String studentId
+    ) {
+        return chatHistoryService.getConversation(id, userId, studentId);
+    }
+
+    @DeleteMapping("/conversations/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteConversation(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) String studentId
+    ) {
+        chatHistoryService.deleteConversation(id, userId, studentId);
     }
 }
