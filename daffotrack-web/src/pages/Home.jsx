@@ -72,7 +72,7 @@ export default function Home() {
       {/* NAVBAR */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#060e1a]/90 backdrop-blur-xl border-b border-white/5 py-3' : 'bg-transparent py-5'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate(getCurrentUser()?.userId ? '/dashboard' : '/')}>
             <AppLogo size="lg" />
             <div>
               <span className="text-[17px] font-bold tracking-tight text-white">DaffoTrack <span className="text-teal-400">AI</span></span>
@@ -242,20 +242,20 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: TrendingUp, title: 'CGPA Tracking & Prediction', desc: 'Log midterm results, quizzes, and continuous grades. Instantly predicts your final CGPA and shows optimal target grades.', link: 'How it calculates' },
-              { icon: Bot, title: '24/7 AI Advisor Bot', desc: 'A personalized smart tutor trained on DIU syllabus catalogs, credit rules, prerequisites, and registration procedures.', link: 'Try AI Sandbox' },
-              { icon: Bell, title: 'DIU Smart Policy Guide', desc: 'Instant guidance on Grade Improvement, Retakes, Makeup Midterms, Semester Drop, and tuition fee waivers.', link: 'View policies' },
-              { icon: Clock, title: '75% Attendance Predictor', desc: 'Track how many absences are left before losing exam eligibility. Stay alerted before falling below critical levels.', link: 'Check calculator' }
-            ].map(({ icon: Icon, title, desc, link }) => (
+              { icon: TrendingUp, title: 'CGPA Tracking & Prediction', desc: 'Log midterm results, quizzes, and continuous grades. Instantly predicts your final CGPA and shows optimal target grades.', link: 'How it calculates', path: '/planner' },
+              { icon: Bot, title: '24/7 AI Advisor Bot', desc: 'A personalized smart tutor trained on DIU syllabus catalogs, credit rules, prerequisites, and registration procedures.', link: 'Try AI Sandbox', path: '/chat' },
+              { icon: Bell, title: 'DIU Smart Policy Guide', desc: 'Instant guidance on Grade Improvement, Retakes, Makeup Midterms, Semester Drop, and tuition fee waivers.', link: 'View policies', path: '/policies' },
+              { icon: Clock, title: '75% Attendance Predictor', desc: 'Track how many absences are left before losing exam eligibility. Stay alerted before falling below critical levels.', link: 'Check calculator', path: '/planner' }
+            ].map(({ icon: Icon, title, desc, link, path }) => (
               <div key={title} className="group bg-[#0a1525]/85 hover:bg-[#0d1e35] rounded-2xl p-6 border border-white/8 hover:border-teal-400/40 hover:shadow-xl hover:shadow-teal-500/10 transition-all duration-300 flex flex-col">
                 <div className="w-11 h-11 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 mb-5 group-hover:scale-110 transition-transform">
                   <Icon className="w-5 h-5" />
                 </div>
                 <h3 className="text-base font-bold text-white mb-2">{title}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed flex-1">{desc}</p>
-                <div className="mt-5 pt-4 border-t border-white/6 flex items-center text-xs font-bold text-slate-300 group-hover:text-teal-400 transition-colors">
+                <Link to={path} className="mt-5 pt-4 border-t border-white/6 flex items-center text-xs font-bold text-slate-300 group-hover:text-teal-400 transition-colors">
                   {link} <ChevronRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
-                </div>
+                </Link>
               </div>
             ))}
           </div>

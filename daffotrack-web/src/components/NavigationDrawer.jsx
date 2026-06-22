@@ -21,7 +21,8 @@ export default function NavigationDrawer({ open, setOpen }) {
   const navigate = useNavigate();
   const currentUser = useCurrentUserProfile();
   const isLoggedIn = hasCurrentUserSession(currentUser);
-  const visibleNavItems = NAV_ITEMS.filter(({ access }) => {
+  const visibleNavItems = NAV_ITEMS.filter(({ access, label }) => {
+    if (label === 'Home' && isLoggedIn) return false;
     if (access === 'public') return true;
     if (access === 'auth') return isLoggedIn;
     if (access === 'guest') return !isLoggedIn;
@@ -52,7 +53,7 @@ export default function NavigationDrawer({ open, setOpen }) {
       >
         {/* Header / Logo */}
         <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-white/6">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/home')}>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate(isLoggedIn ? '/dashboard' : '/home')}>
             <AppLogo size="md" />
             <div>
               <span className="font-bold text-white text-sm">DaffoTrack AI</span>

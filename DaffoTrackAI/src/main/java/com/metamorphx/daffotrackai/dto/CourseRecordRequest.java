@@ -9,6 +9,10 @@ public record CourseRecordRequest(
         double assignmentMarks,
         double attendanceMarks,
         double finalMarks,
-        double attendancePercent
+        double attendancePercent,
+        double classTestMarks,
+        double presentationMarks,
+        double labPerformanceMarks,
+        double labReportMarks
 ) {
 }

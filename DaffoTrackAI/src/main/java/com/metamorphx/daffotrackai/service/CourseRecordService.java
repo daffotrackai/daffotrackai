@@ -81,6 +81,10 @@ public class CourseRecordService {
         course.setAttendanceMarks(clamp(request.attendanceMarks(), 0, 10));
         course.setFinalMarks(clamp(request.finalMarks(), 0, 40));
         course.setAttendancePercent(clamp(request.attendancePercent(), 0, 100));
+        course.setClassTestMarks(clamp(request.classTestMarks(), 0, 15));
+        course.setPresentationMarks(clamp(request.presentationMarks(), 0, 10));
+        course.setLabPerformanceMarks(clamp(request.labPerformanceMarks(), 0, 30));
+        course.setLabReportMarks(clamp(request.labReportMarks(), 0, 30));
     }
 
     private CourseRecordResponse toResponse(CourseRecord course) {
@@ -98,6 +102,10 @@ public class CourseRecordService {
                 course.getAttendanceMarks(),
                 course.getFinalMarks(),
                 course.getAttendancePercent(),
+                course.getClassTestMarks(),
+                course.getPresentationMarks(),
+                course.getLabPerformanceMarks(),
+                course.getLabReportMarks(),
                 totalMarks,
                 grade.letter(),
                 grade.point(),
@@ -108,6 +116,22 @@ public class CourseRecordService {
     }
 
     public static double totalMarks(CourseRecord course) {
+        if (course.getCredit() == 3.0) {
+            return course.getMidtermMarks()
+                    + course.getQuizMarks()
+                    + course.getClassTestMarks()
+                    + course.getAssignmentMarks()
+                    + course.getAttendanceMarks()
+                    + course.getPresentationMarks()
+                    + course.getFinalMarks();
+        } else if (course.getCredit() == 1.5) {
+            return course.getLabPerformanceMarks()
+                    + course.getLabReportMarks()
+                    + course.getAttendanceMarks()
+                    + course.getFinalMarks();
+        }
+
+        // Fallback for other credit types
         return course.getMidtermMarks()
                 + course.getQuizMarks()
                 + course.getAssignmentMarks()

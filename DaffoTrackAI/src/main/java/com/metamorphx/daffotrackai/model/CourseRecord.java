@@ -41,6 +41,11 @@ public class CourseRecord {
     private double finalMarks;
     private double attendancePercent;
 
+    private double classTestMarks;
+    private double presentationMarks;
+    private double labPerformanceMarks;
+    private double labReportMarks;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -141,6 +146,38 @@ public class CourseRecord {
 
     public void setAttendancePercent(double attendancePercent) {
         this.attendancePercent = attendancePercent;
+    }
+
+    public double getClassTestMarks() {
+        return classTestMarks;
+    }
+
+    public void setClassTestMarks(double classTestMarks) {
+        this.classTestMarks = classTestMarks;
+    }
+
+    public double getPresentationMarks() {
+        return presentationMarks;
+    }
+
+    public void setPresentationMarks(double presentationMarks) {
+        this.presentationMarks = presentationMarks;
+    }
+
+    public double getLabPerformanceMarks() {
+        return labPerformanceMarks;
+    }
+
+    public void setLabPerformanceMarks(double labPerformanceMarks) {
+        this.labPerformanceMarks = labPerformanceMarks;
+    }
+
+    public double getLabReportMarks() {
+        return labReportMarks;
+    }
+
+    public void setLabReportMarks(double labReportMarks) {
+        this.labReportMarks = labReportMarks;
     }
 
     public LocalDateTime getCreatedAt() {

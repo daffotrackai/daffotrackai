@@ -9,6 +9,8 @@ import { apiRequest } from '../lib/api';
 import PageTopBar from '../components/PageTopBar';
 import { getCurrentUser } from '../lib/session';
 
+const GUEST_HISTORY_KEY = 'daffotrack.guest_chats';
+
 const SUGGESTED = [
   { icon: BookOpen, category: 'Finance', text: 'What is the tuition waiver policy at DIU?' },
   { icon: Bell, category: 'Exams', text: 'How do I register for a makeup midterm?' },
@@ -123,6 +125,7 @@ function readAsText(file) {
 export default function Chat() {
   const { drawerOpen, setDrawerOpen } = useOutletContext();
   const currentUser = getCurrentUser();
+  const isGuest = !currentUser?.userId;
   const ownerQuery = useMemo(() => historyKey(currentUser), [currentUser?.userId, currentUser?.studentId]);
 
   const [conversations, setConversations] = useState([]);
@@ -147,6 +150,29 @@ export default function Chat() {
   useEffect(() => {
     let ignore = false;
     setLoadingHistory(true);
+
+    if (isGuest) {
+      const stored = localStorage.getItem(GUEST_HISTORY_KEY);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.length > 0) {
+            setConversations(parsed);
+            setActiveConversationId(parsed[0].id);
+            setLoadingHistory(false);
+            return;
+          }
+        } catch (e) {
+          console.error('Failed to parse guest chat history', e);
+        }
+      }
+      const initial = [createConversation()];
+      setConversations(initial);
+      setActiveConversationId(initial[0].id);
+      setLoadingHistory(false);
+      return;
+    }
+
     apiRequest(`/api/chat/conversations?${ownerQuery}`)
       .then(async (items) => {
         if (ignore) return;
@@ -175,7 +201,13 @@ export default function Chat() {
     return () => {
       ignore = true;
     };
-  }, [ownerQuery]);
+  }, [ownerQuery, isGuest]);
+
+  useEffect(() => {
+    if (isGuest && !loadingHistory) {
+      localStorage.setItem(GUEST_HISTORY_KEY, JSON.stringify(conversations));
+    }
+  }, [conversations, isGuest, loadingHistory]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -205,7 +237,13 @@ export default function Chat() {
   };
 
   const startNewChat = async () => {
-    const next = fromApiConversation(await createConversationOnServer('New chat'));
+    let next;
+    if (isGuest) {
+      next = createConversation();
+    } else {
+      next = fromApiConversation(await createConversationOnServer('New chat'));
+    }
+
     setConversations((items) => [next, ...items]);
     setActiveConversationId(next.id);
     setInputText('');
@@ -216,7 +254,9 @@ export default function Chat() {
   };
 
   const deleteConversation = async (id) => {
-    await apiRequest(`/api/chat/conversations/${id}?${ownerQuery}`, { method: 'DELETE' });
+    if (!isGuest) {
+      await apiRequest(`/api/chat/conversations/${id}?${ownerQuery}`, { method: 'DELETE' });
+    }
     const nextItems = conversations.filter((item) => item.id !== id);
     if (!nextItems.length) {
       await startNewChat();
@@ -240,8 +280,10 @@ export default function Chat() {
 
   const openConversation = async (conversationId) => {
     setActiveConversationId(conversationId);
-    const conversation = await apiRequest(`/api/chat/conversations/${conversationId}?${ownerQuery}`);
-    setConversations((items) => items.map((item) => item.id === conversationId ? fromApiConversation(conversation) : item));
+    if (!isGuest) {
+      const conversation = await apiRequest(`/api/chat/conversations/${conversationId}?${ownerQuery}`);
+      setConversations((items) => items.map((item) => item.id === conversationId ? fromApiConversation(conversation) : item));
+    }
   };
 
   const handleFiles = async (event) => {
@@ -309,7 +351,7 @@ export default function Chat() {
       const data = await apiRequest('/api/chat/ask', {
         method: 'POST',
         body: JSON.stringify({
-          conversationId: activeConversationId,
+          conversationId: isGuest ? null : activeConversationId,
           userId: currentUser?.userId || null,
           studentId: currentUser?.studentId || 'guest',
           message: apiMessage,
