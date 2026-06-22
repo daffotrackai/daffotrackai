@@ -12,28 +12,31 @@ import Courses from './pages/Courses';
 import Planner from './pages/Planner';
 import Policies from './pages/Policies';
 import { ToastProvider } from './lib/ToastContext';
+import { ThemeProvider } from './lib/ThemeContext';
 
 function App() {
   return (
-    <ToastProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Splash />} />
+    <ThemeProvider>
+      <ToastProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Splash />} />
 
-          <Route element={<MainLayout />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/courses" element={<Courses />} />
-            <Route path="/planner" element={<Planner />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/policies" element={<Policies />} />
-            <Route path="/profile" element={<Profile />} />
-          </Route>
-        </Routes>
-      </Router>
-    </ToastProvider>
+            <Route element={<MainLayout />}>
+              <Route path="/home" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/courses" element={<Courses />} />
+              <Route path="/planner" element={<Planner />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/policies" element={<Policies />} />
+              <Route path="/profile" element={<Profile />} />
+            </Route>
+          </Routes>
+        </Router>
+      </ToastProvider>
+    </ThemeProvider>
   );
 }
 

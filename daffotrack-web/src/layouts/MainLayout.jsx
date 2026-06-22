@@ -16,7 +16,7 @@ export default function MainLayout() {
   }, [location.pathname]);
 
   return (
-    <div className="flex h-screen w-full bg-[#060e1a] text-white overflow-hidden relative">
+    <div className="flex h-screen w-full bg-(--bg-main) text-(--text-main) overflow-hidden relative">
       
       {/* Sidebar / Drawer */}
       <NavigationDrawer open={drawerOpen} setOpen={setDrawerOpen} />

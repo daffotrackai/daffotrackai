@@ -73,18 +73,18 @@ export default function Policies() {
         setDrawerOpen={setDrawerOpen}
       />
 
-      <main className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-[#060e1a]">
+      <main className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-(--bg-main) text-(--text-main)">
         <div className="max-w-7xl mx-auto space-y-6">
-          <section className="rounded-2xl border border-white/8 bg-[#0a1525] p-5">
+          <section className="rounded-2xl border border-(--border-main) bg-(--bg-card) p-5">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
               <div className="lg:col-span-7">
                 <label className="relative block">
-                  <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                  <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-(--text-muted)" />
                   <input
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Search waiver, makeup, attendance, retake..."
-                    className="w-full rounded-xl border border-white/8 bg-[#060e1a] py-3 pl-11 pr-4 text-sm text-white outline-none placeholder:text-slate-600 focus:border-teal-500/50"
+                    className="w-full rounded-xl border border-(--border-main) bg-(--bg-main) py-3 pl-11 pr-4 text-sm text-(--text-main) outline-none placeholder:text-(--text-muted) focus:border-teal-500/50"
                   />
                 </label>
               </div>
@@ -96,8 +96,8 @@ export default function Policies() {
                     onClick={() => setCategory(item)}
                     className={`rounded-xl border px-3 py-2 text-xs font-bold transition-all ${
                       category === item
-                        ? 'border-teal-500/30 bg-teal-500/15 text-teal-400'
-                        : 'border-white/8 bg-white/3 text-slate-400 hover:text-white'
+                        ? 'border-teal-500/30 bg-teal-500/15 text-teal-500'
+                        : 'border-(--border-main) bg-(--bg-main) text-(--text-muted) hover:text-(--text-main)'
                     }`}
                   >
                     {item}
@@ -109,19 +109,19 @@ export default function Policies() {
 
           <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             {filteredPolicies.map(({ category: policyCategory, icon: Icon, title, code, summary, points }) => (
-              <article key={code} className="rounded-2xl border border-white/8 bg-[#0a1525] p-5">
+              <article key={code} className="rounded-2xl border border-(--border-main) bg-(--bg-card) p-5">
                 <div className="flex items-start justify-between gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-teal-500/20 bg-teal-500/10 text-teal-400">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-teal-500/20 bg-teal-500/10 text-teal-500">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <span className="rounded-lg border border-white/8 bg-white/3 px-2 py-1 text-[10px] font-mono text-slate-500">{code}</span>
+                  <span className="rounded-lg border border-(--border-main) bg-(--bg-main) px-2 py-1 text-[10px] font-mono text-(--text-muted)">{code}</span>
                 </div>
-                <p className="mt-4 text-[10px] font-bold uppercase tracking-wider text-teal-400">{policyCategory}</p>
-                <h2 className="mt-1 text-base font-black text-white">{title}</h2>
-                <p className="mt-3 text-xs leading-relaxed text-slate-400">{summary}</p>
+                <p className="mt-4 text-[10px] font-bold uppercase tracking-wider text-teal-500">{policyCategory}</p>
+                <h2 className="mt-1 text-base font-black text-(--text-main)">{title}</h2>
+                <p className="mt-3 text-xs leading-relaxed text-(--text-muted)">{summary}</p>
                 <div className="mt-4 space-y-2">
                   {points.map((point) => (
-                    <p key={point} className="flex gap-2 text-xs leading-relaxed text-slate-500">
+                    <p key={point} className="flex gap-2 text-xs leading-relaxed text-(--text-muted)">
                       <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-400" />
                       {point}
                     </p>
@@ -131,14 +131,14 @@ export default function Policies() {
             ))}
           </section>
 
-          <section className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl border border-teal-500/20 bg-teal-500/8 p-5">
+          <section className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl border border-teal-500/20 bg-teal-500/10 p-5">
             <div>
-              <p className="text-sm font-bold text-white">Need a personalized answer?</p>
-              <p className="mt-1 text-xs text-slate-400">Open AI Advisor and ask with your CGPA, credits, course code or policy topic.</p>
+              <p className="text-sm font-bold text-(--text-main)">Need a personalized answer?</p>
+              <p className="mt-1 text-xs text-(--text-muted)">Open AI Advisor and ask with your CGPA, credits, course code or policy topic.</p>
             </div>
             <Link
               to="/chat"
-              className="flex h-11 items-center justify-center gap-2 rounded-xl bg-teal-500 px-4 text-sm font-bold text-[#060e1a] hover:bg-teal-400"
+              className="flex h-11 items-center justify-center gap-2 rounded-xl bg-teal-500 px-4 text-sm font-bold text-white hover:bg-teal-400"
             >
               <MessageSquare className="h-4 w-4" />
               Ask AI

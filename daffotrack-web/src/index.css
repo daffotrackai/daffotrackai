@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary-bg: #ffffff;
+  --color-secondary-bg: #f8fafc;
+  --color-border-subtle: rgba(0, 0, 0, 0.08);
+  --color-text-main: #0f172a;
+  --color-text-muted: #64748b;
+  --color-card-bg: #ffffff;
+  --color-header-bg: rgba(255, 255, 255, 0.8);
+
+  --color-dark-bg: #060e1a;
+  --color-dark-card: #0a1525;
+  --color-dark-border: rgba(255, 255, 255, 0.08);
+  --color-dark-text: #ffffff;
+  --color-dark-muted: #94a3b8;
+  --color-dark-header: rgba(6, 14, 26, 0.8);
+}
+
+@layer base {
+  :root {
+    --bg-main: var(--color-primary-bg);
+    --bg-card: var(--color-secondary-bg);
+    --bg-surface: var(--color-card-bg);
+    --bg-header: var(--color-header-bg);
+    --border-main: var(--color-border-subtle);
+    --text-main: var(--color-text-main);
+    --text-muted: var(--color-text-muted);
+  }
+
+  :root.dark {
+    --bg-main: var(--color-dark-bg);
+    --bg-card: var(--color-dark-card);
+    --bg-surface: var(--color-dark-card);
+    --bg-header: var(--color-dark-header);
+    --border-main: var(--color-dark-border);
+    --text-main: var(--color-dark-text);
+    --text-muted: var(--color-dark-muted);
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}

@@ -18,6 +18,7 @@ const PROFILE_FIELDS = [
   { name: 'phone', label: 'Phone' },
   { name: 'sessionYear', label: 'Session' },
   { name: 'semester', label: 'Semester' },
+  { name: 'admissionDate', label: 'Admission Date', type: 'date' },
   { name: 'dateOfBirth', label: 'Date of Birth', type: 'date' },
   { name: 'address', label: 'Address' },
   { name: 'guardianName', label: 'Guardian Name' },
@@ -156,6 +157,7 @@ export default function Profile() {
     { icon: Mail, label: 'Email', value: displayedProfile.email },
     { icon: BookUser, label: 'Department', value: displayedProfile.department },
     { icon: Phone, label: 'Phone', value: displayedProfile.phone || 'Not provided' },
+    { icon: CalendarDays, label: 'Admission Date', value: displayedProfile.admissionDate || 'Not provided' },
     { icon: CalendarDays, label: 'Session', value: displayedProfile.sessionYear || 'Not provided' },
     { icon: BadgeInfo, label: 'Semester', value: displayedProfile.semester || 'Not provided' },
     { icon: CalendarDays, label: 'Date of Birth', value: displayedProfile.dateOfBirth || 'Not provided' },
@@ -180,60 +182,60 @@ export default function Profile() {
       {/* Ambient */}
       <div className="fixed top-1/3 right-0 w-[500px] h-[400px] bg-teal-500/4 rounded-full blur-[120px] pointer-events-none" />
 
-      <main className="flex-1 overflow-y-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
+      <main className="flex-1 overflow-y-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8 relative z-10 bg-(--bg-main) text-(--text-main)">
         <div className="max-w-6xl mx-auto">
 
           {error && (
-            <div className="mb-6 p-3 rounded-xl bg-red-500/8 border border-red-500/20 text-xs text-red-400">{error}</div>
+            <div className="mb-6 p-3 rounded-xl bg-red-500/8 border border-red-500/20 text-xs text-red-500">{error}</div>
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-7">
 
             {/* Left: Avatar & photo upload */}
             <aside className="space-y-5">
-              <div className="bg-[#0a1525] border border-white/8 rounded-2xl p-6 space-y-5">
+              <div className="bg-(--bg-card) border border-(--border-main) rounded-2xl p-6 space-y-5">
 
                 {/* Avatar */}
                 <div className="flex flex-col items-center gap-4">
                   <div className="relative">
-                    <div className="w-32 h-32 rounded-2xl bg-[#060e1a] border border-white/10 flex items-center justify-center overflow-hidden shadow-[0_0_30px_rgba(45,212,191,0.1)]">
+                    <div className="w-32 h-32 rounded-2xl bg-(--bg-main) border border-(--border-main) flex items-center justify-center overflow-hidden shadow-[0_0_30px_rgba(45,212,191,0.1)]">
                       {(previewUrl || imageUrl)
                         ? <img src={previewUrl || imageUrl} alt={displayedProfile.fullName} className="w-full h-full object-cover" />
-                        : <User className="w-14 h-14 text-slate-600" />
+                        : <User className="w-14 h-14 text-(--text-muted)" />
                       }
                     </div>
                     <label htmlFor="photo-update" className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center cursor-pointer hover:bg-teal-400 transition-colors shadow-lg">
-                      <Camera className="w-3.5 h-3.5 text-[#060e1a]" />
+                      <Camera className="w-3.5 h-3.5 text-white" />
                     </label>
                   </div>
                   <input id="photo-update" type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
 
                   <div className="text-center">
-                    <h2 className="text-lg font-black text-white">{displayedProfile.fullName}</h2>
-                    <p className="text-xs text-slate-400 mt-0.5">{displayedProfile.department}</p>
-                    <p className="text-[10px] text-teal-400 font-mono mt-1">{displayedProfile.studentId}</p>
+                    <h2 className="text-lg font-black text-(--text-main)">{displayedProfile.fullName}</h2>
+                    <p className="text-xs text-(--text-muted) mt-0.5">{displayedProfile.department}</p>
+                    <p className="text-[10px] text-teal-500 font-mono mt-1">{displayedProfile.studentId}</p>
                   </div>
                 </div>
 
-                <div className="bg-[#060e1a] border border-white/6 rounded-xl p-3.5">
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5">Account Email</p>
-                  <p className="text-sm font-semibold text-white break-all">{displayedProfile.email}</p>
+                <div className="bg-(--bg-main) border border-(--border-main) rounded-xl p-3.5">
+                  <p className="text-[10px] uppercase tracking-wider text-(--text-muted) mb-1.5">Account Email</p>
+                  <p className="text-sm font-semibold text-(--text-main) break-all">{displayedProfile.email}</p>
                 </div>
 
                 {/* Photo update */}
                 <form onSubmit={handleImageUpdate} className="space-y-3">
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Update Profile Photo</p>
+                  <p className="text-xs font-semibold text-(--text-muted) uppercase tracking-wider">Update Profile Photo</p>
                   <label htmlFor="photo-update"
-                    className="flex items-center gap-2 justify-center py-2.5 rounded-xl bg-white/4 border border-white/8 hover:bg-white/7 cursor-pointer text-xs font-semibold text-slate-300 transition-all">
-                    <Upload className="w-3.5 h-3.5 text-teal-400" />
+                    className="flex items-center gap-2 justify-center py-2.5 rounded-xl bg-white/5 border border-(--border-main) hover:bg-white/10 cursor-pointer text-xs font-semibold text-(--text-muted) transition-all">
+                    <Upload className="w-3.5 h-3.5 text-teal-500" />
                     {profileImage ? profileImage.name.slice(0, 22) + '…' : 'Choose new photo'}
                   </label>
                   <button
                     type="submit"
                     disabled={!profileImage || savingImage}
-                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-teal-500 text-[#060e1a] font-bold text-sm hover:bg-teal-400 transition-all disabled:opacity-40">
+                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-teal-500 text-white font-bold text-sm hover:bg-teal-400 transition-all disabled:opacity-40">
                     {savingImage
-                      ? <><div className="w-4 h-4 border-2 border-[#060e1a] border-t-transparent rounded-full animate-spin" /> Saving...</>
+                      ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Saving...</>
                       : saved
                         ? <><CheckCircle2 className="w-4 h-4" /> Photo Updated!</>
                         : 'Save New Photo'
@@ -243,43 +245,43 @@ export default function Profile() {
               </div>
 
               {/* Status cards */}
-              <div className="bg-[#0a1525] border border-white/8 rounded-2xl p-5 space-y-3">
+              <div className="bg-(--bg-card) border border-(--border-main) rounded-2xl p-5 space-y-3">
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500">Profile Status</p>
+                  <p className="text-[10px] uppercase tracking-wider text-(--text-muted)">Profile Status</p>
                   <div className="mt-2 flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-emerald-400" />
-                    <p className="text-sm font-semibold text-emerald-300">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <p className="text-sm font-semibold text-emerald-500">
                       {displayedProfile.hasProfileImage ? 'Photo uploaded' : 'No photo yet'}
                     </p>
                   </div>
                 </div>
-                <div className="pt-3 border-t border-white/5">
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500">Registered</p>
-                  <p className="text-sm font-semibold text-white mt-1.5">{displayedProfile.createdAt || 'Just now'}</p>
+                <div className="pt-3 border-t border-(--border-main)">
+                  <p className="text-[10px] uppercase tracking-wider text-(--text-muted)">Registered</p>
+                  <p className="text-sm font-semibold text-(--text-main) mt-1.5">{displayedProfile.createdAt || 'Just now'}</p>
                 </div>
-                <div className="pt-3 border-t border-white/5">
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5">Password</p>
-                  <p className="text-lg font-bold tracking-widest text-slate-300">{maskValue(displayedProfile.password)}</p>
+                <div className="pt-3 border-t border-(--border-main)">
+                  <p className="text-[10px] uppercase tracking-wider text-(--text-muted) mb-1.5">Password</p>
+                  <p className="text-lg font-bold tracking-widest text-(--text-muted)">{maskValue(displayedProfile.password)}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-[10px] text-slate-600 px-1">
+              <div className="flex items-center gap-2 text-[10px] text-(--text-muted) px-1">
                 <Shield className="w-3 h-3 text-teal-500/50" />
                 All data stored in MySQL. No third-party access.
               </div>
             </aside>
 
             {/* Right: Detail grid */}
-            <div className="bg-[#0a1525] border border-white/8 rounded-2xl p-6 sm:p-8 space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 pb-5 border-b border-white/6">
+            <div className="bg-(--bg-card) border border-(--border-main) rounded-2xl p-6 sm:p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 pb-5 border-b border-(--border-main)">
                 <div>
-                  <h2 className="text-2xl font-black text-white tracking-tight">Student Profile Details</h2>
-                  <p className="text-sm text-slate-400 mt-1">All data loaded from MySQL database.</p>
+                  <h2 className="text-2xl font-black text-(--text-main) tracking-tight">Student Profile Details</h2>
+                  <p className="text-sm text-(--text-muted) mt-1">All data loaded from MySQL database.</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setEditingProfile((value) => !value)}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/8 border border-emerald-500/15 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/12"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-500 hover:bg-emerald-500/15"
                 >
                   <Edit3 className="w-3.5 h-3.5" />
                   {editingProfile ? 'Cancel Edit' : 'Edit Information'}
@@ -291,21 +293,35 @@ export default function Profile() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                     {PROFILE_FIELDS.map(({ name, label, type = 'text' }) => (
                       <label key={name} className="block">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{label}</span>
-                        <input
-                          type={type}
-                          name={name}
-                          value={profileForm[name] || ''}
-                          onChange={handleProfileChange}
-                          className="mt-2 w-full rounded-xl border border-white/8 bg-[#060e1a] px-4 py-3 text-sm text-white outline-none focus:border-teal-500/50"
-                        />
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-(--text-muted)">{label}</span>
+                        {name === 'semester' ? (
+                          <select
+                            name={name}
+                            value={profileForm[name] || ''}
+                            onChange={handleProfileChange}
+                            className="mt-2 w-full rounded-xl border border-(--border-main) bg-(--bg-main) px-4 py-3 text-sm text-(--text-main) outline-none focus:border-teal-500/50"
+                          >
+                            <option value="">Select Semester</option>
+                            <option value="Spring">Spring</option>
+                            <option value="Summer">Summer</option>
+                            <option value="Fall">Fall</option>
+                          </select>
+                        ) : (
+                          <input
+                            type={type}
+                            name={name}
+                            value={profileForm[name] || ''}
+                            onChange={handleProfileChange}
+                            className="mt-2 w-full rounded-xl border border-(--border-main) bg-(--bg-main) px-4 py-3 text-sm text-(--text-main) outline-none focus:border-teal-500/50"
+                          />
+                        )}
                       </label>
                     ))}
                   </div>
                   <button
                     type="submit"
                     disabled={savingProfile}
-                    className="flex items-center justify-center gap-2 rounded-xl bg-teal-500 px-5 py-3 text-sm font-bold text-[#060e1a] hover:bg-teal-400 disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-teal-500 px-5 py-3 text-sm font-bold text-white hover:bg-teal-400 disabled:opacity-50"
                   >
                     {savingProfile ? 'Saving...' : saved ? 'Saved' : 'Save Information'}
                   </button>
@@ -327,12 +343,12 @@ export default function Profile() {
 
 function DetailCard({ icon, label, value }) {
   return (
-    <div className="bg-[#060e1a] border border-white/6 rounded-xl p-4 hover:border-teal-500/20 transition-all">
-      <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2.5">
-        <span className="text-slate-600">{icon}</span>
+    <div className="bg-(--bg-main) border border-(--border-main) rounded-xl p-4 hover:border-teal-500/20 transition-all">
+      <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-(--text-muted) mb-2.5">
+        <span className="text-teal-500">{icon}</span>
         {label}
       </div>
-      <p className="text-sm font-semibold text-white break-words leading-relaxed">{value}</p>
+      <p className="text-sm font-semibold text-(--text-main) break-words leading-relaxed">{value}</p>
     </div>
   );
 }

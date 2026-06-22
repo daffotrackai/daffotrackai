@@ -28,8 +28,8 @@ export default function Register() {
   const [formData, setFormData] = useState({
     fullName: '', email: '', password: '', studentId: '',
     department: 'Software Engineering', phone: '', sessionYear: '',
-    semester: '', dateOfBirth: '', address: '', guardianName: '',
-    bloodGroup: '', gender: '', nationality: 'Bangladeshi',
+    semester: '', admissionDate: '', dateOfBirth: '', address: '',
+    guardianName: '', bloodGroup: '', gender: '', nationality: 'Bangladeshi',
   });
   const [profileImage, setProfileImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -86,7 +86,7 @@ export default function Register() {
       <div className="fixed bottom-0 right-1/4 w-[500px] h-[400px] bg-indigo-600/5 rounded-full blur-[100px] pointer-events-none" />
 
       {/* pt-24 যোগ করা হয়েছে যাতে টপ-বারের নিচে না ঢোকে */}
-      <main className="flex-1 pt-24 pb-10 px-4 sm:px-6 lg:px-8 relative z-10 overflow-y-auto">
+      <main className="flex-1 pt-24 pb-10 px-4 sm:px-6 lg:px-8 relative z-10 overflow-y-auto bg-(--bg-main) text-(--text-main)">
         <div className="max-w-5xl mx-auto">
 
           {/* Header */}
@@ -94,10 +94,10 @@ export default function Register() {
             <div className="flex items-center gap-4">
               <AppLogo size="xl" />
               <div>
-                <h1 className="text-2xl font-black tracking-tight">
-                  Create your <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">DaffoTrack</span> Profile
+                <h1 className="text-2xl font-black tracking-tight text-(--text-main)">
+                  Create your <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">DaffoTrack</span> Profile
                 </h1>
-                <p className="text-sm text-slate-400 mt-0.5">Register once — access everything from your dashboard.</p>
+                <p className="text-sm text-(--text-muted) mt-0.5">Register once — access everything from your dashboard.</p>
               </div>
             </div>
 
@@ -110,9 +110,9 @@ export default function Register() {
                 return (
                   <React.Fragment key={label}>
                     <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                      done ? 'bg-teal-500/15 text-teal-400 border border-teal-500/30' :
-                      active ? 'bg-teal-500 text-[#060e1a]' :
-                      'bg-white/4 text-slate-500 border border-white/8'
+                      done ? 'bg-teal-500/15 text-teal-500 border border-teal-500/30' :
+                      active ? 'bg-teal-500 text-white' :
+                      'bg-white/5 text-(--text-muted) border border-(--border-main)'
                     }`}>
                       {done
                         ? <CheckCircle2 className="w-3.5 h-3.5" />
@@ -121,7 +121,7 @@ export default function Register() {
                       <span className="hidden sm:block">{label}</span>
                     </div>
                     {i < steps.length - 1 && (
-                      <div className={`w-6 h-px ${step > num ? 'bg-teal-500/50' : 'bg-white/10'}`} />
+                      <div className={`w-6 h-px ${step > num ? 'bg-teal-500/50' : 'bg-(--border-main)'}`} />
                     )}
                   </React.Fragment>
                 );
@@ -134,41 +134,41 @@ export default function Register() {
 
               {/* Left: Photo upload + info */}
               <aside className="lg:col-span-4 space-y-6">
-                <div className="bg-[#0a1525] border border-white/8 rounded-2xl p-6 space-y-5">
-                  <h3 className="text-sm font-bold text-white">Profile Photo</h3>
+                <div className="bg-(--bg-card) border border-(--border-main) rounded-2xl p-6 space-y-5">
+                  <h3 className="text-sm font-bold text-(--text-main)">Profile Photo</h3>
 
                   <div className="flex flex-col items-center gap-4">
                     <div className="relative">
-                      <div className="w-28 h-28 rounded-2xl bg-[#060e1a] border border-white/10 flex items-center justify-center overflow-hidden">
+                      <div className="w-28 h-28 rounded-2xl bg-(--bg-main) border border-(--border-main) flex items-center justify-center overflow-hidden">
                         {previewUrl
                           ? <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-                          : <User className="w-12 h-12 text-slate-600" />
+                          : <User className="w-12 h-12 text-(--text-muted)" />
                         }
                       </div>
                       <label htmlFor="photo-upload" className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center cursor-pointer hover:bg-teal-400 transition-colors shadow-lg">
-                        <Camera className="w-3.5 h-3.5 text-[#060e1a]" />
+                        <Camera className="w-3.5 h-3.5 text-white" />
                       </label>
                     </div>
                     <input id="photo-upload" type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                     <div className="text-center">
-                      <p className="text-xs text-slate-400">Upload a clear profile photo</p>
-                      <p className="text-[10px] text-slate-600 mt-1">JPG / PNG • Max 5 MB</p>
+                      <p className="text-xs text-(--text-muted)">Upload a clear profile photo</p>
+                      <p className="text-[10px] text-slate-500 mt-1">JPG / PNG • Max 5 MB</p>
                     </div>
                     <label htmlFor="photo-upload"
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/4 border border-white/8 hover:bg-white/7 cursor-pointer text-xs font-semibold text-slate-300 transition-all">
-                      <Upload className="w-3.5 h-3.5 text-teal-400" />
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/5 border border-(--border-main) hover:bg-white/10 cursor-pointer text-xs font-semibold text-(--text-muted) transition-all">
+                      <Upload className="w-3.5 h-3.5 text-teal-500" />
                       {profileImage ? profileImage.name.slice(0, 22) + '…' : 'Choose file'}
                     </label>
                   </div>
                 </div>
 
-                <div className="bg-[#0a1525] border border-white/8 rounded-2xl p-5 space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-bold text-teal-400 uppercase tracking-wider">
+                <div className="bg-(--bg-card) border border-(--border-main) rounded-2xl p-5 space-y-3">
+                  <div className="flex items-center gap-2 text-xs font-bold text-teal-500 uppercase tracking-wider">
                     <Sparkles className="w-4 h-4" /> What you get
                   </div>
                   {['CGPA tracking & predictions', 'AI-powered academic advisor', 'Smart attendance alerts', 'DIU policy quick-guide', 'Secure MySQL profile storage'].map(item => (
-                    <div key={item} className="flex items-center gap-2 text-xs text-slate-400">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-teal-400 shrink-0" />
+                    <div key={item} className="flex items-center gap-2 text-xs text-(--text-muted)">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-teal-500 shrink-0" />
                       {item}
                     </div>
                   ))}
@@ -177,10 +177,10 @@ export default function Register() {
 
               {/* Right: Form panels */}
               <div className="lg:col-span-8">
-                <div className="bg-[#0a1525] border border-white/8 rounded-2xl p-6 sm:p-8">
+                <div className="bg-(--bg-card) border border-(--border-main) rounded-2xl p-6 sm:p-8">
 
                   {error && (
-                    <div className="mb-5 p-3 rounded-xl bg-red-500/8 border border-red-500/20 text-xs text-red-400">
+                    <div className="mb-5 p-3 rounded-xl bg-red-500/5 border border-red-500/20 text-xs text-red-500">
                       {error}
                     </div>
                   )}
@@ -205,20 +205,36 @@ export default function Register() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {/* Department Select */}
                         <div className="space-y-1.5 sm:col-span-2">
-                          <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                          <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-(--text-muted)">
                             <BookUser className="w-3.5 h-3.5" /> Department
                           </label>
                           <select
                             name="department"
                             value={formData.department}
                             onChange={handleChange}
-                            className="w-full rounded-xl border border-white/8 bg-[#060e1a] px-4 py-3 text-sm text-white focus:border-teal-500/60 focus:outline-none focus:ring-1 focus:ring-teal-500/30 transition-all"
+                            className="w-full rounded-xl border border-(--border-main) bg-(--bg-main) px-4 py-3 text-sm text-(--text-main) focus:border-teal-500/60 focus:outline-none focus:ring-1 focus:ring-teal-500/30 transition-all"
                           >
                             {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                           </select>
                         </div>
                         <Field icon={<CalendarDays />} label="Session Year" name="sessionYear" value={formData.sessionYear} onChange={handleChange} placeholder="2023–2024" />
-                        <Field icon={<BadgeInfo />} label="Semester" name="semester" value={formData.semester} onChange={handleChange} placeholder="6th Semester" />
+                        <div className="space-y-1.5">
+                          <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-(--text-muted)">
+                            <BadgeInfo className="w-3.5 h-3.5" /> Semester
+                          </label>
+                          <select
+                            name="semester"
+                            value={formData.semester}
+                            onChange={handleChange}
+                            className="w-full rounded-xl border border-(--border-main) bg-(--bg-main) px-4 py-3 text-sm text-(--text-main) focus:border-teal-500/60 focus:outline-none focus:ring-1 focus:ring-teal-500/30 transition-all"
+                          >
+                            <option value="">Select Semester</option>
+                            <option value="Spring">Spring</option>
+                            <option value="Summer">Summer</option>
+                            <option value="Fall">Fall</option>
+                          </select>
+                        </div>
+                        <Field icon={<CalendarDays />} label="Admission Date" name="admissionDate" type="date" value={formData.admissionDate} onChange={handleChange} />
                         <Field icon={<Phone />} label="Phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="01XXXXXXXXX" />
                       </div>
                     </div>
@@ -236,11 +252,11 @@ export default function Register() {
 
                         {/* Gender select */}
                         <div className="space-y-1.5">
-                          <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                          <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-(--text-muted)">
                             <VenusAndMars className="w-3.5 h-3.5" /> Gender
                           </label>
                           <select name="gender" value={formData.gender} onChange={handleChange}
-                            className="w-full rounded-xl border border-white/8 bg-[#060e1a] px-4 py-3 text-sm text-white focus:border-teal-500/60 focus:outline-none focus:ring-1 focus:ring-teal-500/30 transition-all">
+                            className="w-full rounded-xl border border-(--border-main) bg-(--bg-main) px-4 py-3 text-sm text-(--text-main) focus:border-teal-500/60 focus:outline-none focus:ring-1 focus:ring-teal-500/30 transition-all">
                             <option value="">Select gender</option>
                             {GENDERS.map(g => <option key={g} value={g}>{g}</option>)}
                           </select>
@@ -248,11 +264,11 @@ export default function Register() {
 
                         {/* Blood group select */}
                         <div className="space-y-1.5">
-                          <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                          <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-(--text-muted)">
                             <BadgeInfo className="w-3.5 h-3.5" /> Blood Group
                           </label>
                           <select name="bloodGroup" value={formData.bloodGroup} onChange={handleChange}
-                            className="w-full rounded-xl border border-white/8 bg-[#060e1a] px-4 py-3 text-sm text-white focus:border-teal-500/60 focus:outline-none focus:ring-1 focus:ring-teal-500/30 transition-all">
+                            className="w-full rounded-xl border border-(--border-main) bg-(--bg-main) px-4 py-3 text-sm text-(--text-main) focus:border-teal-500/60 focus:outline-none focus:ring-1 focus:ring-teal-500/30 transition-all">
                             <option value="">Select blood group</option>
                             {BLOOD_GROUPS.map(b => <option key={b} value={b}>{b}</option>)}
                           </select>
@@ -265,25 +281,25 @@ export default function Register() {
                   <div className="mt-8 flex items-center justify-between gap-4">
                     {step > 1 ? (
                       <button type="button" onClick={() => setStep(s => s - 1)}
-                        className="px-6 py-3 rounded-xl bg-white/4 border border-white/8 hover:bg-white/7 text-sm font-semibold text-slate-300 transition-all">
+                        className="px-6 py-3 rounded-xl bg-white/5 border border-(--border-main) hover:bg-white/10 text-sm font-semibold text-(--text-muted) transition-all">
                         ← Back
                       </button>
                     ) : (
-                      <Link to="/login" className="text-xs text-slate-500 hover:text-teal-400 transition-colors">
+                      <Link to="/login" className="text-xs text-(--text-muted) hover:text-teal-500 transition-colors">
                         ← Back to login
                       </Link>
                     )}
 
                     {step < 3 ? (
                       <button type="button" onClick={() => setStep(s => s + 1)}
-                        className="flex items-center gap-2 px-7 py-3 rounded-xl bg-teal-500 text-[#060e1a] font-bold text-sm hover:bg-teal-400 shadow-[0_0_20px_rgba(45,212,191,0.3)] hover:shadow-[0_0_30px_rgba(45,212,191,0.5)] transition-all">
+                        className="flex items-center gap-2 px-7 py-3 rounded-xl bg-teal-500 text-white font-bold text-sm hover:bg-teal-400 shadow-[0_0_20px_rgba(45,212,191,0.3)] hover:shadow-[0_0_30px_rgba(45,212,191,0.5)] transition-all">
                         Continue <ArrowRight className="w-4 h-4" />
                       </button>
                     ) : (
                       <button type="submit" disabled={isSubmitting}
-                        className="flex items-center gap-2 px-7 py-3 rounded-xl bg-teal-500 text-[#060e1a] font-bold text-sm hover:bg-teal-400 shadow-[0_0_20px_rgba(45,212,191,0.3)] hover:shadow-[0_0_30px_rgba(45,212,191,0.5)] transition-all disabled:opacity-60">
+                        className="flex items-center gap-2 px-7 py-3 rounded-xl bg-teal-500 text-white font-bold text-sm hover:bg-teal-400 shadow-[0_0_20px_rgba(45,212,191,0.3)] hover:shadow-[0_0_30px_rgba(45,212,191,0.5)] transition-all disabled:opacity-60">
                         {isSubmitting ? (
-                          <><div className="w-4 h-4 border-2 border-[#060e1a] border-t-transparent rounded-full animate-spin" /> Saving...</>
+                          <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Saving...</>
                         ) : (
                           <>Create Profile <ArrowRight className="w-4 h-4" /></>
                         )}

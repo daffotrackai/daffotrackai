@@ -34,6 +34,7 @@ public class StudentProfileService {
             String sessionYear,
             String semester,
             String dateOfBirth,
+            String admissionDate,
             String address,
             String guardianName,
             String bloodGroup,
@@ -62,6 +63,7 @@ public class StudentProfileService {
         profile.setSessionYear(emptyToNull(sessionYear));
         profile.setSemester(emptyToNull(semester));
         profile.setDateOfBirth(parseDate(dateOfBirth));
+        profile.setAdmissionDate(parseDate(admissionDate));
         profile.setAddress(emptyToNull(address));
         profile.setGuardianName(emptyToNull(guardianName));
         profile.setBloodGroup(emptyToNull(bloodGroup));
@@ -138,6 +140,7 @@ public class StudentProfileService {
         profile.setSessionYear(emptyToNull(request.sessionYear()));
         profile.setSemester(emptyToNull(request.semester()));
         profile.setDateOfBirth(parseDate(request.dateOfBirth()));
+        profile.setAdmissionDate(parseDate(request.admissionDate()));
         profile.setAddress(emptyToNull(request.address()));
         profile.setGuardianName(emptyToNull(request.guardianName()));
         profile.setBloodGroup(emptyToNull(request.bloodGroup()));
@@ -208,6 +211,7 @@ public class StudentProfileService {
                 profile.getSessionYear(),
                 profile.getSemester(),
                 profile.getDateOfBirth(),
+                profile.getAdmissionDate(),
                 profile.getAddress(),
                 profile.getGuardianName(),
                 profile.getBloodGroup(),

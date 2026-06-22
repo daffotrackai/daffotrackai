@@ -192,31 +192,31 @@ export default function Courses() {
         setDrawerOpen={setDrawerOpen}
       />
 
-      <main className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-[#060e1a]">
+      <main className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-(--bg-main) text-(--text-main)">
         <div className="max-w-7xl mx-auto space-y-6">
           {error && (
-            <div className="rounded-xl border border-red-500/20 bg-red-500/8 px-4 py-3 text-xs text-red-400">
+            <div className="rounded-xl border border-red-500/20 bg-red-500/8 px-4 py-3 text-xs text-red-500">
               {error}
             </div>
           )}
 
           {loading && (
-            <div className="rounded-xl border border-white/8 bg-[#0a1525] px-4 py-3 text-xs text-slate-400">
+            <div className="rounded-xl border border-(--border-main) bg-(--bg-card) px-4 py-3 text-xs text-(--text-muted)">
               Loading course data from database...
             </div>
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <SummaryCard icon={BookOpenCheck} label="Registered Credits" value={summary.credits.toFixed(1)} />
-            <SummaryCard icon={CheckCircle2} label="Projected SGPA" value={summary.semesterGpa.toFixed(2)} tone="text-teal-400" />
-            <SummaryCard icon={AlertTriangle} label="At-risk Courses" value={summary.riskCount} tone={summary.riskCount ? 'text-amber-400' : 'text-emerald-400'} />
+            <SummaryCard icon={CheckCircle2} label="Projected SGPA" value={summary.semesterGpa.toFixed(2)} tone="text-teal-500" />
+            <SummaryCard icon={AlertTriangle} label="At-risk Courses" value={summary.riskCount} tone={summary.riskCount ? 'text-amber-500' : 'text-emerald-500'} />
           </div>
 
-          <section className="rounded-2xl border border-white/8 bg-[#0a1525] overflow-hidden">
-            <div className="flex items-center justify-between gap-3 border-b border-white/6 px-5 py-4">
+          <section className="rounded-2xl border border-(--border-main) bg-(--bg-card) overflow-hidden">
+            <div className="flex items-center justify-between gap-3 border-b border-(--border-main) px-5 py-4">
               <div>
-                <h1 className="text-sm font-bold text-white">Semester Courses</h1>
-                <p className="mt-1 text-[10px] text-slate-500">
+                <h1 className="text-sm font-bold text-(--text-main)">Semester Courses</h1>
+                <p className="mt-1 text-[10px] text-(--text-muted)">
                   Theory (3.0): Mid 25, Quiz 15, CT 15, Assign 5, Attend 7, Pres 8, Final 40. <br/>
                   Lab (1.5): Lab Perf 25, Lab Report 25, Attend 10, Final 40.
                 </p>
@@ -225,7 +225,7 @@ export default function Courses() {
                 <button
                   type="button"
                   onClick={() => setShowCatalog(true)}
-                  className="flex h-10 items-center gap-2 rounded-xl border border-teal-500/20 bg-teal-500/10 px-3 text-xs font-bold text-teal-400 hover:bg-teal-500/15"
+                  className="flex h-10 items-center gap-2 rounded-xl border border-teal-500/20 bg-teal-500/10 px-3 text-xs font-bold text-teal-500 hover:bg-teal-500/15"
                 >
                   <Search className="w-4 h-4" />
                   Catalog
@@ -233,7 +233,7 @@ export default function Courses() {
                 <button
                   type="button"
                   onClick={addManual}
-                  className="flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 text-xs font-bold text-white hover:bg-white/8"
+                  className="flex h-10 items-center gap-2 rounded-xl border border-(--border-main) bg-(--bg-main) px-3 text-xs font-bold text-(--text-main) hover:bg-teal-500/5"
                 >
                   <Plus className="w-4 h-4" />
                   Manual
@@ -243,7 +243,7 @@ export default function Courses() {
 
             <div className="overflow-x-auto">
               <table className="w-full min-w-[1100px] text-left text-sm">
-                <thead className="bg-white/3 text-[10px] uppercase tracking-wider text-slate-500">
+                <thead className="bg-white/5 text-[10px] uppercase tracking-wider text-(--text-muted)">
                   <tr>
                     <th className="px-4 py-3 font-bold w-48">Course</th>
                     <th className="px-4 py-3 font-bold w-20">Credit</th>
@@ -253,21 +253,21 @@ export default function Courses() {
                     <th className="px-4 py-3 font-bold w-24">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/6">
+                <tbody className="divide-y divide-(--border-main)">
                   {courses.map((course) => {
                     const total = calculateTotal(course);
                     const grade = gradeFromMarks(total, course.credit);
                     return (
-                      <tr key={course.id} className="text-slate-300">
+                      <tr key={course.id} className="text-(--text-main)">
                         <td className="px-4 py-4">
-                          <input value={course.code} onChange={(event) => updateCourse(course.id, 'code', event.target.value)} className="w-full rounded-lg border border-white/8 bg-[#060e1a] px-2 py-2 text-xs font-bold text-white outline-none focus:border-teal-500/40" />
-                          <input value={course.title} onChange={(event) => updateCourse(course.id, 'title', event.target.value)} className="mt-2 w-full rounded-lg border border-white/8 bg-[#060e1a] px-2 py-2 text-[10px] text-slate-400 outline-none focus:border-teal-500/40" />
+                          <input value={course.code} onChange={(event) => updateCourse(course.id, 'code', event.target.value)} className="w-full rounded-lg border border-(--border-main) bg-(--bg-main) px-2 py-2 text-xs font-bold text-(--text-main) outline-none focus:border-teal-500/40" />
+                          <input value={course.title} onChange={(event) => updateCourse(course.id, 'title', event.target.value)} className="mt-2 w-full rounded-lg border border-(--border-main) bg-(--bg-main) px-2 py-2 text-[10px] text-(--text-muted) outline-none focus:border-teal-500/40" />
                         </td>
                         <td className="px-4 py-4">
                            <select
                             value={course.credit}
                             onChange={(e) => updateCourse(course.id, 'credit', Number(e.target.value))}
-                            className="w-16 rounded-lg border border-white/8 bg-[#060e1a] px-2 py-2 text-xs text-white outline-none focus:border-teal-500/40"
+                            className="w-16 rounded-lg border border-(--border-main) bg-(--bg-main) px-2 py-2 text-xs text-(--text-main) outline-none focus:border-teal-500/40"
                            >
                              <option value={3.0}>3.0</option>
                              <option value={1.5}>1.5</option>
@@ -308,10 +308,10 @@ export default function Courses() {
                            </div>
                         </td>
 
-                        <td className="px-4 py-4 font-black text-white">{total}</td>
+                        <td className="px-4 py-4 font-black text-(--text-main)">{total}</td>
                         <td className="px-4 py-4">
                           <p className={`text-lg font-black ${grade.tone}`}>{grade.letter}</p>
-                          <p className="text-[10px] text-slate-500">{grade.status}</p>
+                          <p className="text-[10px] text-(--text-muted)">{grade.status}</p>
                         </td>
                         <td className="px-4 py-4 flex gap-1">
                           <button
@@ -319,7 +319,7 @@ export default function Courses() {
                             onClick={() => saveCourse(course)}
                             disabled={savingId === course.id}
                             title="Save"
-                            className="rounded-lg border border-teal-500/20 bg-teal-500/10 p-2 text-teal-400 hover:bg-teal-500/15 disabled:opacity-50"
+                            className="rounded-lg border border-teal-500/20 bg-teal-500/10 p-2 text-teal-500 hover:bg-teal-500/15 disabled:opacity-50"
                           >
                             <Save className="w-4 h-4" />
                           </button>
@@ -328,7 +328,7 @@ export default function Courses() {
                             onClick={() => deleteCourse(course)}
                             disabled={savingId === course.id}
                             title="Delete"
-                            className="rounded-lg border border-red-500/15 bg-red-500/8 p-2 text-red-400 hover:bg-red-500/15"
+                            className="rounded-lg border border-red-500/15 bg-red-500/8 p-2 text-red-500 hover:bg-red-500/15"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -346,23 +346,23 @@ export default function Courses() {
       {/* Course Catalog Modal */}
       {showCatalog && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#0a1525] border border-white/10 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
-            <div className="px-6 py-4 border-b border-white/6 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-white">Course Catalog</h2>
-              <button onClick={() => setShowCatalog(false)} className="p-1 rounded-lg hover:bg-white/5 text-slate-400">
+          <div className="bg-(--bg-card) border border-(--border-main) w-full max-w-xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+            <div className="px-6 py-4 border-b border-(--border-main) flex items-center justify-between">
+              <h2 className="text-lg font-bold text-(--text-main)">Course Catalog</h2>
+              <button onClick={() => setShowCatalog(false)} className="p-1 rounded-lg hover:bg-white/5 text-(--text-muted)">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-4 border-b border-white/6">
+            <div className="p-4 border-b border-(--border-main)">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-(--text-muted)" />
                 <input
                   type="text"
                   placeholder="Search by code or name..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#060e1a] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-teal-500/50"
+                  className="w-full bg-(--bg-main) border border-(--border-main) rounded-xl pl-10 pr-4 py-2.5 text-sm text-(--text-main) focus:outline-none focus:border-teal-500/50"
                 />
               </div>
             </div>
@@ -372,12 +372,12 @@ export default function Courses() {
                 <button
                   key={item.id}
                   onClick={() => addFromCatalog(item)}
-                  className="w-full text-left px-4 py-3 rounded-xl hover:bg-teal-500/10 hover:border-teal-500/20 border border-transparent transition-all group"
+                  className="w-full text-left px-4 py-3 rounded-xl hover:bg-teal-500/10 border border-transparent transition-all group"
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-bold text-white group-hover:text-teal-400">{item.code}</p>
-                      <p className="text-xs text-slate-500">{item.name}</p>
+                      <p className="text-sm font-bold text-(--text-main) group-hover:text-teal-500">{item.code}</p>
+                      <p className="text-xs text-(--text-muted)">{item.name}</p>
                     </div>
                     <span className="text-[10px] font-bold text-teal-500/60 bg-teal-500/5 px-2 py-0.5 rounded border border-teal-500/10">
                       {item.credit} CR
@@ -386,13 +386,13 @@ export default function Courses() {
                 </button>
               ))}
               {filteredCatalog.length === 0 && (
-                <div className="py-12 text-center text-slate-500 text-sm">
+                <div className="py-12 text-center text-(--text-muted) text-sm">
                   No courses found matching "{searchQuery}"
                 </div>
               )}
             </div>
 
-            <div className="p-4 bg-white/2 border-t border-white/6 text-[10px] text-center text-slate-600">
+            <div className="p-4 bg-white/5 border-t border-(--border-main) text-[10px] text-center text-(--text-muted)">
               Select a course to instantly add it to your tracker.
             </div>
           </div>

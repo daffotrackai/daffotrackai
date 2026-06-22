@@ -56,7 +56,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060e1a] text-white selection:bg-teal-500/20 selection:text-teal-300">
+    <div className="min-h-screen bg-(--bg-main) text-(--text-main) selection:bg-teal-500/20 selection:text-teal-500">
       <PageTopBar
         title="DaffoTrack AI"
         subtitle="Smart academic companion for DIU students"
@@ -70,44 +70,44 @@ export default function Home() {
       <div className="fixed top-[600px] right-0 w-[500px] h-[400px] bg-indigo-600/5 rounded-full blur-[100px] pointer-events-none -z-10" />
 
       {/* NAVBAR */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#060e1a]/90 backdrop-blur-xl border-b border-white/5 py-3' : 'bg-transparent py-5'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-(--bg-header) backdrop-blur-xl border-b border-(--border-main) py-3' : 'bg-transparent py-5'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate(getCurrentUser()?.userId ? '/dashboard' : '/')}>
             <AppLogo size="lg" />
             <div>
-              <span className="text-[17px] font-bold tracking-tight text-white">DaffoTrack <span className="text-teal-400">AI</span></span>
-              <span className="block text-[9px] text-slate-500 font-semibold tracking-widest uppercase">by Metamorph X</span>
+              <span className={`text-[17px] font-bold tracking-tight text-(--text-main)`}>DaffoTrack <span className="text-teal-500">AI</span></span>
+              <span className="block text-[9px] text-(--text-muted) font-semibold tracking-widest uppercase">by Metamorph X</span>
             </div>
           </div>
 
           <nav className="hidden md:flex items-center gap-8">
             {['#features', '#sandbox', '#diu-rules', '#about'].map((href, i) => (
-              <a key={href} href={href} className="text-sm text-slate-400 hover:text-teal-400 transition-colors font-medium">
+              <a key={href} href={href} className="text-sm text-(--text-muted) hover:text-teal-500 transition-colors font-medium">
                 {['Features', 'Live Demo', 'DIU Guides', 'About'][i]}
               </a>
             ))}
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
-            <Link to="/login" className="text-sm font-semibold text-slate-400 hover:text-white transition-colors">Sign In</Link>
-            <Link to="/login" className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-teal-500 text-[#060e1a] font-bold text-sm hover:bg-teal-400 transition-all shadow-[0_0_20px_rgba(45,212,191,0.3)] hover:shadow-[0_0_30px_rgba(45,212,191,0.5)]">
+            <Link to="/login" className="text-sm font-semibold text-(--text-muted) hover:text-(--text-main) transition-colors">Sign In</Link>
+            <Link to="/login" className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-teal-500 text-white font-bold text-sm hover:bg-teal-400 transition-all shadow-[0_0_20px_rgba(45,212,191,0.3)] hover:shadow-[0_0_30px_rgba(45,212,191,0.5)]">
               Launch App <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden p-2 text-slate-400">
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden p-2 text-(--text-muted)">
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-[#0a1525]/98 backdrop-blur-xl border-b border-white/5 px-4 pt-3 pb-5 space-y-1">
+          <div className="md:hidden bg-(--bg-card) backdrop-blur-xl border-b border-(--border-main) px-4 pt-3 pb-5 space-y-1">
             {[['#features','Features'],['#sandbox','Live Demo'],['#diu-rules','DIU Guides'],['#about','About']].map(([href, label]) => (
-              <a key={href} href={href} onClick={() => setIsMobileMenuOpen(false)} className="block py-2.5 px-3 text-sm text-slate-300 hover:text-teal-400 rounded-lg hover:bg-white/5 transition-all">{label}</a>
+              <a key={href} href={href} onClick={() => setIsMobileMenuOpen(false)} className="block py-2.5 px-3 text-sm text-(--text-muted) hover:text-teal-500 rounded-lg hover:bg-white/5 transition-all">{label}</a>
             ))}
-            <div className="pt-3 flex flex-col gap-2 border-t border-white/5">
-              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-center py-2.5 text-sm text-slate-300 bg-white/5 rounded-xl font-medium">Sign In</Link>
-              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-center py-2.5 text-sm text-[#060e1a] bg-teal-500 rounded-xl font-bold">Launch App</Link>
+            <div className="pt-3 flex flex-col gap-2 border-t border-(--border-main)">
+              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-center py-2.5 text-sm text-(--text-muted) bg-white/5 rounded-xl font-medium">Sign In</Link>
+              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-center py-2.5 text-sm text-white bg-teal-500 rounded-xl font-bold">Launch App</Link>
             </div>
           </div>
         )}
@@ -121,37 +121,37 @@ export default function Home() {
             {/* Copy */}
             <div className="lg:col-span-6 space-y-7">
               <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 px-4 py-1.5 rounded-full">
-                <Sparkles className="w-3.5 h-3.5 text-teal-400" />
-                <span className="text-[11px] font-bold text-teal-400 uppercase tracking-widest">Premier AI Portal for DIU Students</span>
+                <Sparkles className="w-3.5 h-3.5 text-teal-500" />
+                <span className="text-[11px] font-bold text-teal-500 uppercase tracking-widest">Premier AI Portal for DIU Students</span>
               </div>
 
-              <h1 className="text-5xl sm:text-6xl font-black tracking-tighter leading-[1.05] text-white">
+              <h1 className="text-5xl sm:text-6xl font-black tracking-tighter leading-[1.05] text-(--text-main)">
                 Your Smart<br />
-                <span className="bg-gradient-to-r from-teal-400 via-cyan-400 to-indigo-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-indigo-500 bg-clip-text text-transparent">
                   Academic
                 </span><br />
                 Companion.
               </h1>
 
-              <p className="text-slate-400 text-lg leading-relaxed max-w-lg">
+              <p className="text-(--text-muted) text-lg leading-relaxed max-w-lg">
                 AI-driven academic insights built for Daffodil International University. Track CGPA, forecast attendance, and solve complex DIU policy questions in seconds.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <Link to="/login" className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-teal-500 text-[#060e1a] font-bold text-sm shadow-[0_0_25px_rgba(45,212,191,0.35)] hover:shadow-[0_0_40px_rgba(45,212,191,0.55)] hover:bg-teal-400 transition-all">
+                <Link to="/login" className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-teal-500 text-white font-bold text-sm shadow-[0_0_25px_rgba(45,212,191,0.35)] hover:shadow-[0_0_40px_rgba(45,212,191,0.55)] hover:bg-teal-400 transition-all">
                   Get Started Free <ArrowRight className="w-4 h-4" />
                 </Link>
-                <a href="#features" className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/8 text-white font-semibold text-sm transition-all">
+                <a href="#features" className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-white/5 dark:bg-white/5 light:bg-black/5 border border-(--border-main) hover:bg-white/8 text-(--text-main) font-semibold text-sm transition-all">
                   See Features
                 </a>
               </div>
 
               {/* Stats */}
-              <div className="pt-6 border-t border-white/6 grid grid-cols-3 gap-6">
+              <div className="pt-6 border-t border-(--border-main) grid grid-cols-3 gap-6">
                 {[['98.4%','Advisor Accuracy'],['Instant','Policy Lookup'],['Free','Open Platform']].map(([val, label]) => (
                   <div key={label}>
-                    <p className="text-2xl font-black text-white tracking-tight">{val}</p>
-                    <p className="text-xs text-slate-500 mt-1">{label}</p>
+                    <p className="text-2xl font-black text-(--text-main) tracking-tight">{val}</p>
+                    <p className="text-xs text-(--text-muted) mt-1">{label}</p>
                   </div>
                 ))}
               </div>
@@ -227,17 +227,17 @@ export default function Home() {
       </section>
 
       {/* FEATURES */}
-      <section id="features" className="py-24 bg-[#07111f] text-white relative border-t border-white/5">
-        <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-[#060e1a] to-[#07111f] pointer-events-none" />
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-[#060e1a] pointer-events-none" />
+      <section id="features" className="py-24 bg-(--bg-card) text-(--text-main) relative border-t border-(--border-main)">
+        <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-(--bg-main) to-(--bg-card) pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-(--bg-main) pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 px-4 py-1.5 rounded-full mb-4">
-              <Zap className="w-3.5 h-3.5 text-teal-400" />
-              <span className="text-xs font-bold text-teal-400 uppercase tracking-wider">What DaffoTrack Does</span>
+              <Zap className="w-3.5 h-3.5 text-teal-500" />
+              <span className="text-xs font-bold text-teal-500 uppercase tracking-wider">What DaffoTrack Does</span>
             </div>
-            <h2 className="text-4xl font-black text-white tracking-tight mb-4">Built for DIU. Designed for Excellence.</h2>
-            <p className="text-slate-400 text-lg">Purpose-built AI tools configured around Daffodil's semester framework, policies, and regulations.</p>
+            <h2 className="text-4xl font-black text-(--text-main) tracking-tight mb-4">Built for DIU. Designed for Excellence.</h2>
+            <p className="text-(--text-muted) text-lg">Purpose-built AI tools configured around Daffodil's semester framework, policies, and regulations.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -247,13 +247,13 @@ export default function Home() {
               { icon: Bell, title: 'DIU Smart Policy Guide', desc: 'Instant guidance on Grade Improvement, Retakes, Makeup Midterms, Semester Drop, and tuition fee waivers.', link: 'View policies', path: '/policies' },
               { icon: Clock, title: '75% Attendance Predictor', desc: 'Track how many absences are left before losing exam eligibility. Stay alerted before falling below critical levels.', link: 'Check calculator', path: '/planner' }
             ].map(({ icon: Icon, title, desc, link, path }) => (
-              <div key={title} className="group bg-[#0a1525]/85 hover:bg-[#0d1e35] rounded-2xl p-6 border border-white/8 hover:border-teal-400/40 hover:shadow-xl hover:shadow-teal-500/10 transition-all duration-300 flex flex-col">
-                <div className="w-11 h-11 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 mb-5 group-hover:scale-110 transition-transform">
+              <div key={title} className="group bg-(--bg-surface) hover:bg-(--bg-main) rounded-2xl p-6 border border-(--border-main) hover:border-teal-500/40 hover:shadow-xl hover:shadow-teal-500/10 transition-all duration-300 flex flex-col">
+                <div className="w-11 h-11 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-500 mb-5 group-hover:scale-110 transition-transform">
                   <Icon className="w-5 h-5" />
                 </div>
-                <h3 className="text-base font-bold text-white mb-2">{title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed flex-1">{desc}</p>
-                <Link to={path} className="mt-5 pt-4 border-t border-white/6 flex items-center text-xs font-bold text-slate-300 group-hover:text-teal-400 transition-colors">
+                <h3 className="text-base font-bold text-(--text-main) mb-2">{title}</h3>
+                <p className="text-(--text-muted) text-sm leading-relaxed flex-1">{desc}</p>
+                <Link to={path} className="mt-5 pt-4 border-t border-(--border-main) flex items-center text-xs font-bold text-(--text-muted) group-hover:text-teal-500 transition-colors">
                   {link} <ChevronRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
@@ -261,14 +261,14 @@ export default function Home() {
           </div>
 
           {/* Privacy banner */}
-          <div className="mt-12 bg-[#0a1525] border border-white/8 rounded-2xl p-7 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="mt-12 bg-(--bg-surface) border border-(--border-main) rounded-2xl p-7 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-1.5 max-w-xl">
-              <h4 className="text-base font-bold text-white flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-teal-400" /> Privacy & Academic Integrity
+              <h4 className="text-base font-bold text-(--text-main) flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-teal-500" /> Privacy & Academic Integrity
               </h4>
-              <p className="text-sm text-slate-400">DaffoTrack AI does not require your actual portal credentials. All calculation engines run locally, secure and isolated.</p>
+              <p className="text-sm text-(--text-muted)">DaffoTrack AI does not require your actual portal credentials. All calculation engines run locally, secure and isolated.</p>
             </div>
-            <Link to="/login" className="whitespace-nowrap px-6 py-3 rounded-xl bg-teal-500 text-[#060e1a] font-bold text-sm hover:bg-teal-400 transition-all">
+            <Link to="/login" className="whitespace-nowrap px-6 py-3 rounded-xl bg-teal-500 text-white font-bold text-sm hover:bg-teal-400 transition-all">
               Connect Securely
             </Link>
           </div>
@@ -276,18 +276,18 @@ export default function Home() {
       </section>
 
       {/* SANDBOX */}
-      <section id="sandbox" className="py-24 bg-[#060e1a] border-t border-white/5 relative">
+      <section id="sandbox" className="py-24 bg-(--bg-main) border-t border-(--border-main) relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
             {/* Presets */}
             <div className="lg:col-span-5 space-y-7">
               <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 px-4 py-1.5 rounded-full">
-                <Sparkles className="w-3.5 h-3.5 text-teal-400" />
-                <span className="text-[11px] font-bold text-teal-400 uppercase tracking-widest">Interactive Playground</span>
+                <Sparkles className="w-3.5 h-3.5 text-teal-500" />
+                <span className="text-[11px] font-bold text-teal-500 uppercase tracking-widest">Interactive Playground</span>
               </div>
-              <h2 className="text-4xl font-black text-white tracking-tight">Try the Live AI Sandbox</h2>
-              <p className="text-slate-400 text-base leading-relaxed">Click any preset below. Watch the AI interpret DIU academic policy in real time.</p>
+              <h2 className="text-4xl font-black text-(--text-main) tracking-tight">Try the Live AI Sandbox</h2>
+              <p className="text-(--text-muted) text-base leading-relaxed">Click any preset below. Watch the AI interpret DIU academic policy in real time.</p>
 
               <div className="space-y-2.5 pt-2">
                 {[
@@ -298,18 +298,18 @@ export default function Home() {
                   <button key={key} onClick={() => handlePresetClick(key)}
                     className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all text-left ${activeTab === key
                       ? 'bg-teal-500/8 border-teal-500/40 shadow-[0_0_20px_rgba(45,212,191,0.1)]'
-                      : 'bg-transparent border-white/6 hover:bg-white/3'}`}
+                      : 'bg-transparent border-(--border-main) hover:bg-white/3'}`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${activeTab === key ? 'bg-teal-500/20 text-teal-400' : 'bg-white/5 text-slate-500'}`}>
+                      <div className={`p-2 rounded-lg ${activeTab === key ? 'bg-teal-500/20 text-teal-500' : 'bg-white/5 text-(--text-muted)'}`}>
                         <Icon className="w-4 h-4" />
                       </div>
                       <div>
-                        <span className="block text-[10px] text-slate-500 uppercase tracking-wider">{category}</span>
-                        <span className="text-sm font-semibold text-white">{label}</span>
+                        <span className="block text-[10px] text-(--text-muted) uppercase tracking-wider">{category}</span>
+                        <span className="text-sm font-semibold text-(--text-main)">{label}</span>
                       </div>
                     </div>
-                    <ChevronRight className={`w-4 h-4 transition-colors ${activeTab === key ? 'text-teal-400' : 'text-slate-600'}`} />
+                    <ChevronRight className={`w-4 h-4 transition-colors ${activeTab === key ? 'text-teal-500' : 'text-slate-400'}`} />
                   </button>
                 ))}
               </div>
@@ -317,23 +317,23 @@ export default function Home() {
 
             {/* Chat window */}
             <div className="lg:col-span-7">
-              <div className="bg-[#0a1525] border border-white/8 rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[460px]">
-                <div className="bg-[#060e1a] px-5 py-4 border-b border-white/6 flex items-center justify-between shrink-0">
+              <div className="bg-(--bg-card) border border-(--border-main) rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[460px]">
+                <div className="bg-(--bg-main) px-5 py-4 border-b border-(--border-main) flex items-center justify-between shrink-0">
                   <div className="flex items-center gap-3">
                     <div className="relative">
-                      <div className="w-8 h-8 rounded-full bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-400">
+                      <div className="w-8 h-8 rounded-full bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-500">
                         <Bot className="w-4 h-4" />
                       </div>
-                      <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-[#060e1a]" />
+                      <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-(--bg-main)" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-white">DaffoTrack AI Engine</p>
-                      <p className="text-[10px] text-teal-400 font-mono">MODEL-DIU-SWE_V4.2 • ONLINE</p>
+                      <p className="text-sm font-bold text-(--text-main)">DaffoTrack AI Engine</p>
+                      <p className="text-[10px] text-teal-500 font-mono">MODEL-DIU-SWE_V4.2 • ONLINE</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-                    <span className="text-[10px] text-teal-400 font-mono">Sandbox</span>
+                    <span className="text-[10px] text-teal-500 font-mono">Sandbox</span>
                   </div>
                 </div>
 
@@ -341,9 +341,9 @@ export default function Home() {
                   {simulatedChat.map((msg, i) => (
                     <div key={i} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-[85%] rounded-2xl px-4 py-3 border whitespace-pre-line text-sm leading-relaxed ${msg.sender === 'user'
-                        ? 'bg-teal-500/10 text-white border-teal-500/20 rounded-tr-none'
-                        : 'bg-[#0d1e35] text-slate-100 border-white/8 rounded-tl-none'}`}>
-                        <span className={`block text-[10px] font-bold mb-1 uppercase tracking-wider ${msg.sender === 'user' ? 'text-teal-400' : 'text-teal-400'}`}>
+                        ? 'bg-teal-500/10 text-(--text-main) border-teal-500/20 rounded-tr-none'
+                        : 'bg-(--bg-main) text-(--text-main) border-(--border-main) rounded-tl-none'}`}>
+                        <span className={`block text-[10px] font-bold mb-1 uppercase tracking-wider ${msg.sender === 'user' ? 'text-teal-500' : 'text-teal-500'}`}>
                           {msg.sender === 'user' ? 'You' : 'DaffoTrack AI'}
                         </span>
                         {msg.text}
@@ -352,16 +352,16 @@ export default function Home() {
                   ))}
                   {isTyping && (
                     <div className="flex justify-start">
-                      <div className="bg-[#0d1e35] border border-white/8 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-1.5">
+                      <div className="bg-(--bg-main) border border-(--border-main) rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-1.5">
                         {[0, 150, 300].map(d => <span key={d} className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div className="p-4 bg-[#060e1a]/60 border-t border-white/5 shrink-0 flex items-center justify-between">
-                  <span className="text-xs text-slate-500 italic">Select a preset to simulate...</span>
-                  <Link to="/chat" className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-teal-500 text-[#060e1a] font-bold text-xs hover:bg-teal-400 transition-all">
+                <div className="p-4 bg-(--bg-main) border-t border-(--border-main) shrink-0 flex items-center justify-between">
+                  <span className="text-xs text-(--text-muted) italic">Select a preset to simulate...</span>
+                  <Link to="/chat" className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-teal-500 text-white font-bold text-xs hover:bg-teal-400 transition-all">
                     Full Live Chat <ArrowRight className="w-3 h-3" />
                   </Link>
                 </div>
@@ -372,11 +372,11 @@ export default function Home() {
       </section>
 
       {/* DIU POLICY CARDS */}
-      <section id="diu-rules" className="py-24 bg-[#04090f] border-t border-white/4 relative">
+      <section id="diu-rules" className="py-24 bg-(--bg-main) border-t border-(--border-main) relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 className="text-4xl font-black text-white tracking-tight mb-4">Master DIU's Complex Policies</h2>
-            <p className="text-slate-400 text-base">Popular rules pre-parsed by Metamorph X's custom-built algorithms.</p>
+            <h2 className="text-4xl font-black text-(--text-main) tracking-tight mb-4">Master DIU's Complex Policies</h2>
+            <p className="text-(--text-muted) text-base">Popular rules pre-parsed by Metamorph X's custom-built algorithms.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
@@ -385,17 +385,17 @@ export default function Home() {
               { icon: ShieldCheck, color: 'rose', title: 'Midterm Makeup Criteria', desc: 'Application must be filed within 3 days of missed examination with authorized proof. Non-refundable BDT 1,000 makeup fees apply.', code: 'EXAM_POL_11.5' }
             ].map(({ icon: Icon, color, title, desc, code }) => {
               const colors = {
-                emerald: { bg: 'bg-emerald-500/8', text: 'text-emerald-400', border: 'border-emerald-500/15' },
-                amber: { bg: 'bg-amber-500/8', text: 'text-amber-400', border: 'border-amber-500/15' },
-                rose: { bg: 'bg-rose-500/8', text: 'text-rose-400', border: 'border-rose-500/15' }
+                emerald: { bg: 'bg-emerald-500/8', text: 'text-emerald-500', border: 'border-emerald-500/15' },
+                amber: { bg: 'bg-amber-500/8', text: 'text-amber-500', border: 'border-amber-500/15' },
+                rose: { bg: 'bg-rose-500/8', text: 'text-rose-500', border: 'border-rose-500/15' }
               }[color];
               return (
-                <div key={title} className="bg-[#0a1525]/60 border border-white/6 p-6 rounded-2xl hover:border-teal-500/25 transition-all group space-y-4">
+                <div key={title} className="bg-(--bg-card) border border-(--border-main) p-6 rounded-2xl hover:border-teal-500/25 transition-all group space-y-4">
                   <div className={`w-10 h-10 rounded-xl ${colors.bg} ${colors.text} flex items-center justify-center`}>
                     <Icon className="w-5 h-5" />
                   </div>
-                  <h3 className="text-base font-bold text-white">{title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{desc}</p>
+                  <h3 className="text-base font-bold text-(--text-main)">{title}</h3>
+                  <p className="text-sm text-(--text-muted) leading-relaxed">{desc}</p>
                   <div className={`inline-block text-[10px] font-mono ${colors.text} bg-white/4 border ${colors.border} py-1 px-2.5 rounded-md`}>{code}</div>
                 </div>
               );
@@ -405,20 +405,20 @@ export default function Home() {
       </section>
 
       {/* ABOUT */}
-      <section id="about" className="py-24 bg-[#060e1a] border-t border-white/5">
+      <section id="about" className="py-24 bg-(--bg-main) border-t border-(--border-main)">
         <div className="max-w-4xl mx-auto px-4 text-center space-y-8">
-          <span className="inline-block text-xs font-bold text-teal-400 tracking-widest uppercase bg-teal-500/10 border border-teal-500/20 px-4 py-1.5 rounded-full">
+          <span className="inline-block text-xs font-bold text-teal-500 tracking-widest uppercase bg-teal-500/10 border border-teal-500/20 px-4 py-1.5 rounded-full">
             Crafted by Metamorph X
           </span>
-          <h2 className="text-4xl font-black text-white tracking-tight">Bridging AI Innovation and Academic Success</h2>
-          <p className="text-slate-400 text-lg leading-relaxed">
+          <h2 className="text-4xl font-black text-(--text-main) tracking-tight">Bridging AI Innovation and Academic Success</h2>
+          <p className="text-(--text-muted) text-lg leading-relaxed">
             Metamorph X is a forward-thinking group of elite student engineers at Daffodil International University. We specialize in next-generation AI interfaces that simplify complex university frameworks.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             {[[MessageSquareCode,'100% LLM Engineered','teal'],[GraduationCap,'For DIU Students','indigo'],[Cpu,'Self-Refined AI Hub','emerald']].map(([Icon, label, c]) => (
-              <div key={label} className="flex items-center gap-2 bg-white/4 border border-white/8 px-5 py-2.5 rounded-xl">
-                <Icon className={`w-4 h-4 text-${c}-400`} />
-                <span className="text-sm font-semibold text-white">{label}</span>
+              <div key={label} className="flex items-center gap-2 bg-(--bg-card) border border-(--border-main) px-5 py-2.5 rounded-xl">
+                <Icon className={`w-4 h-4 text-${c}-500`} />
+                <span className="text-sm font-semibold text-(--text-main)">{label}</span>
               </div>
             ))}
           </div>
@@ -426,19 +426,19 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 border-t border-white/5 relative overflow-hidden bg-gradient-to-r from-teal-900/15 via-[#060e1a] to-indigo-900/15">
-        <div className="absolute inset-0 bg-radial-gradient from-teal-900/20 via-transparent to-transparent pointer-events-none" />
+      <section className="py-20 border-t border-(--border-main) relative overflow-hidden bg-gradient-to-r from-teal-500/10 via-(--bg-main) to-indigo-500/10">
+        <div className="absolute inset-0 bg-radial-gradient from-teal-500/20 via-transparent to-transparent pointer-events-none" />
         <div className="max-w-4xl mx-auto px-4 text-center space-y-8 relative z-10">
-          <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white">
+          <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-(--text-main)">
             Ready to Accelerate Your<br />
-            <span className="bg-gradient-to-r from-teal-400 via-cyan-400 to-indigo-400 bg-clip-text text-transparent">Academic Journey?</span>
+            <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-indigo-500 bg-clip-text text-transparent">Academic Journey?</span>
           </h2>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto">Sign up to configure your personal DIU academic planner, calculate projections, and leverage our AI advisor.</p>
+          <p className="text-(--text-muted) text-lg max-w-2xl mx-auto">Sign up to configure your personal DIU academic planner, calculate projections, and leverage our AI advisor.</p>
           <div className="flex flex-col sm:flex-row justify-center gap-3">
-            <Link to="/login" className="px-8 py-4 rounded-xl bg-teal-500 text-[#060e1a] font-black text-base shadow-[0_0_25px_rgba(45,212,191,0.35)] hover:shadow-[0_0_40px_rgba(45,212,191,0.55)] hover:bg-teal-400 transition-all">
+            <Link to="/login" className="px-8 py-4 rounded-xl bg-teal-500 text-white font-black text-base shadow-[0_0_25px_rgba(45,212,191,0.35)] hover:shadow-[0_0_40px_rgba(45,212,191,0.55)] hover:bg-teal-400 transition-all">
               Get Started Free
             </Link>
-            <Link to="/login" className="px-8 py-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/8 font-semibold text-white text-base transition-all">
+            <Link to="/login" className="px-8 py-4 rounded-xl bg-white/5 dark:bg-white/5 light:bg-black/5 border border-(--border-main) hover:bg-white/8 font-semibold text-(--text-main) text-base transition-all">
               Sign In to DaffoTrack
             </Link>
           </div>
@@ -446,25 +446,25 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-[#03070d] border-t border-white/4 py-10 text-slate-500 text-sm">
+      <footer className="bg-(--bg-card) border-t border-(--border-main) py-10 text-(--text-muted) text-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-7 border-b border-white/4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-7 border-b border-(--border-main)">
             <div className="flex items-center gap-3">
               <AppLogo size="sm" />
               <div>
-                <span className="font-bold text-white text-sm">DaffoTrack AI</span>
-                <span className="block text-[9px] text-slate-600 uppercase tracking-widest">by Metamorph X</span>
+                <span className="font-bold text-(--text-main) text-sm">DaffoTrack AI</span>
+                <span className="block text-[9px] text-(--text-muted) uppercase tracking-widest">by Metamorph X</span>
               </div>
             </div>
             <div className="flex flex-wrap justify-center gap-6 text-xs font-semibold">
               {[['#features','Features'],['#sandbox','AI Sandbox'],['#diu-rules','DIU Rules'],['#about','About']].map(([href, label]) => (
-                <a key={href} href={href} className="hover:text-white transition-colors">{label}</a>
+                <a key={href} href={href} className="hover:text-(--text-main) transition-colors">{label}</a>
               ))}
             </div>
           </div>
           <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-            <p>© {new Date().getFullYear()} DaffoTrack AI. Crafted with passion by <span className="text-white font-semibold">Metamorph X</span>.</p>
-            <p className="text-slate-600 text-center sm:text-right">Independent project — not officially affiliated with DIU.</p>
+            <p>© {new Date().getFullYear()} DaffoTrack AI. Crafted with passion by <span className="text-(--text-main) font-semibold">Metamorph X</span>.</p>
+            <p className="text-(--text-muted) text-center sm:text-right">Independent project — not officially affiliated with DIU.</p>
           </div>
         </div>
       </footer>

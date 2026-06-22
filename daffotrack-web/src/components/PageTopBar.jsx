@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, Bell, User as UserIcon, LogOut, IdCard } from 'lucide-react';
+import { Menu, Bell, User as UserIcon, LogOut, IdCard, Sun, Moon } from 'lucide-react';
 import UserAvatar from './UserAvatar';
 import useCurrentUserProfile from '../lib/useCurrentUserProfile';
 import { clearCurrentUser, hasCurrentUserSession } from '../lib/session';
+import { useTheme } from '../lib/ThemeContext';
 
 export default function PageTopBar({
   title,
@@ -15,6 +16,7 @@ export default function PageTopBar({
   const navigate = useNavigate();
   const currentUser = useCurrentUserProfile();
   const hasSession = hasCurrentUserSession(currentUser);
+  const { theme, toggleTheme } = useTheme();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const closeTimerRef = useRef(null);
 
@@ -44,7 +46,7 @@ export default function PageTopBar({
 
   return (
     <div 
-      className={`fixed top-0 right-0 z-[55] h-16 border-b border-white/6 bg-[#060e1a]/90 backdrop-blur-xl transition-all duration-300 ease-in-out ${
+      className={`fixed top-0 right-0 z-[55] h-16 border-b border-(--border-main) bg-(--bg-header) backdrop-blur-xl transition-all duration-300 ease-in-out ${
         drawerOpen ? 'left-0 lg:left-[280px]' : 'left-0'
       }`}
     >
@@ -58,15 +60,15 @@ export default function PageTopBar({
             type="button"
             onClick={() => setDrawerOpen(v => !v)}
             aria-label={drawerOpen ? 'Close menu' : 'Open menu'}
-            className="w-10 h-10 rounded-xl border border-white/8 bg-white/4 flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/8 transition-all shrink-0"
+            className="w-10 h-10 rounded-xl border border-(--border-main) bg-(--bg-card) flex items-center justify-center text-(--text-muted) hover:text-(--text-main) hover:bg-(--bg-main) transition-all shrink-0"
           >
             <Menu className="w-5 h-5" />
           </button>
 
           {/* Title Area */}
           <div className="min-w-0 ml-1">
-            <p className="truncate text-sm font-bold text-white">{title}</p>
-            {subtitle && <p className="truncate hidden md:block text-[10px] text-slate-500">{subtitle}</p>}
+            <p className="truncate text-sm font-bold text-(--text-main)">{title}</p>
+            {subtitle && <p className="truncate hidden md:block text-[10px] text-(--text-muted)">{subtitle}</p>}
           </div>
         </div>
 
@@ -74,7 +76,15 @@ export default function PageTopBar({
         <div className="flex items-center gap-2">
           <button
             type="button"
-            className="w-9 h-9 rounded-xl border border-white/8 bg-white/3 flex items-center justify-center text-slate-400 hover:text-teal-400 hover:border-teal-500/20 transition-all"
+            onClick={toggleTheme}
+            className="w-9 h-9 rounded-xl border border-(--border-main) bg-(--bg-card) flex items-center justify-center text-(--text-muted) hover:text-teal-400 hover:border-teal-500/20 transition-all"
+            aria-label="Toggle theme"
+          >
+            {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+          </button>
+          <button
+            type="button"
+            className="w-9 h-9 rounded-xl border border-(--border-main) bg-(--bg-card) flex items-center justify-center text-(--text-muted) hover:text-teal-400 hover:border-teal-500/20 transition-all"
           >
             <Bell className="w-4 h-4" />
           </button>
@@ -94,7 +104,7 @@ export default function PageTopBar({
               onClick={() => setProfileMenuOpen((value) => !value)}
               aria-haspopup="menu"
               aria-expanded={profileMenuOpen}
-              className="w-9 h-9 rounded-full border border-white/8 bg-white/3 flex items-center justify-center text-slate-400 hover:text-teal-400 hover:border-teal-500/20 transition-all"
+              className="w-9 h-9 rounded-full border border-(--border-main) bg-(--bg-card) flex items-center justify-center text-(--text-muted) hover:text-teal-400 hover:border-teal-500/20 transition-all"
             >
               {currentUser?.profileImageUrl ? (
                 <UserAvatar user={currentUser} size="sm" className="border-0 bg-transparent" />
@@ -106,15 +116,15 @@ export default function PageTopBar({
             {profileMenuOpen && (
               <div
                 role="menu"
-                className="absolute right-0 top-full mt-1 w-64 rounded-2xl border border-white/8 bg-[#0a1525] p-3 shadow-2xl shadow-black/45"
+                className="absolute right-0 top-full mt-1 w-64 rounded-2xl border border-(--border-main) bg-(--bg-card) p-3 shadow-2xl shadow-black/10"
               >
                 {hasSession ? (
                   <>
-                    <div className="flex items-center gap-3 rounded-xl bg-white/3 p-3 border border-white/6">
+                    <div className="flex items-center gap-3 rounded-xl bg-(--bg-main) p-3 border border-(--border-main)">
                       <UserAvatar user={currentUser} size="md" />
                       <div className="min-w-0">
-                        <p className="truncate text-xs font-bold text-white">{currentUser.fullName || 'Student'}</p>
-                        <p className="mt-0.5 truncate text-[10px] text-slate-500">{currentUser.studentId || 'DIU Portal'}</p>
+                        <p className="truncate text-xs font-bold text-(--text-main)">{currentUser.fullName || 'Student'}</p>
+                        <p className="mt-0.5 truncate text-[10px] text-(--text-muted)">{currentUser.studentId || 'DIU Portal'}</p>
                       </div>
                     </div>
 
@@ -123,7 +133,7 @@ export default function PageTopBar({
                         to="/profile"
                         role="menuitem"
                         onClick={() => setProfileMenuOpen(false)}
-                        className="flex w-full items-center gap-2 rounded-xl border border-white/8 bg-white/4 px-3 py-2.5 text-sm font-semibold text-slate-300 transition-all hover:border-teal-500/25 hover:bg-teal-500/8 hover:text-white"
+                        className="flex w-full items-center gap-2 rounded-xl border border-(--border-main) bg-(--bg-main) px-3 py-2.5 text-sm font-semibold text-(--text-muted) transition-all hover:border-teal-500/25 hover:bg-teal-500/8 hover:text-(--text-main)"
                       >
                         <IdCard className="w-4 h-4 text-teal-400" />
                         My Profile

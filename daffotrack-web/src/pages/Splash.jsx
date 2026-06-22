@@ -9,7 +9,7 @@ export default function Splash() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const currentUser = getCurrentUser();
-      navigate(hasCurrentUserSession(currentUser) ? '/home' : '/login', { replace: true });
+      navigate(hasCurrentUserSession(currentUser) ? '/dashboard' : '/login', { replace: true });
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -17,8 +17,8 @@ export default function Splash() {
 
   return (
     <div
-      className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
-      style={{ background: '#060c12', zIndex: 9999 }}
+      className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden bg-(--bg-main)"
+      style={{ zIndex: 9999 }}
     >
       {/* ── Background glows ── */}
       <div

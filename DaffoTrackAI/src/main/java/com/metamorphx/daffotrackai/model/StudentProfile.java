@@ -43,6 +43,8 @@ public class StudentProfile {
 
     private LocalDate dateOfBirth;
 
+    private LocalDate admissionDate;
+
     @Column(length = 1000)
     private String address;
 
@@ -159,6 +161,14 @@ public class StudentProfile {
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public LocalDate getAdmissionDate() {
+        return admissionDate;
+    }
+
+    public void setAdmissionDate(LocalDate admissionDate) {
+        this.admissionDate = admissionDate;
     }
 
     public String getAddress() {

@@ -14,6 +14,7 @@ public record ProfileResponse(
         String sessionYear,
         String semester,
         LocalDate dateOfBirth,
+        LocalDate admissionDate,
         String address,
         String guardianName,
         String bloodGroup,

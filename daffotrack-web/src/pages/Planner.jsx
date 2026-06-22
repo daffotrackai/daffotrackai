@@ -47,17 +47,17 @@ export default function Planner() {
         setDrawerOpen={setDrawerOpen}
       />
 
-      <main className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-[#060e1a]">
+      <main className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-(--bg-main) text-(--text-main)">
         <div className="max-w-7xl mx-auto space-y-6">
           <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-5 rounded-2xl border border-white/8 bg-[#0a1525] p-6">
-              <div className="flex items-center gap-3 border-b border-white/6 pb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-teal-500/20 bg-teal-500/10 text-teal-400">
+            <div className="lg:col-span-5 rounded-2xl border border-(--border-main) bg-(--bg-card) p-6">
+              <div className="flex items-center gap-3 border-b border-(--border-main) pb-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-teal-500/20 bg-teal-500/10 text-teal-500">
                   <Calculator className="h-5 w-5" />
                 </div>
                 <div>
-                  <h1 className="text-sm font-bold text-white">Target CGPA Calculator</h1>
-                  <p className="text-xs text-slate-500">Estimate what SGPA you need next semester.</p>
+                  <h1 className="text-sm font-bold text-(--text-main)">Target CGPA Calculator</h1>
+                  <p className="text-xs text-(--text-muted)">Estimate what SGPA you need next semester.</p>
                 </div>
               </div>
 
@@ -68,17 +68,17 @@ export default function Planner() {
                 <Field label="Target CGPA" value={targetCgpa} setValue={setTargetCgpa} min={0} max={4} step={0.01} />
               </div>
 
-              <div className={`mt-6 rounded-2xl border p-5 ${result.possible ? 'border-teal-500/20 bg-teal-500/8' : 'border-red-500/20 bg-red-500/8'}`}>
+              <div className={`mt-6 rounded-2xl border p-5 ${result.possible ? 'border-teal-500/20 bg-teal-500/5' : 'border-red-500/20 bg-red-500/5'}`}>
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Required SGPA</p>
-                    <p className={`mt-2 text-4xl font-black ${result.possible ? 'text-teal-400' : 'text-red-400'}`}>
+                    <p className="text-xs font-bold uppercase tracking-wider text-(--text-muted)">Required SGPA</p>
+                    <p className={`mt-2 text-4xl font-black ${result.possible ? 'text-teal-500' : 'text-red-500'}`}>
                       {result.requiredSgpa.toFixed(2)}
                     </p>
                   </div>
-                  {result.possible ? <Target className="h-10 w-10 text-teal-400" /> : <AlertTriangle className="h-10 w-10 text-red-400" />}
+                  {result.possible ? <Target className="h-10 w-10 text-teal-500" /> : <AlertTriangle className="h-10 w-10 text-red-500" />}
                 </div>
-                <p className="mt-3 text-xs leading-relaxed text-slate-400">
+                <p className="mt-3 text-xs leading-relaxed text-(--text-muted)">
                   {result.possible
                     ? 'This target is reachable with the selected credit load. Keep every course at or above the required average.'
                     : 'This target is above the 4.00 SGPA limit. Lower the target CGPA or spread the plan across more credits.'}
@@ -87,30 +87,30 @@ export default function Planner() {
             </div>
 
             <div className="lg:col-span-7 space-y-5">
-              <div className="rounded-2xl border border-white/8 bg-[#0a1525] p-6">
-                <div className="flex items-center justify-between border-b border-white/6 pb-4">
+              <div className="rounded-2xl border border-(--border-main) bg-(--bg-card) p-6">
+                <div className="flex items-center justify-between border-b border-(--border-main) pb-4">
                   <div>
-                    <h2 className="text-sm font-bold text-white">Scenario Planning</h2>
-                    <p className="mt-1 text-xs text-slate-500">Compare next-semester outcomes before course registration.</p>
+                    <h2 className="text-sm font-bold text-(--text-main)">Scenario Planning</h2>
+                    <p className="mt-1 text-xs text-(--text-muted)">Compare next-semester outcomes before course registration.</p>
                   </div>
-                  <TrendingUp className="h-5 w-5 text-teal-400" />
+                  <TrendingUp className="h-5 w-5 text-teal-500" />
                 </div>
 
                 <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
                   {plans.map((plan, index) => {
                     const values = [result.afterConservative, result.afterTarget, result.afterAggressive];
                     return (
-                      <div key={plan.label} className="rounded-2xl border border-white/7 bg-white/3 p-4">
-                        <p className="text-xs font-bold text-white">{plan.label}</p>
-                        <p className="mt-1 text-[10px] leading-relaxed text-slate-500">{plan.note}</p>
+                      <div key={plan.label} className="rounded-2xl border border-(--border-main) bg-(--bg-main) p-4">
+                        <p className="text-xs font-bold text-(--text-main)">{plan.label}</p>
+                        <p className="mt-1 text-[10px] leading-relaxed text-(--text-muted)">{plan.note}</p>
                         <div className="mt-4 flex items-end justify-between">
                           <div>
-                            <p className="text-[10px] uppercase tracking-wider text-slate-600">Next SGPA</p>
-                            <p className="mt-1 text-xl font-black text-teal-400">{plan.sgpa.toFixed(2)}</p>
+                            <p className="text-[10px] uppercase tracking-wider text-slate-500">Next SGPA</p>
+                            <p className="mt-1 text-xl font-black text-teal-500">{plan.sgpa.toFixed(2)}</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-[10px] uppercase tracking-wider text-slate-600">New CGPA</p>
-                            <p className="mt-1 text-xl font-black text-white">{values[index].toFixed(2)}</p>
+                            <p className="text-[10px] uppercase tracking-wider text-slate-500">New CGPA</p>
+                            <p className="mt-1 text-xl font-black text-(--text-main)">{values[index].toFixed(2)}</p>
                           </div>
                         </div>
                       </div>
@@ -125,12 +125,12 @@ export default function Planner() {
                   title="Waiver Guardrail"
                   body="For scholarship safety, keep semester SGPA at 3.00+ and avoid F, I or W grades."
                 />
-                <Link to="/chat" className="rounded-2xl border border-teal-500/20 bg-teal-500/8 p-5 transition-all hover:bg-teal-500/12">
+                <Link to="/chat" className="rounded-2xl border border-teal-500/20 bg-teal-500/10 p-5 transition-all hover:bg-teal-500/15">
                   <div className="flex items-center gap-3">
-                    <MessageSquare className="h-5 w-5 text-teal-400" />
-                    <p className="text-sm font-bold text-white">Ask AI for a study plan</p>
+                    <MessageSquare className="h-5 w-5 text-teal-500" />
+                    <p className="text-sm font-bold text-(--text-main)">Ask AI for a study plan</p>
                   </div>
-                  <p className="mt-3 text-xs leading-relaxed text-slate-400">
+                  <p className="mt-3 text-xs leading-relaxed text-(--text-muted)">
                     Send your target and weak courses to DaffoTrack AI for a focused weekly plan.
                   </p>
                 </Link>
@@ -146,7 +146,7 @@ export default function Planner() {
 function Field({ label, value, setValue, min, max, step }) {
   return (
     <label className="block">
-      <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</span>
+      <span className="text-xs font-semibold uppercase tracking-wider text-(--text-muted)">{label}</span>
       <input
         type="number"
         value={value}
@@ -154,7 +154,7 @@ function Field({ label, value, setValue, min, max, step }) {
         max={max}
         step={step}
         onChange={(event) => setValue(Number(event.target.value))}
-        className="mt-2 w-full rounded-xl border border-white/8 bg-[#060e1a] px-4 py-3 text-sm font-bold text-white outline-none focus:border-teal-500/50"
+        className="mt-2 w-full rounded-xl border border-(--border-main) bg-(--bg-main) px-4 py-3 text-sm font-bold text-(--text-main) outline-none focus:border-teal-500/50"
       />
     </label>
   );
@@ -162,12 +162,12 @@ function Field({ label, value, setValue, min, max, step }) {
 
 function ActionCard({ icon: Icon, title, body }) {
   return (
-    <div className="rounded-2xl border border-white/8 bg-[#0a1525] p-5">
+    <div className="rounded-2xl border border-(--border-main) bg-(--bg-card) p-5">
       <div className="flex items-center gap-3">
-        <Icon className="h-5 w-5 text-teal-400" />
-        <p className="text-sm font-bold text-white">{title}</p>
+        <Icon className="h-5 w-5 text-teal-500" />
+        <p className="text-sm font-bold text-(--text-main)">{title}</p>
       </div>
-      <p className="mt-3 text-xs leading-relaxed text-slate-400">{body}</p>
+      <p className="mt-3 text-xs leading-relaxed text-(--text-muted)">{body}</p>
     </div>
   );
 }

@@ -10,6 +10,7 @@ public record ProfileUpdateRequest(
         String sessionYear,
         String semester,
         String dateOfBirth,
+        String admissionDate,
         String address,
         String guardianName,
         String bloodGroup,

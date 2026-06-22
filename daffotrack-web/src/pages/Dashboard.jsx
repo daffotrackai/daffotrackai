@@ -68,16 +68,16 @@ export default function Dashboard() {
       />
 
       {/* Main Content Area - Standardized layout */}
-      <main className="flex-1 overflow-y-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
+      <main className="flex-1 overflow-y-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8 relative z-10 bg-(--bg-main) text-(--text-main)">
         <div className="max-w-7xl mx-auto space-y-7">
           
           {/* Header row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-(--border-main)">
             <div>
-              <h1 className="text-2xl font-black text-white flex items-center gap-2 tracking-tight">
+              <h1 className="text-2xl font-black text-(--text-main) flex items-center gap-2 tracking-tight">
                 Welcome back! <Sparkles className="w-5 h-5 text-teal-400" />
               </h1>
-              <p className="text-xs text-slate-500 mt-1">Software Engineering · Daffodil International University</p>
+              <p className="text-xs text-(--text-muted) mt-1">Software Engineering · Daffodil International University</p>
             </div>
             <div className="flex items-center gap-2 bg-teal-500/8 border border-teal-500/20 px-3 py-2 rounded-xl">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -127,13 +127,13 @@ export default function Dashboard() {
                 bar: { w: 0, color: 'from-amber-400 to-orange-400' }
               },
             ].map(({ label, icon: Icon, value, sub, subColor, accent, bar }) => (
-              <div key={label} className={`bg-[#0a1525] border ${accent} rounded-2xl p-5 space-y-3 hover:shadow-lg transition-all`}>
+              <div key={label} className={`bg-(--bg-surface) border ${accent} border-(--border-main) rounded-2xl p-5 space-y-3 hover:shadow-lg transition-all`}>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-medium">{label}</span>
-                  <Icon className="w-4 h-4 text-slate-600" />
+                  <span className="text-xs text-(--text-muted) font-medium">{label}</span>
+                  <Icon className="w-4 h-4 text-slate-400" />
                 </div>
-                <p className="text-2xl font-black text-white tracking-tight">{value}</p>
-                <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                <p className="text-2xl font-black text-(--text-main) tracking-tight">{value}</p>
+                <div className="h-1 bg-white/5 dark:bg-white/5 light:bg-black/5 rounded-full overflow-hidden">
                   <div className={`h-full bg-gradient-to-r ${bar.color} rounded-full transition-all duration-700`} style={{ width: `${bar.w}%` }} />
                 </div>
                 <p className={`text-[10px] font-medium ${subColor}`}>{sub}</p>
@@ -145,16 +145,16 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
             {/* Sliders Area */}
-            <div className="lg:col-span-7 bg-[#0a1525] border border-white/6 rounded-2xl p-6 space-y-6">
-              <div className="flex items-center justify-between pb-4 border-b border-white/6">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+            <div className="lg:col-span-7 bg-(--bg-surface) border border-(--border-main) rounded-2xl p-6 space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-(--border-main)">
+                <h3 className="text-sm font-bold text-(--text-main) flex items-center gap-2">
                   <Sliders className="w-4 h-4 text-teal-400" /> Live Grade Predictor
                 </h3>
-                <span className="text-[10px] font-mono text-slate-600 bg-white/3 border border-white/6 px-2.5 py-1 rounded-lg">
+                <span className="text-[10px] font-mono text-(--text-muted) bg-white/3 border border-(--border-main) px-2.5 py-1 rounded-lg">
                   DIU_SWE v4.0
                 </span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-(--text-muted) leading-relaxed">
                 Drag sliders to simulate your marks. Grade letter and GPA points update instantly using DIU's official grading rubric.
               </p>
 
@@ -168,10 +168,10 @@ export default function Dashboard() {
                 ].map(({ label, max, val, set }) => (
                   <div key={label}>
                     <div className="flex justify-between text-xs mb-2">
-                      <span className="text-slate-300 font-medium">{label}</span>
-                      <span className="font-bold text-teal-400">{val} <span className="text-slate-600 font-normal">/ {max}</span></span>
+                      <span className="text-(--text-muted) font-medium">{label}</span>
+                      <span className="font-bold text-teal-400">{val} <span className="text-(--text-muted) font-normal">/ {max}</span></span>
                     </div>
-                    <div className="relative h-2 bg-white/5 rounded-full overflow-visible">
+                    <div className="relative h-2 bg-white/5 dark:bg-white/5 light:bg-black/5 rounded-full overflow-visible">
                       <div
                         className="absolute top-0 left-0 h-full bg-gradient-to-r from-teal-500 to-cyan-400 rounded-full transition-all"
                         style={{ width: `${(val / max) * 100}%` }}
@@ -186,15 +186,15 @@ export default function Dashboard() {
                 ))}
               </div>
 
-              <div className="pt-4 border-t border-white/5 grid grid-cols-3 text-center gap-3">
+              <div className="pt-4 border-t border-(--border-main) grid grid-cols-3 text-center gap-3">
                 {[
                   ['Total Marks', `${totalMarks} / 100`],
                   ['Grade Points', `${gradeInfo.points.toFixed(2)} / 4.00`],
                   ['Percentage', `${totalMarks}%`],
                 ].map(([k, v]) => (
-                  <div key={k} className="bg-white/3 rounded-xl py-3 border border-white/5">
-                    <p className="text-[10px] text-slate-500 mb-1">{k}</p>
-                    <p className="text-sm font-black text-white">{v}</p>
+                  <div key={k} className="bg-white/3 dark:bg-white/3 light:bg-black/3 rounded-xl py-3 border border-(--border-main)">
+                    <p className="text-[10px] text-(--text-muted) mb-1">{k}</p>
+                    <p className="text-sm font-black text-(--text-main)">{v}</p>
                   </div>
                 ))}
               </div>
@@ -204,12 +204,12 @@ export default function Dashboard() {
             <div className="lg:col-span-5 flex flex-col gap-5">
               
               {/* Grade card */}
-              <div className={`bg-[#0a1525] border border-white/6 rounded-2xl p-6 flex flex-col gap-5 flex-1 relative overflow-hidden`}>
+              <div className={`bg-(--bg-surface) border border-(--border-main) rounded-2xl p-6 flex flex-col gap-5 flex-1 relative overflow-hidden`}>
                 <div className={`absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl pointer-events-none ${gradeInfo.bg} opacity-40`} />
 
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Projected Grade</span>
-                  <Target className="w-4 h-4 text-slate-600" />
+                  <span className="text-xs text-(--text-muted) font-semibold uppercase tracking-wider">Projected Grade</span>
+                  <Target className="w-4 h-4 text-slate-400" />
                 </div>
 
                 <div className="flex items-center gap-5">
@@ -218,10 +218,10 @@ export default function Dashboard() {
                     <span className={`text-[10px] font-bold ${gradeInfo.text} opacity-80 mt-0.5`}>{gradeInfo.label}</span>
                   </div>
                   <div className="space-y-1.5">
-                    <p className="text-xs text-slate-400">Grade Points</p>
+                    <p className="text-xs text-(--text-muted)">Grade Points</p>
                     <p className={`text-2xl font-black ${gradeInfo.text}`}>{gradeInfo.points.toFixed(2)}</p>
-                    <p className="text-xs text-slate-500">Score: <span className="text-white font-bold">{totalMarks}/100</span></p>
-                    <div className="h-1.5 w-32 bg-white/5 rounded-full overflow-hidden mt-2">
+                    <p className="text-xs text-(--text-muted)">Score: <span className="text-(--text-main) font-bold">{totalMarks}/100</span></p>
+                    <div className="h-1.5 w-32 bg-white/5 dark:bg-white/5 light:bg-black/5 rounded-full overflow-hidden mt-2">
                       <div className={`h-full bg-gradient-to-r ${gradeInfo.bar} rounded-full transition-all duration-500`} style={{ width: `${totalMarks}%` }} />
                     </div>
                   </div>
@@ -244,7 +244,7 @@ export default function Dashboard() {
                   }
                 </div>
 
-                <Link to="/chat" className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/4 border border-white/8 hover:bg-white/7 text-xs font-semibold text-slate-300 transition-all">
+                <Link to="/chat" className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/4 border border-(--border-main) hover:bg-white/7 text-xs font-semibold text-(--text-muted) transition-all">
                   Consult AI Advisor Bot <ChevronRight className="w-3.5 h-3.5 text-teal-400" />
                 </Link>
               </div>
@@ -259,12 +259,12 @@ export default function Dashboard() {
                   { to: '/profile', icon: User, label: 'Profile', sub: 'View student info', color: 'indigo' },
                 ].map(({ to, icon: Icon, label, sub, color }) => (
                   <Link key={to} to={to}
-                    className={`bg-[#0a1525] border border-${color}-500/15 rounded-2xl p-4 hover:border-${color}-500/35 hover:bg-${color}-500/5 transition-all group`}>
+                    className={`bg-(--bg-surface) border border-${color}-500/15 rounded-2xl p-4 hover:border-${color}-500/35 hover:bg-${color}-500/5 transition-all group`}>
                     <div className={`w-8 h-8 rounded-lg bg-${color}-500/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
                       <Icon className={`w-4 h-4 text-${color}-400`} />
                     </div>
-                    <p className="text-xs font-bold text-white">{label}</p>
-                    <p className="text-[10px] text-slate-500 mt-0.5">{sub}</p>
+                    <p className="text-xs font-bold text-(--text-main)">{label}</p>
+                    <p className="text-[10px] text-(--text-muted) mt-0.5">{sub}</p>
                   </Link>
                 ))}
               </div>

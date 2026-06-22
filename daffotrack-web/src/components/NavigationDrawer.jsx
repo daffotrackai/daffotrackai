@@ -47,16 +47,16 @@ export default function NavigationDrawer({ open, setOpen }) {
 
       {/* Drawer / Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-[70] h-screen w-[280px] flex flex-col bg-[#0a1525] border-r border-white/6 transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 z-[70] h-screen w-[280px] flex flex-col bg-(--bg-card) border-r border-(--border-main) transition-transform duration-300 ease-in-out ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Header / Logo */}
-        <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-white/6">
+        <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-(--border-main)">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate(isLoggedIn ? '/dashboard' : '/home')}>
             <AppLogo size="md" />
             <div>
-              <span className="font-bold text-white text-sm">DaffoTrack AI</span>
+              <span className="font-bold text-(--text-main) text-sm">DaffoTrack AI</span>
               <span className="block text-[9px] text-teal-400 font-semibold uppercase tracking-widest">by Metamorph X</span>
             </div>
           </div>
@@ -72,12 +72,12 @@ export default function NavigationDrawer({ open, setOpen }) {
 
         {/* User Info Card (If logged in) */}
         {isLoggedIn && (
-          <div className="p-4 border-b border-white/5 bg-white/2">
+          <div className="p-4 border-b border-(--border-main) bg-white/2">
             <div className="flex items-center gap-3">
               <UserAvatar user={currentUser} size="md" />
               <div className="overflow-hidden">
-                <p className="text-xs font-bold text-white truncate">{currentUser.fullName || 'Student'}</p>
-                <p className="text-[10px] text-slate-500">{currentUser.studentId || 'DIU Portal'}</p>
+                <p className="text-xs font-bold text-(--text-main) truncate">{currentUser.fullName || 'Student'}</p>
+                <p className="text-[10px] text-(--text-muted)">{currentUser.studentId || 'DIU Portal'}</p>
               </div>
             </div>
           </div>
@@ -91,8 +91,8 @@ export default function NavigationDrawer({ open, setOpen }) {
               to={to}
               className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
                 isActive
-                  ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20 shadow-[inset_0_0_10px_rgba(45,212,191,0.05)]'
-                  : 'text-slate-400 hover:text-white hover:bg-white/4 border border-transparent'
+                  ? 'bg-teal-500/10 text-teal-500 border border-teal-500/20'
+                  : 'text-(--text-muted) hover:text-teal-500 hover:bg-teal-500/5 border border-transparent'
               }`}
             >
               {({ isActive }) => (
@@ -107,7 +107,7 @@ export default function NavigationDrawer({ open, setOpen }) {
         </nav>
 
         {/* Footer actions */}
-        <div className="p-4 border-t border-white/6 space-y-3">
+        <div className="p-4 border-t border-(--border-main) space-y-3">
           {isLoggedIn ? (
             <button
               type="button"
