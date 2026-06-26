@@ -53,7 +53,7 @@ export default function NavigationDrawer({ open, setOpen }) {
       >
         {/* Header / Logo */}
         <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-(--border-main)">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate(isLoggedIn ? '/dashboard' : '/home')}>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
             <AppLogo size="md" />
             <div>
               <span className="font-bold text-(--text-main) text-sm">DaffoTrack AI</span>

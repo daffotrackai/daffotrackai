@@ -11,14 +11,28 @@
     <style>
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #0B1A30; /* Primary background color */
-        color: #FFFFFF;
+        background-color: #ffffff;
+        color: #0f172a;
         overflow-x: hidden;
+      }
+      html.dark body {
+        background-color: #060e1a;
+        color: #ffffff;
       }
       h1, h2, h3, h4, h5, h6 {
         font-family: 'Plus Jakarta Sans', sans-serif;
       }
     </style>
+    <script>
+      (function() {
+        const theme = localStorage.getItem('daffotrack.theme') || 'light';
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
   </head>
   <body class="antialiased selection:bg-[#00E5FF]/30 selection:text-[#00E5FF]">
     <div id="root"></div>

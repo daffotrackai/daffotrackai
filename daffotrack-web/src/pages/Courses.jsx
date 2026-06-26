@@ -405,16 +405,16 @@ export default function Courses() {
 function MarkInput({ label, val, max, onChange }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-[9px] font-bold uppercase text-slate-600 px-1">{label}</span>
+      <span className="text-[9px] font-bold uppercase text-(--text-muted) px-1">{label}</span>
       <input
         type="number"
         min="0"
         max={max}
         value={val}
         onChange={(e) => onChange(e.target.value)}
-        className="w-14 rounded-lg border border-white/8 bg-[#060e1a] px-1.5 py-1.5 text-[11px] text-white outline-none focus:border-teal-500/40 text-center"
+        className="w-14 rounded-lg border border-(--border-main) bg-(--bg-main) px-1.5 py-1.5 text-[11px] text-(--text-main) outline-none focus:border-teal-500/40 text-center"
       />
-      <span className="text-[8px] text-slate-700 text-center">/{max}</span>
+      <span className="text-[8px] text-(--text-muted) text-center">/{max}</span>
     </div>
   );
 }
@@ -457,12 +457,12 @@ function toApiCourse(course) {
   };
 }
 
-function SummaryCard({ icon: Icon, label, value, tone = 'text-white' }) {
+function SummaryCard({ icon: Icon, label, value, tone = 'text-(--text-main)' }) {
   return (
-    <div className="rounded-2xl border border-white/8 bg-[#0a1525] p-5">
+    <div className="rounded-2xl border border-(--border-main) bg-(--bg-card) p-5">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-medium text-slate-500">{label}</p>
-        <Icon className="h-4 w-4 text-slate-600" />
+        <p className="text-xs font-medium text-(--text-muted)">{label}</p>
+        <Icon className="h-4 w-4 text-(--text-muted)" />
       </div>
       <p className={`mt-3 text-2xl font-black ${tone}`}>{value}</p>
     </div>

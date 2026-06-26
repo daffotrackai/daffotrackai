@@ -27,7 +27,7 @@ export default function Login() {
         body: JSON.stringify({ email, password, guest: false }),
       });
       setCurrentUser(response);
-      navigate('/profile');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Login failed. Please try again.');
     } finally {

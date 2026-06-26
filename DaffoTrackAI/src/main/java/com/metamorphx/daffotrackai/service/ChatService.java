@@ -26,6 +26,9 @@ public class ChatService {
     private final String groqApiKey;
     private final String groqModel;
     private final String groqChatUrl;
+    private final String xaiApiKey;
+    private final String xaiModel;
+    private final String xaiChatUrl;
     private final ChatHistoryService chatHistoryService;
 
     public ChatService(
@@ -35,6 +38,9 @@ public class ChatService {
             @Value("${groq.api-key:}") String groqApiKey,
             @Value("${groq.model:llama-3.3-70b-versatile}") String groqModel,
             @Value("${groq.chat-url:https://api.groq.com/openai/v1/chat/completions}") String groqChatUrl,
+            @Value("${xai.api-key:}") String xaiApiKey,
+            @Value("${xai.model:grok-beta}") String xaiModel,
+            @Value("${xai.chat-url:https://api.x.ai/v1/chat/completions}") String xaiChatUrl,
             ChatHistoryService chatHistoryService
     ) {
         this.objectMapper = new ObjectMapper();
@@ -44,6 +50,9 @@ public class ChatService {
         this.groqApiKey = groqApiKey;
         this.groqModel = groqModel;
         this.groqChatUrl = groqChatUrl;
+        this.xaiApiKey = xaiApiKey;
+        this.xaiModel = xaiModel;
+        this.xaiChatUrl = xaiChatUrl;
         this.chatHistoryService = chatHistoryService;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
@@ -68,6 +77,18 @@ public class ChatService {
         }
 
         String responseText;
+        if (StringUtils.hasText(xaiApiKey)) {
+            try {
+                responseText = askXai(request.studentId(), message);
+                saveAiMessage(request, responseText);
+                return new ChatResponse("success", responseText);
+            } catch (Exception exception) {
+                responseText = fallbackResponse(message) + "\n\nxAI service fallback: " + exception.getMessage();
+                saveAiMessage(request, responseText);
+                return new ChatResponse("fallback", responseText);
+            }
+        }
+
         if (StringUtils.hasText(groqApiKey)) {
             try {
                 responseText = askGroq(request.studentId(), message);
@@ -92,7 +113,7 @@ public class ChatService {
             }
         }
 
-        responseText = fallbackResponse(message) + "\n\nSet GROQ_API_KEY or OPENAI_API_KEY to enable real AI responses.";
+        responseText = fallbackResponse(message) + "\n\nSet XAI_API_KEY, GROQ_API_KEY, or OPENAI_API_KEY to enable real AI responses.";
         saveAiMessage(request, responseText);
         return new ChatResponse("fallback", responseText);
     }
@@ -107,6 +128,33 @@ public class ChatService {
                 responseText,
                 null
         );
+    }
+
+    private String askXai(String studentId, String message) throws Exception {
+        Map<String, Object> payload = Map.of(
+                "model", xaiModel,
+                "messages", List.of(
+                        Map.of("role", "system", "content", systemPrompt(studentId)),
+                        Map.of("role", "user", "content", message)
+                ),
+                "temperature", 0.3
+        );
+
+        String body = objectMapper.writeValueAsString(payload);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(xaiChatUrl))
+                .timeout(Duration.ofSeconds(45))
+                .header("Authorization", "Bearer " + xaiApiKey)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(body))
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new IllegalStateException("xAI request failed with status " + response.statusCode() + ": " + extractErrorMessage(response.body()));
+        }
+
+        return extractChatCompletionText(response.body());
     }
 
     private String askGroq(String studentId, String message) throws Exception {
@@ -140,13 +188,11 @@ public class ChatService {
     private String askOpenAi(String studentId, String message) throws Exception {
         Map<String, Object> payload = Map.of(
                 "model", model,
-                "instructions", systemPrompt(studentId),
-                "input", List.of(
-                        Map.of(
-                                "role", "user",
-                                "content", List.of(Map.of("type", "input_text", "text", message))
-                        )
-                )
+                "messages", List.of(
+                        Map.of("role", "system", "content", systemPrompt(studentId)),
+                        Map.of("role", "user", "content", message)
+                ),
+                "temperature", 0.7
         );
 
         String body = objectMapper.writeValueAsString(payload);
@@ -163,7 +209,7 @@ public class ChatService {
             throw new IllegalStateException(openAiErrorMessage(response.statusCode(), response.body()));
         }
 
-        return extractOutputText(response.body());
+        return extractChatCompletionText(response.body());
     }
 
     private String openAiErrorMessage(int statusCode, String responseBody) {
@@ -256,7 +302,7 @@ public class ChatService {
             }
         }
 
-        return "I received a response from Groq, but it did not include readable text.";
+        return "I received a response from the AI service, but it did not include readable text.";
     }
 
     private String systemPrompt(String studentId) {

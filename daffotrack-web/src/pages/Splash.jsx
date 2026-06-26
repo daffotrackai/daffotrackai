@@ -120,8 +120,8 @@ export default function Splash() {
           style={{ animation: 'fadeUp 0.8s 0.2s cubic-bezier(0.16,1,0.3,1) both' }}
         >
           <h1
-            className="font-extrabold leading-none"
-            style={{ fontSize: 52, letterSpacing: '-0.03em', color: '#fff' }}
+            className="font-extrabold leading-none text-(--text-main)"
+            style={{ fontSize: 52, letterSpacing: '-0.03em' }}
           >
             DaffoTrack
             <span
@@ -163,10 +163,9 @@ export default function Splash() {
           </div>
 
           <p
-            className="mt-3 font-medium"
+            className="mt-3 font-medium text-(--text-muted)"
             style={{
               fontSize: 11,
-              color: 'rgba(255,255,255,0.3)',
               letterSpacing: '0.32em',
               textTransform: 'uppercase',
               animation: 'fadeIn 0.8s 0.6s both',
@@ -185,9 +184,9 @@ export default function Splash() {
           }}
         >
           <div
+            className="bg-white/10 dark:bg-white/10 light:bg-black/10"
             style={{
               height: 2,
-              background: 'rgba(255,255,255,0.06)',
               borderRadius: 2,
               overflow: 'hidden',
               position: 'relative',
@@ -214,10 +213,10 @@ export default function Splash() {
         className="absolute bottom-8 flex flex-col items-center gap-1"
         style={{ animation: 'fadeIn 1s 1s both' }}
       >
-        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+        <p className="text-(--text-muted)" style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', opacity: 0.5 }}>
           Developed by
         </p>
-        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.3em', textTransform: 'uppercase', fontWeight: 600 }}>
+        <p className="text-(--text-main)" style={{ fontSize: 11, letterSpacing: '0.3em', textTransform: 'uppercase', fontWeight: 600, opacity: 0.8 }}>
           Metamorph-X
         </p>
       </div>
@@ -268,13 +267,14 @@ export default function Splash() {
 function OrbitalRing({ size, duration, reverse = false }) {
   return (
     <div
-      className="absolute rounded-full pointer-events-none"
+      className="absolute rounded-full pointer-events-none border-(--border-main)"
       style={{
         top: '50%', left: '50%',
         width: size, height: size,
-        border: '0.5px solid rgba(0,210,185,0.11)',
+        borderWidth: '0.5px',
         transform: 'translate(-50%,-50%)',
         animation: `spin ${duration}s linear infinite${reverse ? ' reverse' : ''}`,
+        opacity: 0.5,
       }}
     />
   );

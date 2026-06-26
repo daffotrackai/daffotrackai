@@ -59,7 +59,7 @@ export default function Register() {
     try {
       const response = await apiRequest('/api/users/register', { method: 'POST', body: payload });
       setCurrentUser(response);
-      navigate('/profile');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Registration failed.');
       setStep(1);
