@@ -154,13 +154,14 @@ export default function Courses() {
   };
 
   const addFromCatalog = (item) => {
+    setSemesterFilter('All Semesters');
     setCourses((items) => [
       {
         id: `draft-${Date.now()}`,
         code: item.code,
         title: item.name,
         credit: item.credit,
-        semesterName: semesterFilter === 'All Semesters' ? CURRENT_SEMESTER : semesterFilter,
+        semesterName: CURRENT_SEMESTER,
         mid: 0, quiz: 0, classTest: 0, assignment: 0, attendance: 0, presentation: 0, final: 0,
         labPerformance: 0, labReport: 0,
         attendancePercent: 0, isDraft: true
@@ -171,13 +172,14 @@ export default function Courses() {
   };
 
   const addManual = () => {
+    setSemesterFilter('All Semesters');
     setCourses((items) => [
       {
         id: `draft-${Date.now()}`,
         code: 'NEW-101',
         title: 'New Course',
         credit: 3,
-        semesterName: semesterFilter === 'All Semesters' ? CURRENT_SEMESTER : semesterFilter,
+        semesterName: CURRENT_SEMESTER,
         mid: 0, quiz: 0, classTest: 0, assignment: 0, attendance: 0, presentation: 0, final: 0,
         labPerformance: 0, labReport: 0,
         attendancePercent: 0, isDraft: true
@@ -241,12 +243,19 @@ export default function Courses() {
   };
 
   const deleteCourse = async (course) => {
-    if (course.isDraft) { setCourses((items) => items.filter((item) => item.id !== course.id)); return; }
+    if (course.isDraft) {
+      setCourses((items) => items.filter((item) => item.id !== course.id));
+      addToast('Draft removed.', 'info');
+      return;
+    }
     setSavingId(course.id);
     try {
       await apiRequest(`/api/courses/${course.id}?userId=${currentUser.userId}`, { method: 'DELETE' });
       setCourses((items) => items.filter((item) => item.id !== course.id));
-    } catch (err) {} finally { setSavingId(null); }
+      addToast(`${course.code} deleted successfully!`, 'success');
+    } catch (err) {
+      // Error is handled by apiRequest emitting event
+    } finally { setSavingId(null); }
   };
 
   return (
@@ -563,7 +572,7 @@ function fromApiCourse(course) {
     id: course.id,
     code: course.code || '',
     title: course.title || '',
-    credit: course.credit || 3,
+    credit: course.credit || 3.0,
     semesterName: course.semesterName || '',
     mid: course.midtermMarks || 0,
     quiz: course.quizMarks || 0,

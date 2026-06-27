@@ -43,6 +43,7 @@ export async function apiRequest(path, options = {}) {
     throw new Error(errorMessage);
   }
 
+  if (response.status === 204) return null;
   return response.json();
 }
 
