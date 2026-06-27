@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { apiRequest, buildApiUrl } from '../lib/api';
 import { getCurrentUser, setCurrentUser } from '../lib/session';
+import { useToast } from '../lib/ToastContext';
 import PageTopBar from '../components/PageTopBar';
 
 const PROFILE_FIELDS = [
@@ -30,6 +31,7 @@ const PROFILE_FIELDS = [
 export default function Profile() {
   const navigate = useNavigate();
   const currentUser = useMemo(() => getCurrentUser(), []);
+  const { addToast } = useToast();
   // MainLayout থেকে ড্রয়ারের স্টেট রিসিভ করা হচ্ছে
   const { drawerOpen, setDrawerOpen } = useOutletContext();
 
@@ -85,9 +87,10 @@ export default function Profile() {
       setProfileImage(null);
       setPreviewUrl(null);
       setSaved(true);
+      addToast('Profile image updated successfully!', 'success');
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
-      setError(err.message || 'Failed to update profile image.');
+      // apiRequest already dispatches a global toast for errors
     } finally {
       setSavingImage(false);
     }
@@ -113,9 +116,10 @@ export default function Profile() {
       setCurrentUser({ ...currentUser, ...updated });
       setEditingProfile(false);
       setSaved(true);
+      addToast('Profile updated successfully!', 'success');
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
-      setError(err.message || 'Failed to update profile information.');
+      // apiRequest already dispatches a global toast for errors
     } finally {
       setSavingProfile(false);
     }
@@ -197,18 +201,27 @@ export default function Profile() {
 
                 {/* Avatar */}
                 <div className="flex flex-col items-center gap-4">
-                  <div className="relative">
-                    <div className="w-32 h-32 rounded-2xl bg-(--bg-main) border border-(--border-main) flex items-center justify-center overflow-hidden shadow-[0_0_30px_rgba(45,212,191,0.1)]">
+                  <div className="relative group">
+                    <div className="w-32 h-32 rounded-2xl bg-(--bg-main) border border-(--border-main) flex items-center justify-center overflow-hidden shadow-[0_0_30px_rgba(45,212,191,0.1)] relative">
                       {(previewUrl || imageUrl)
                         ? <img src={previewUrl || imageUrl} alt={displayedProfile.fullName} className="w-full h-full object-cover" />
                         : <User className="w-14 h-14 text-(--text-muted)" />
                       }
+
+                      {/* Loading Overlay inside the image box */}
+                      {savingImage && (
+                        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center z-20">
+                          <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      )}
                     </div>
-                    <label htmlFor="photo-update" className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center cursor-pointer hover:bg-teal-400 transition-colors shadow-lg">
-                      <Camera className="w-3.5 h-3.5 text-white" />
-                    </label>
+                    {!savingImage && (
+                      <label htmlFor="photo-update" className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center cursor-pointer hover:bg-teal-400 transition-colors shadow-lg z-30">
+                        <Camera className="w-3.5 h-3.5 text-white" />
+                      </label>
+                    )}
                   </div>
-                  <input id="photo-update" type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+                  <input id="photo-update" type="file" accept="image/*" className="hidden" onChange={handleImageChange} disabled={savingImage} />
 
                   <div className="text-center">
                     <h2 className="text-lg font-black text-(--text-main)">{displayedProfile.fullName}</h2>

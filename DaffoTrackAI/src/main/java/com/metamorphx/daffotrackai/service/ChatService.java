@@ -11,6 +11,12 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+
+// Spring AI Imports for RAG
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.VectorStore;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -31,6 +37,9 @@ public class ChatService {
     private final String xaiChatUrl;
     private final ChatHistoryService chatHistoryService;
 
+    // Pinecone VectorStore initialization
+    private final VectorStore vectorStore;
+
     public ChatService(
             @Value("${openai.api-key:}") String apiKey,
             @Value("${openai.model:gpt-5.5}") String model,
@@ -41,7 +50,8 @@ public class ChatService {
             @Value("${xai.api-key:}") String xaiApiKey,
             @Value("${xai.model:grok-beta}") String xaiModel,
             @Value("${xai.chat-url:https://api.x.ai/v1/chat/completions}") String xaiChatUrl,
-            ChatHistoryService chatHistoryService
+            ChatHistoryService chatHistoryService,
+            VectorStore vectorStore // Injected VectorStore
     ) {
         this.objectMapper = new ObjectMapper();
         this.apiKey = apiKey;
@@ -54,6 +64,7 @@ public class ChatService {
         this.xaiModel = xaiModel;
         this.xaiChatUrl = xaiChatUrl;
         this.chatHistoryService = chatHistoryService;
+        this.vectorStore = vectorStore;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
@@ -130,11 +141,36 @@ public class ChatService {
         );
     }
 
+    // Similarity Search Method for RAG
+    private String getDIURulesFromPinecone(String message) {
+        try {
+            List<Document> results = vectorStore.similaritySearch(
+                    SearchRequest.query(message).withTopK(3)
+            );
+
+            if (results == null || results.isEmpty()) {
+                return "";
+            }
+
+            StringBuilder contextBuilder = new StringBuilder();
+            contextBuilder.append("\n\n[Important Context from DIU Knowledge Base]:\n");
+            for (Document doc : results) {
+                contextBuilder.append("- ").append(doc.getContent()).append("\n");
+            }
+            return contextBuilder.toString();
+        } catch (Exception e) {
+            System.out.println("Vector DB Search Failed: " + e.getMessage());
+            return ""; // Failsafe: if DB fails, return empty context
+        }
+    }
+
     private String askXai(String studentId, String message) throws Exception {
+        String dbContext = getDIURulesFromPinecone(message); // Fetch Context
+
         Map<String, Object> payload = Map.of(
                 "model", xaiModel,
                 "messages", List.of(
-                        Map.of("role", "system", "content", systemPrompt(studentId)),
+                        Map.of("role", "system", "content", systemPrompt(studentId, dbContext)),
                         Map.of("role", "user", "content", message)
                 ),
                 "temperature", 0.3
@@ -158,10 +194,12 @@ public class ChatService {
     }
 
     private String askGroq(String studentId, String message) throws Exception {
+        String dbContext = getDIURulesFromPinecone(message); // Fetch Context
+
         Map<String, Object> payload = Map.of(
                 "model", groqModel,
                 "messages", List.of(
-                        Map.of("role", "system", "content", systemPrompt(studentId)),
+                        Map.of("role", "system", "content", systemPrompt(studentId, dbContext)),
                         Map.of("role", "user", "content", message)
                 ),
                 "temperature", 0.4,
@@ -186,10 +224,12 @@ public class ChatService {
     }
 
     private String askOpenAi(String studentId, String message) throws Exception {
+        String dbContext = getDIURulesFromPinecone(message); // Fetch Context
+
         Map<String, Object> payload = Map.of(
                 "model", model,
                 "messages", List.of(
-                        Map.of("role", "system", "content", systemPrompt(studentId)),
+                        Map.of("role", "system", "content", systemPrompt(studentId, dbContext)),
                         Map.of("role", "user", "content", message)
                 ),
                 "temperature", 0.7
@@ -305,7 +345,8 @@ public class ChatService {
         return "I received a response from the AI service, but it did not include readable text.";
     }
 
-    private String systemPrompt(String studentId) {
+    // System Prompt Updated to receive Database Context
+    private String systemPrompt(String studentId, String dbContext) {
         return """
                 You are DaffoTrack AI, an academic planning assistant for Daffodil International University students.
                 Keep answers practical, concise, and specific to academic planning, CGPA, course registration,
@@ -315,8 +356,16 @@ public class ChatService {
                 what you can infer from the provided context and ask for missing file contents only when necessary.
                 If a rule is uncertain, say that the student should verify with DIU administration or department office.
                 Never ask for passwords or sensitive private data.
+                
+                Use the provided [Important Context from DIU Knowledge Base] below to answer the user's questions accurately.
+                If the answer is not in the context, give a general logical answer but advise verifying with the department.
+                
                 Current student ID context: %s
-                """.formatted(StringUtils.hasText(studentId) ? studentId : "unknown");
+                %s
+                """.formatted(
+                StringUtils.hasText(studentId) ? studentId : "unknown",
+                dbContext == null ? "" : dbContext
+        );
     }
 
     private String fallbackResponse(String message) {

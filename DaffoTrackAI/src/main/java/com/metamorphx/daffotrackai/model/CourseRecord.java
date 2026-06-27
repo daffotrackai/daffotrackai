@@ -34,6 +34,8 @@ public class CourseRecord {
     @Column(nullable = false)
     private double credit;
 
+    private String semesterName;
+
     private double midtermMarks;
     private double quizMarks;
     private double assignmentMarks;
@@ -98,6 +100,14 @@ public class CourseRecord {
 
     public void setCredit(double credit) {
         this.credit = credit;
+    }
+
+    public String getSemesterName() {
+        return semesterName;
+    }
+
+    public void setSemesterName(String semesterName) {
+        this.semesterName = semesterName;
     }
 
     public double getMidtermMarks() {

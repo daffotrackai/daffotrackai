@@ -8,6 +8,7 @@ public record CourseRecordResponse(
         String code,
         String title,
         double credit,
+        String semesterName,
         double midtermMarks,
         double quizMarks,
         double assignmentMarks,

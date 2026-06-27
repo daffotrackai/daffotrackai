@@ -75,6 +75,7 @@ public class CourseRecordService {
         course.setCode(required(request.code(), "Course code is required"));
         course.setTitle(required(request.title(), "Course title is required"));
         course.setCredit(clamp(request.credit(), 0.5, 6));
+        course.setSemesterName(emptyToNull(request.semesterName()));
         course.setMidtermMarks(clamp(request.midtermMarks(), 0, 25));
         course.setQuizMarks(clamp(request.quizMarks(), 0, 15));
         course.setAssignmentMarks(clamp(request.assignmentMarks(), 0, 10));
@@ -96,6 +97,7 @@ public class CourseRecordService {
                 course.getCode(),
                 course.getTitle(),
                 course.getCredit(),
+                course.getSemesterName(),
                 course.getMidtermMarks(),
                 course.getQuizMarks(),
                 course.getAssignmentMarks(),
@@ -144,6 +146,10 @@ public class CourseRecordService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
         }
         return value.trim();
+    }
+
+    private String emptyToNull(String value) {
+        return StringUtils.hasText(value) ? value.trim() : null;
     }
 
     private double clamp(double value, double min, double max) {
