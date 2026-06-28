@@ -183,7 +183,7 @@ export default function Login() {
           {/* Trust badge */}
           <div className="mt-5 flex items-center justify-center gap-2 text-xs text-slate-500">
             <Shield className="w-3.5 h-3.5 text-teal-500/60" />
-            <span>Local calculations only. No portal data stored.</span>
+            <span>Portal data stored.</span>
           </div>
         </div>
       </main>

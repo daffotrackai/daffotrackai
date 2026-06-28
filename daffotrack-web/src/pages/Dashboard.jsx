@@ -20,10 +20,11 @@ export default function Dashboard() {
   // Live Grade Predictor States
   const [midterm, setMidterm] = useState(20);
   const [quiz, setQuiz] = useState(12);
-  const [assignment, setAssignment] = useState(8);
-  const [attendance, setAttendance] = useState(10);
+  const [assignment, setAssignment] = useState(4);
+  const [attendance, setAttendance] = useState(7);
+  const [presentation, setPresentation] = useState(6);
   const [finalExam, setFinalExam] = useState(30);
-  const totalMarks = midterm + quiz + assignment + attendance + finalExam;
+  const totalMarks = midterm + quiz + assignment + attendance + presentation + finalExam;
 
   useEffect(() => {
     let mounted = true;
@@ -179,9 +180,10 @@ export default function Dashboard() {
               <div className="space-y-6">
                 {[
                   { label: 'Midterm Exam', max: 25, val: midterm, set: setMidterm, icon: Target },
-                  { label: 'Quizzes & CTs', max: 15, val: quiz, set: setQuiz, icon: Award },
-                  { label: 'Assignments', max: 10, val: assignment, set: setAssignment, icon: FileText },
-                  { label: 'Attendance', max: 10, val: attendance, set: setAttendance, icon: Clock },
+                  { label: 'Quizzes', max: 15, val: quiz, set: setQuiz, icon: Award },
+                  { label: 'Assignments', max: 5, val: assignment, set: setAssignment, icon: FileText },
+                  { label: 'Attendance', max: 7, val: attendance, set: setAttendance, icon: Clock },
+                  { label: 'Presentation', max: 8, val: presentation, set: setPresentation, icon: User },
                   { label: 'Final Exam', max: 40, val: finalExam, set: setFinalExam, icon: GraduationCap },
                 ].map(({ label, max, val, set, icon: Icon }) => (
                   <div key={label} className="group">
