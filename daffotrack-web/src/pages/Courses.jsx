@@ -85,6 +85,7 @@ export default function Courses() {
   const [savingId, setSavingId] = useState(null);
   const [isSavingAll, setIsSavingAll] = useState(false);
   const [error, setError] = useState('');
+  const [courseToDelete, setCourseToDelete] = useState(null);
 
   useEffect(() => {
     if (!currentUser?.userId) return;
@@ -166,6 +167,17 @@ export default function Courses() {
   };
 
   const addFromCatalog = (item) => {
+    // Validation: prevent duplicate courses in the same semester
+    const isDuplicate = courses.some(
+      (c) => c.code === item.code && c.semesterName === semesterFilter
+    );
+
+    if (isDuplicate) {
+      addToast(`${item.code} is already added to ${semesterFilter}.`, 'warning');
+      setShowCatalog(false);
+      return;
+    }
+
     const newId = `draft-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     const newCourse = {
       id: newId,
@@ -179,7 +191,7 @@ export default function Courses() {
     };
     setCourses((items) => [newCourse, ...items]);
     setShowCatalog(false);
-    addToast(`${item.code} added to current view.`, 'info');
+    addToast(`${item.code} added to ${semesterFilter}.`, 'success');
   };
 
   const addManual = () => {
@@ -252,12 +264,19 @@ export default function Courses() {
     }
   };
 
-  const deleteCourse = async (course) => {
+  const requestDelete = (course) => {
     if (course.isDraft) {
       setCourses((items) => items.filter((item) => item.id !== course.id));
       addToast('Draft removed.', 'info');
       return;
     }
+    setCourseToDelete(course);
+  };
+
+  const confirmDelete = async () => {
+    if (!courseToDelete) return;
+    const course = courseToDelete;
+    setCourseToDelete(null);
     setSavingId(course.id);
     try {
       await apiRequest(`/api/courses/${course.id}?userId=${currentUser.userId}`, { method: 'DELETE' });
@@ -459,7 +478,7 @@ export default function Courses() {
                               <Save className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={() => deleteCourse(course)}
+                              onClick={() => requestDelete(course)}
                               disabled={savingId === course.id}
                               className="w-10 h-10 flex items-center justify-center rounded-2xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm border border-rose-500/20"
                             >
@@ -552,6 +571,37 @@ export default function Courses() {
                 </button>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {courseToDelete && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-(--bg-card) border border-(--border-main) w-full max-w-sm shadow-2xl rounded-3xl p-8 text-center space-y-6 animate-in zoom-in-95 duration-200">
+             <div className="w-16 h-16 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center justify-center text-rose-500 mx-auto">
+                <Trash2 className="w-8 h-8" />
+             </div>
+             <div>
+                <h3 className="text-xl font-black text-(--text-main) tracking-tight">Confirm Deletion</h3>
+                <p className="text-sm text-(--text-muted) mt-2 leading-relaxed">
+                   Are you sure you want to delete <span className="text-rose-500 font-bold">{courseToDelete.code}</span>? This action cannot be undone.
+                </p>
+             </div>
+             <div className="flex gap-3">
+                <button
+                  onClick={() => setCourseToDelete(null)}
+                  className="flex-1 h-12 rounded-2xl bg-(--bg-main) border border-(--border-main) text-sm font-bold text-(--text-main) hover:bg-white/5 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 h-12 rounded-2xl bg-rose-500 text-white text-sm font-black uppercase tracking-widest hover:bg-rose-600 transition-all shadow-lg shadow-rose-500/20"
+                >
+                  Delete
+                </button>
+             </div>
           </div>
         </div>
       )}

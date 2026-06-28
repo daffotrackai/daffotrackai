@@ -309,7 +309,7 @@ export default function Home() {
                     </div>
                     <div className="bg-(--bg-main) border border-(--border-main) rounded-xl rounded-tl-none p-3 text-xs text-(--text-main) leading-relaxed">
                       <span className="block text-[10px] font-bold text-teal-500 mb-1">DaffoTrack AI</span>
-                      You need 14 more attendance counts in SWE-312 to meet the 75% eligibility threshold. Don't miss Monday's lecture!
+                      You need 14 more attendance counts in <span className="font-bold">CSE226</span> to meet the 75% eligibility threshold. Don't miss Monday's lecture!
                     </div>
                   </div>
 
