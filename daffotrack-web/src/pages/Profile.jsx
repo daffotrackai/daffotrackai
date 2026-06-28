@@ -138,16 +138,16 @@ export default function Profile() {
 
   if (!displayedProfile?.userId) {
     return (
-      <div className="flex-1 flex items-center justify-center px-4 pt-24 pb-12">
-        <div className="max-w-md text-center bg-[#0a1525] border border-white/8 rounded-2xl p-10 shadow-2xl">
-          <div className="w-14 h-14 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 mx-auto mb-5">
+      <div className="flex-1 flex items-center justify-center px-4 pt-24 pb-12 bg-(--bg-main)">
+        <div className="max-w-md text-center bg-(--bg-card) border border-(--border-main) rounded-3xl p-10 shadow-2xl">
+          <div className="w-14 h-14 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-500 mx-auto mb-5">
             <User className="w-7 h-7" />
           </div>
-          <h1 className="text-2xl font-black text-white mb-3">No Profile Found</h1>
-          <p className="text-sm text-slate-400 mb-7">Please register or log in first to access your student profile.</p>
+          <h1 className="text-2xl font-black text-(--text-main) mb-3 tracking-tight">No Profile Found</h1>
+          <p className="text-sm text-(--text-muted) mb-7 font-medium">Please register or log in first to access your student profile.</p>
           <div className="flex flex-col sm:flex-row justify-center gap-3">
-            <Link to="/register" className="px-6 py-3 rounded-xl bg-teal-500 text-[#060e1a] font-bold text-sm hover:bg-teal-400 transition-all">Create Profile</Link>
-            <Link to="/login" className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-semibold text-sm hover:bg-white/8 transition-all">Login</Link>
+            <Link to="/register" className="px-6 py-3 rounded-xl bg-teal-500 text-white font-bold text-sm hover:bg-teal-400 transition-all shadow-[0_0_20px_rgba(45,212,191,0.2)]">Create Profile</Link>
+            <Link to="/login" className="px-6 py-3 rounded-xl bg-(--bg-main) border border-(--border-main) text-(--text-main) font-semibold text-sm hover:bg-teal-500/5 transition-all">Login</Link>
           </div>
         </div>
       </div>
@@ -202,10 +202,10 @@ export default function Profile() {
                 {/* Avatar */}
                 <div className="flex flex-col items-center gap-4">
                   <div className="relative group">
-                    <div className="w-32 h-32 rounded-2xl bg-(--bg-main) border border-(--border-main) flex items-center justify-center overflow-hidden shadow-[0_0_30px_rgba(45,212,191,0.1)] relative">
+                    <div className={`w-32 h-32 rounded-2xl border border-(--border-main) flex items-center justify-center overflow-hidden shadow-[0_0_30px_rgba(45,212,191,0.1)] relative transition-all ${(previewUrl || imageUrl) ? 'bg-transparent' : 'bg-teal-500/10 text-teal-500'}`}>
                       {(previewUrl || imageUrl)
                         ? <img src={previewUrl || imageUrl} alt={displayedProfile.fullName} className="w-full h-full object-cover" />
-                        : <User className="w-14 h-14 text-(--text-muted)" />
+                        : <User className="w-14 h-14" />
                       }
 
                       {/* Loading Overlay inside the image box */}

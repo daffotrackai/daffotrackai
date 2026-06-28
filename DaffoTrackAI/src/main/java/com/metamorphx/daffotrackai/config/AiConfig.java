@@ -9,21 +9,18 @@ import org.springframework.ai.embedding.EmbeddingRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.document.Document;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import java.util.List;
 import java.util.Optional;
 
 @Configuration
 public class AiConfig {
 
-    /**
-     * Provides a fallback EmbeddingModel to prevent startup failure.
-     */
     @Bean
-    @Primary
-    public EmbeddingModel embeddingModel() {
+    @ConditionalOnMissingBean(EmbeddingModel.class)
+    public EmbeddingModel fallbackEmbeddingModel() {
         return new EmbeddingModel() {
             @Override
             public float[] embed(String text) { return new float[1536]; }
@@ -34,24 +31,18 @@ public class AiConfig {
         };
     }
 
-    /**
-     * Provides a fallback ChatModel to prevent startup failure.
-     */
     @Bean
-    @Primary
-    public ChatModel chatModel() {
+    @ConditionalOnMissingBean(ChatModel.class)
+    public ChatModel fallbackChatModel() {
         return new ChatModel() {
             @Override
             public ChatResponse call(Prompt prompt) { return null; }
         };
     }
 
-    /**
-     * Provides a fallback VectorStore to prevent startup failure.
-     */
     @Bean
-    @Primary
-    public VectorStore vectorStore() {
+    @ConditionalOnMissingBean(VectorStore.class)
+    public VectorStore fallbackVectorStore() {
         return new VectorStore() {
             @Override
             public void add(List<Document> documents) {}

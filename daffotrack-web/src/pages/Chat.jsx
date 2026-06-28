@@ -3,11 +3,12 @@ import { useOutletContext } from 'react-router-dom';
 import {
   Bell, BookOpen, Bot, Check, Copy, FileText, GraduationCap, Image as ImageIcon,
   Mic2, Paperclip, Plus, Send, Share2, ShieldAlert, Sparkles, Trash2, User,
-  Volume2, VolumeX, X
+  Volume2, VolumeX, X, Edit2
 } from 'lucide-react';
-import { apiRequest } from '../lib/api';
+import { apiRequest, buildApiUrl } from '../lib/api';
 import PageTopBar from '../components/PageTopBar';
-import { getCurrentUser } from '../lib/session';
+import UserAvatar from '../components/UserAvatar';
+import useCurrentUserProfile from '../lib/useCurrentUserProfile';
 
 const GUEST_HISTORY_KEY = 'daffotrack.guest_chats';
 
@@ -124,7 +125,7 @@ function readAsText(file) {
 
 export default function Chat() {
   const { drawerOpen, setDrawerOpen } = useOutletContext();
-  const currentUser = getCurrentUser();
+  const currentUser = useCurrentUserProfile();
   const isGuest = !currentUser?.userId;
   const ownerQuery = useMemo(() => historyKey(currentUser), [currentUser?.userId, currentUser?.studentId]);
 
@@ -138,6 +139,8 @@ export default function Chat() {
   const [copiedId, setCopiedId] = useState(null);
   const [speakingId, setSpeakingId] = useState(null);
   const [ttsEnabled, setTtsEnabled] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editingTitle, setEditingTitle] = useState('');
 
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -255,7 +258,14 @@ export default function Chat() {
 
   const deleteConversation = async (id) => {
     if (!isGuest) {
-      await apiRequest(`/api/chat/conversations/${id}?${ownerQuery}`, { method: 'DELETE' });
+      try {
+        await apiRequest(`/api/chat/conversations/${id}?${ownerQuery}`, { method: 'DELETE' });
+        addToast('Conversation deleted.', 'info');
+      } catch (err) {
+        return; // error handled by apiRequest
+      }
+    } else {
+      addToast('Conversation deleted.', 'info');
     }
     const nextItems = conversations.filter((item) => item.id !== id);
     if (!nextItems.length) {
@@ -266,6 +276,46 @@ export default function Chat() {
     if (id === activeConversationId) {
       openConversation(nextItems[0].id);
     }
+  };
+
+  const startEditTitle = (conversation) => {
+    setEditingId(conversation.id);
+    setEditingTitle(conversation.title);
+  };
+
+  const cancelEditTitle = () => {
+    setEditingId(null);
+    setEditingTitle('');
+  };
+
+  const saveEditTitle = async (id) => {
+    const title = editingTitle.trim();
+    if (!title) { cancelEditTitle(); return; }
+
+    const now = new Date().toISOString();
+
+    if (!isGuest) {
+      try {
+        const response = await apiRequest(`/api/chat/conversations/${id}?${ownerQuery}`, {
+          method: 'PUT',
+          body: JSON.stringify({ title }),
+        });
+
+        // Use server values if returned
+        setConversations((items) => items.map((c) =>
+          c.id === id ? { ...c, title: response?.title || title, updatedAt: response?.updatedAt || now } : c
+        ));
+      } catch (err) {
+        addToast('Failed to update title.', 'error');
+        return;
+      }
+    } else {
+      setConversations((items) => items.map((c) => c.id === id ? { ...c, title, updatedAt: now } : c));
+    }
+
+    setEditingId(null);
+    setEditingTitle('');
+    addToast('Title updated.', 'success');
   };
 
   const appendMessage = (message) => {
@@ -467,25 +517,80 @@ export default function Chat() {
             {conversations.map((conversation) => (
               <div
                 key={conversation.id}
-                className={`group flex items-center gap-2 rounded-xl border px-3 py-2.5 transition-all ${
+                className={`group flex items-center gap-2 rounded-xl border px-3 py-2 transition-all ${
                   conversation.id === activeConversationId
                     ? 'border-teal-500/25 bg-teal-500/10'
                     : 'border-(--border-main) bg-(--bg-main) hover:bg-teal-500/5'
                 }`}
               >
-                <button type="button" onClick={() => openConversation(conversation.id)} className="min-w-0 flex-1 text-left">
-                  <p className="truncate text-xs font-bold text-(--text-main)">{conversation.title}</p>
-                  <p className="mt-0.5 text-[10px] text-(--text-muted)">
-                    {new Date(conversation.updatedAt).toLocaleDateString()}
-                  </p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => deleteConversation(conversation.id)}
-                  className="rounded-lg p-1.5 text-(--text-muted) opacity-0 transition-all hover:bg-red-500/10 hover:text-red-500 group-hover:opacity-100"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                {editingId === conversation.id ? (
+                   <div className="flex-1 flex items-center gap-1.5 animate-in fade-in slide-in-from-left-2 duration-300">
+                      <input
+                        autoFocus
+                        value={editingTitle}
+                        onChange={(e) => setEditingTitle(e.target.value)}
+                        onKeyDown={(e) => {
+                          if(e.key === 'Enter') { e.preventDefault(); saveEditTitle(conversation.id); }
+                          if(e.key === 'Escape') cancelEditTitle();
+                        }}
+                        className="min-w-0 flex-1 bg-white/5 border border-teal-500/30 rounded-lg px-2 py-1 text-xs font-bold text-(--text-main) focus:ring-1 focus:ring-teal-500/50 outline-none"
+                        placeholder="Enter title..."
+                      />
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          type="button"
+                          onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            saveEditTitle(conversation.id);
+                          }}
+                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-teal-500/20 text-teal-500 hover:bg-teal-500 hover:text-white transition-all shadow-sm cursor-pointer z-[60]"
+                          title="Save title"
+                        >
+                          <Check className="w-3.5 h-3.5 font-bold" />
+                        </button>
+                        <button
+                          type="button"
+                          onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            cancelEditTitle();
+                          }}
+                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm cursor-pointer z-[60]"
+                          title="Cancel"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                   </div>
+                ) : (
+                  <>
+                    <button type="button" onClick={() => openConversation(conversation.id)} className="min-w-0 flex-1 text-left">
+                      <p className="truncate text-xs font-bold text-(--text-main)">{conversation.title}</p>
+                      <p className="mt-0.5 text-[10px] text-(--text-muted)">
+                        {new Date(conversation.updatedAt).toLocaleDateString()}
+                      </p>
+                    </button>
+                    <div className="flex items-center opacity-0 group-hover:opacity-100 transition-all">
+                      <button
+                        type="button"
+                        onClick={() => startEditTitle(conversation)}
+                        className="rounded-lg p-1.5 text-(--text-muted) hover:bg-teal-500/10 hover:text-teal-500"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => deleteConversation(conversation.id)}
+                        className="rounded-lg p-1.5 text-(--text-muted) hover:bg-red-500/10 hover:text-red-500"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>
@@ -500,12 +605,14 @@ export default function Chat() {
           <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-5">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex items-end gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mb-0.5 ${
-                  msg.sender === 'ai'
-                    ? 'bg-teal-500/15 border border-teal-500/25 text-teal-500'
-                    : 'bg-white/10 dark:bg-white/10 light:bg-black/10 border border-(--border-main) text-(--text-muted)'
-                }`}>
-                  {msg.sender === 'ai' ? <Bot className="w-3.5 h-3.5" /> : <User className="w-3.5 h-3.5" />}
+                <div className="mb-0.5 shrink-0">
+                  {msg.sender === 'ai' ? (
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center bg-teal-500/15 border border-teal-500/25 text-teal-500 overflow-hidden">
+                      <Bot className="w-3.5 h-3.5" />
+                    </div>
+                  ) : (
+                    <UserAvatar user={currentUser} size="sm" className="w-7 h-7 !p-0" />
+                  )}
                 </div>
 
                 <div className="max-w-[82%] sm:max-w-[70%]">

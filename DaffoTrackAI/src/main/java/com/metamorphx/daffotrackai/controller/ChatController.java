@@ -109,6 +109,16 @@ Content-Type: application/json
         return chatHistoryService.getConversation(id, userId, studentId);
     }
 
+    @PutMapping("/conversations/{id}")
+    public ChatConversationResponse updateConversation(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) String studentId,
+            @RequestBody ChatConversationRequest request
+    ) {
+        return chatHistoryService.updateConversation(id, userId, studentId, request);
+    }
+
     @DeleteMapping("/conversations/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteConversation(

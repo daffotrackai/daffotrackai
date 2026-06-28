@@ -159,10 +159,10 @@ export default function Login() {
             <button
               onClick={handleGuestLogin}
               disabled={isLoading}
-              className="w-full flex justify-center items-center gap-2 py-3 rounded-xl text-xs font-semibold text-(--text-muted) bg-white/5 border border-(--border-main) hover:bg-white/10 hover:text-(--text-main) transition-all disabled:opacity-50"
+              className="w-full flex justify-center items-center gap-2 py-3 rounded-xl text-xs font-semibold text-(--text-muted) bg-(--bg-main) border border-(--border-main) hover:bg-teal-500/5 hover:text-(--text-main) transition-all disabled:opacity-50"
             >
               <Sparkles className="w-4 h-4 text-teal-500" />
-              Explore as Guest / Sandbox User
+              Explore as Guest User
             </button>
 
             <p className="mt-5 text-center text-xs text-(--text-muted)">

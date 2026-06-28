@@ -9,7 +9,7 @@ export default function Splash() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const currentUser = getCurrentUser();
-      navigate(hasCurrentUserSession(currentUser) ? '/dashboard' : '/login', { replace: true });
+      navigate(hasCurrentUserSession(currentUser) ? '/dashboard' : '/home', { replace: true });
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -171,7 +171,7 @@ export default function Splash() {
               animation: 'fadeIn 0.8s 0.6s both',
             }}
           >
-            Intelligent Fleet Intelligence
+            A Smart Academic Companion
           </p>
         </div>
 

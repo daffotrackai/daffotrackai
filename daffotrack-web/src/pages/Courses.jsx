@@ -11,14 +11,18 @@ import { useToast } from '../lib/ToastContext';
 const CURRENT_SEMESTER = (() => {
   const now = new Date();
   const year = now.getFullYear();
-  const month = now.getMonth(); // 0-11
-  if (month < 5) return `Spring ${year}`;
-  if (month < 9) return `Summer ${year}`;
+  const month = now.getMonth(); // 0-11 (Jan is 0)
+
+  // Jan-Apr (0,1,2,3) -> Spring
+  if (month < 4) return `Spring ${year}`;
+  // May-Aug (4,5,6,7) -> Summer
+  if (month < 8) return `Summer ${year}`;
+  // Sep-Dec (8,9,10,11) -> Fall
   return `Fall ${year}`;
 })();
 
 function gradeFromMarks(marks, credit) {
-  const normalized = credit === 3.0 ? (marks / 115) * 100 : marks;
+  const normalized = credit === 3.0 ? marks : marks; // If CT is removed, total is 100
   if (normalized >= 80) return { letter: 'A+', point: 4.0, tone: 'text-emerald-500', status: 'Excellent' };
   if (normalized >= 75) return { letter: 'A', point: 3.75, tone: 'text-emerald-400', status: 'Strong' };
   if (normalized >= 70) return { letter: 'A-', point: 3.5, tone: 'text-cyan-500', status: 'Stable' };
@@ -38,7 +42,7 @@ function clamp(value, max) {
 
 function calculateTotal(course) {
   if (course.credit === 3.0) {
-    return (course.mid || 0) + (course.quiz || 0) + (course.classTest || 0) + (course.assignment || 0) + (course.attendance || 0) + (course.presentation || 0) + (course.final || 0);
+    return (course.mid || 0) + (course.quiz || 0) + (course.assignment || 0) + (course.attendance || 0) + (course.presentation || 0) + (course.final || 0);
   }
   if (course.credit === 1.5) {
     return (course.labPerformance || 0) + (course.labReport || 0) + (course.attendance || 0) + (course.final || 0);
@@ -55,7 +59,7 @@ export default function Courses() {
   const [catalog, setCatalog] = useState([]);
   const [showCatalog, setShowCatalog] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [semesterFilter, setSemesterFilter] = useState('All Semesters');
+  const [semesterFilter, setSemesterFilter] = useState(CURRENT_SEMESTER);
 
   const admissionYear = useMemo(() => {
     if (currentUser?.admissionDate) {
@@ -106,19 +110,21 @@ export default function Courses() {
 
   const existingSemesters = useMemo(() => {
     const sems = new Set(courses.map(c => c.semesterName).filter(Boolean));
-    return ['All Semesters', ...Array.from(sems).sort((a, b) => {
-        // Sort semesters chronologically (desc)
+    sems.add(CURRENT_SEMESTER);
+    if (semesterFilter && !sems.has(semesterFilter)) sems.add(semesterFilter);
+
+    return Array.from(sems).sort((a, b) => {
         const [semA, yearA] = a.split(' ');
         const [semB, yearB] = b.split(' ');
         if (yearA !== yearB) return yearB - yearA;
         const order = { 'Fall': 3, 'Summer': 2, 'Spring': 1 };
         return order[semB] - order[semA];
-    })];
-  }, [courses]);
+    });
+  }, [courses, semesterFilter]);
 
   const filteredCourses = useMemo(() => {
     return courses.filter(c => {
-      const matchesSemester = semesterFilter === 'All Semesters' || !c.semesterName || c.semesterName === semesterFilter;
+      const matchesSemester = c.semesterName === semesterFilter;
       const matchesSearch = !searchQuery ||
         c.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -141,51 +147,55 @@ export default function Courses() {
   }, [filteredCourses]);
 
   const updateCourse = (id, field, value) => {
-    const maxByField = {
-      credit: 6, mid: 25, quiz: 15, classTest: 15, assignment: 10,
-      attendance: 10, presentation: 10, final: 40,
-      labPerformance: 30, labReport: 30
-    };
-    setCourses((items) => items.map((course) => (
-      course.id === id
-        ? { ...course, [field]: field in maxByField ? clamp(value, maxByField[field]) : value }
-        : course
-    )));
+    setCourses((items) => items.map((course) => {
+      if (course.id !== id) return course;
+
+      let max = 100;
+      if (field === 'mid') max = 25;
+      if (field === 'quiz') max = 15;
+      if (field === 'assignment') max = 5;
+      if (field === 'attendance') max = course.credit === 3.0 ? 7 : 10;
+      if (field === 'presentation') max = 8;
+      if (field === 'final') max = 40;
+      if (field === 'labPerformance') max = 25;
+      if (field === 'labReport') max = 25;
+      if (field === 'credit') max = 6;
+
+      return { ...course, [field]: ['code', 'title', 'semesterName'].includes(field) ? value : clamp(value, max) };
+    }));
   };
 
   const addFromCatalog = (item) => {
-    setSemesterFilter('All Semesters');
-    setCourses((items) => [
-      {
-        id: `draft-${Date.now()}`,
-        code: item.code,
-        title: item.name,
-        credit: item.credit,
-        semesterName: CURRENT_SEMESTER,
-        mid: 0, quiz: 0, classTest: 0, assignment: 0, attendance: 0, presentation: 0, final: 0,
-        labPerformance: 0, labReport: 0,
-        attendancePercent: 0, isDraft: true
-      },
-      ...items,
-    ]);
+    const newId = `draft-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const newCourse = {
+      id: newId,
+      code: item.code,
+      title: item.name,
+      credit: item.credit,
+      semesterName: semesterFilter,
+      mid: 0, quiz: 0, assignment: 0, attendance: 0, presentation: 0, final: 0,
+      labPerformance: 0, labReport: 0,
+      attendancePercent: 0, isDraft: true
+    };
+    setCourses((items) => [newCourse, ...items]);
     setShowCatalog(false);
+    addToast(`${item.code} added to current view.`, 'info');
   };
 
   const addManual = () => {
-    setSemesterFilter('All Semesters');
-    setCourses((items) => [
-      {
-        id: `draft-${Date.now()}`,
-        code: 'NEW-101',
-        title: 'New Course',
-        credit: 3,
-        semesterName: CURRENT_SEMESTER,
-        mid: 0, quiz: 0, classTest: 0, assignment: 0, attendance: 0, presentation: 0, final: 0,
-        labPerformance: 0, labReport: 0,
-        attendancePercent: 0, isDraft: true
-      },
-      ...items,
-    ]);
+    const newId = `draft-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const newCourse = {
+      id: newId,
+      code: 'NEW-101',
+      title: 'New Course',
+      credit: 3.0,
+      semesterName: semesterFilter,
+      mid: 0, quiz: 0, assignment: 0, attendance: 0, presentation: 0, final: 0,
+      labPerformance: 0, labReport: 0,
+      attendancePercent: 0, isDraft: true
+    };
+    setCourses((items) => [newCourse, ...items]);
+    addToast('New manual entry row added.', 'info');
   };
 
   const saveCourse = async (course) => {
@@ -299,12 +309,12 @@ export default function Courses() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <SummaryCard
               icon={BookOpenCheck}
-              label={semesterFilter === 'All Semesters' ? 'Total Credits' : `${semesterFilter} Credits`}
+              label={`${semesterFilter} Credits`}
               value={summary.credits.toFixed(1)}
             />
             <SummaryCard
               icon={CheckCircle2}
-              label={semesterFilter === 'All Semesters' ? 'Cumulative GPA' : `${semesterFilter} GPA`}
+              label={`${semesterFilter} GPA`}
               value={summary.semesterGpa.toFixed(2)}
               tone="text-teal-500"
             />
@@ -410,7 +420,6 @@ export default function Courses() {
                                <>
                                  <MarkInput label="Mid" val={course.mid} max={25} onChange={(v) => updateCourse(course.id, 'mid', v)} />
                                  <MarkInput label="Quiz" val={course.quiz} max={15} onChange={(v) => updateCourse(course.id, 'quiz', v)} />
-                                 <MarkInput label="CT" val={course.classTest} max={15} onChange={(v) => updateCourse(course.id, 'classTest', v)} />
                                  <MarkInput label="Assign" val={course.assignment} max={5} onChange={(v) => updateCourse(course.id, 'assignment', v)} />
                                  <MarkInput label="Attend" val={course.attendance} max={7} onChange={(v) => updateCourse(course.id, 'attendance', v)} />
                                  <MarkInput label="Pres" val={course.presentation} max={8} onChange={(v) => updateCourse(course.id, 'presentation', v)} />
@@ -576,7 +585,6 @@ function fromApiCourse(course) {
     semesterName: course.semesterName || '',
     mid: course.midtermMarks || 0,
     quiz: course.quizMarks || 0,
-    classTest: course.classTestMarks || 0,
     assignment: course.assignmentMarks || 0,
     attendance: course.attendanceMarks || 0,
     presentation: course.presentationMarks || 0,
@@ -596,7 +604,7 @@ function toApiCourse(course) {
     semesterName: course.semesterName || '',
     midtermMarks: course.mid || 0,
     quizMarks: course.quiz || 0,
-    classTestMarks: course.classTest || 0,
+    classTestMarks: 0,
     assignmentMarks: course.assignment || 0,
     attendanceMarks: course.attendance || 0,
     presentationMarks: course.presentation || 0,

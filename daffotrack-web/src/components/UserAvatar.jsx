@@ -24,10 +24,17 @@ function resolveImageUrl(path) {
 export default function UserAvatar({ user, size = 'sm', className = '' }) {
   const classes = sizeClasses[size] ?? sizeClasses.sm;
   const imageUrl = resolveImageUrl(user?.profileImageUrl);
+  const isGuest = !user?.userId;
 
   return (
     <div
-      className={`${classes.wrapper} rounded-full bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 overflow-hidden shrink-0 ${className}`}
+      className={`${classes.wrapper} rounded-full flex items-center justify-center overflow-hidden shrink-0 transition-all ${
+        imageUrl
+          ? 'bg-transparent border border-(--border-main)'
+          : isGuest
+            ? 'bg-slate-500/10 border border-slate-500/20 text-slate-400'
+            : 'bg-teal-500/10 border border-teal-500/20 text-teal-400'
+      } ${className}`}
     >
       {imageUrl ? (
         <img

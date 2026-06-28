@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { apiRequest } from '../lib/api';
 import { setCurrentUser } from '../lib/session';
+import { useToast } from '../lib/ToastContext';
 import PageTopBar from '../components/PageTopBar';
 import AppLogo from '../components/AppLogo';
 
@@ -21,6 +22,7 @@ const GENDERS = ['Male', 'Female', 'Other', 'Prefer not to say'];
 
 export default function Register() {
   const navigate = useNavigate();
+  const { addToast } = useToast();
   // MainLayout থেকে ড্রয়ারের স্টেট রিসিভ করা হচ্ছে
   const { drawerOpen, setDrawerOpen } = useOutletContext();
   
@@ -49,8 +51,32 @@ export default function Register() {
     }
   };
 
+  const validateStep = (currentStep) => {
+    if (currentStep === 1) {
+      if (!formData.fullName.trim()) { addToast('Full name is required.', 'warning'); return false; }
+      if (!formData.email.trim()) { addToast('Email is required.', 'warning'); return false; }
+      if (!formData.password.trim()) { addToast('Password is required.', 'warning'); return false; }
+      if (!formData.studentId.trim()) { addToast('Student ID is required.', 'warning'); return false; }
+    }
+    if (currentStep === 2) {
+      if (!formData.department) { addToast('Please select your department.', 'warning'); return false; }
+    }
+    return true;
+  };
+
+  const nextStep = () => {
+    if (validateStep(step)) {
+      setStep(s => s + 1);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateStep(1) || !validateStep(2)) {
+      setStep(1);
+      return;
+    }
+
     setIsSubmitting(true);
     setError('');
     const payload = new FormData();
@@ -59,10 +85,16 @@ export default function Register() {
     try {
       const response = await apiRequest('/api/users/register', { method: 'POST', body: payload });
       setCurrentUser(response);
+      addToast('Profile created successfully!', 'success');
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message || 'Registration failed.');
-      setStep(1);
+      const msg = err.message || 'Registration failed.';
+      setError(msg);
+      addToast(msg, 'error');
+      // If error is about email or studentId, go back to step 1
+      if (msg.toLowerCase().includes('email') || msg.toLowerCase().includes('student id')) {
+        setStep(1);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -112,7 +144,7 @@ export default function Register() {
                     <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
                       done ? 'bg-teal-500/15 text-teal-500 border border-teal-500/30' :
                       active ? 'bg-teal-500 text-white' :
-                      'bg-white/5 text-(--text-muted) border border-(--border-main)'
+                      'bg-(--bg-main) text-(--text-muted) border border-(--border-main)'
                     }`}>
                       {done
                         ? <CheckCircle2 className="w-3.5 h-3.5" />
@@ -139,23 +171,23 @@ export default function Register() {
 
                   <div className="flex flex-col items-center gap-4">
                     <div className="relative">
-                      <div className="w-28 h-28 rounded-2xl bg-(--bg-main) border border-(--border-main) flex items-center justify-center overflow-hidden">
+                      <div className={`w-28 h-28 rounded-2xl border border-(--border-main) flex items-center justify-center overflow-hidden shadow-lg transition-all ${previewUrl ? 'bg-transparent' : 'bg-teal-500/10 text-teal-500'}`}>
                         {previewUrl
                           ? <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-                          : <User className="w-12 h-12 text-(--text-muted)" />
+                          : <User className="w-12 h-12" />
                         }
                       </div>
-                      <label htmlFor="photo-upload" className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center cursor-pointer hover:bg-teal-400 transition-colors shadow-lg">
+                      <label htmlFor="photo-upload" className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center cursor-pointer hover:bg-teal-400 transition-colors shadow-lg z-10">
                         <Camera className="w-3.5 h-3.5 text-white" />
                       </label>
                     </div>
                     <input id="photo-upload" type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                     <div className="text-center">
                       <p className="text-xs text-(--text-muted)">Upload a clear profile photo</p>
-                      <p className="text-[10px] text-slate-500 mt-1">JPG / PNG • Max 5 MB</p>
+                      <p className="text-[10px] text-(--text-muted) opacity-60 mt-1">JPG / PNG • Max 5 MB</p>
                     </div>
                     <label htmlFor="photo-upload"
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/5 border border-(--border-main) hover:bg-white/10 cursor-pointer text-xs font-semibold text-(--text-muted) transition-all">
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-(--bg-main) border border-(--border-main) hover:bg-teal-500/5 cursor-pointer text-xs font-semibold text-(--text-muted) transition-all">
                       <Upload className="w-3.5 h-3.5 text-teal-500" />
                       {profileImage ? profileImage.name.slice(0, 22) + '…' : 'Choose file'}
                     </label>
@@ -281,7 +313,7 @@ export default function Register() {
                   <div className="mt-8 flex items-center justify-between gap-4">
                     {step > 1 ? (
                       <button type="button" onClick={() => setStep(s => s - 1)}
-                        className="px-6 py-3 rounded-xl bg-white/5 border border-(--border-main) hover:bg-white/10 text-sm font-semibold text-(--text-muted) transition-all">
+                        className="px-6 py-3 rounded-xl bg-(--bg-main) border border-(--border-main) hover:bg-teal-500/5 text-sm font-semibold text-(--text-muted) transition-all">
                         ← Back
                       </button>
                     ) : (
@@ -291,7 +323,7 @@ export default function Register() {
                     )}
 
                     {step < 3 ? (
-                      <button type="button" onClick={() => setStep(s => s + 1)}
+                      <button type="button" onClick={nextStep}
                         className="flex items-center gap-2 px-7 py-3 rounded-xl bg-teal-500 text-white font-bold text-sm hover:bg-teal-400 shadow-[0_0_20px_rgba(45,212,191,0.3)] hover:shadow-[0_0_30px_rgba(45,212,191,0.5)] transition-all">
                         Continue <ArrowRight className="w-4 h-4" />
                       </button>
@@ -318,9 +350,9 @@ export default function Register() {
 
 function SectionTitle({ icon, title }) {
   return (
-    <div className="flex items-center gap-2.5 pb-4 border-b border-white/6 mb-1">
-      <div className="text-teal-400">{icon}</div>
-      <h3 className="text-sm font-bold text-white">{title}</h3>
+    <div className="flex items-center gap-2.5 pb-4 border-b border-(--border-main) mb-1">
+      <div className="text-teal-500">{icon}</div>
+      <h3 className="text-sm font-bold text-(--text-main)">{title}</h3>
     </div>
   );
 }
@@ -328,8 +360,8 @@ function SectionTitle({ icon, title }) {
 function Field({ icon, label, name, value, onChange, placeholder, type = 'text', required = false }) {
   return (
     <div className="space-y-1.5">
-      <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-        <span className="text-slate-500 w-3.5 h-3.5 [&>svg]:w-3.5 [&>svg]:h-3.5">{icon}</span>
+      <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-(--text-muted)">
+        <span className="text-teal-500/70 w-3.5 h-3.5 [&>svg]:w-3.5 [&>svg]:h-3.5">{icon}</span>
         {label}
       </label>
       <input
@@ -339,7 +371,7 @@ function Field({ icon, label, name, value, onChange, placeholder, type = 'text',
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        className="w-full rounded-xl border border-white/8 bg-[#060e1a] px-4 py-3 text-sm text-white placeholder-slate-600 focus:border-teal-500/60 focus:outline-none focus:ring-1 focus:ring-teal-500/30 transition-all"
+        className="w-full rounded-xl border border-(--border-main) bg-(--bg-main) px-4 py-3 text-sm text-(--text-main) placeholder-(--text-muted)/50 focus:border-teal-500/60 focus:outline-none focus:ring-1 focus:ring-teal-500/30 transition-all"
       />
     </div>
   );

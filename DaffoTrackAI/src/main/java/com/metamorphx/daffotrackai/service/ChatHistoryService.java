@@ -8,6 +8,7 @@ import com.metamorphx.daffotrackai.model.ChatMessage;
 import com.metamorphx.daffotrackai.model.StudentProfile;
 import com.metamorphx.daffotrackai.repository.ChatConversationRepository;
 import com.metamorphx.daffotrackai.repository.ChatMessageRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -62,11 +63,27 @@ public class ChatHistoryService {
     }
 
     @Transactional
+    public ChatConversationResponse updateConversation(Long id, Long userId, String studentId, ChatConversationRequest request) {
+        ChatConversation conversation = getOwnedConversation(id, userId, studentId);
+        if (StringUtils.hasText(request.title())) {
+            conversation.setTitle(request.title().trim());
+        }
+        conversation.setUpdatedAt(LocalDateTime.now());
+        ChatConversation saved = chatConversationRepository.save(conversation);
+        return toResponse(saved, false);
+    }
+
+    @Transactional
     public ChatMessageResponse addMessage(Long conversationId, Long userId, String studentId, String sender, String text, String attachmentsJson) {
         ChatConversation conversation = getOwnedConversation(conversationId, userId, studentId);
-        if ("user".equals(sender) && "New chat".equals(conversation.getTitle()) && StringUtils.hasText(text)) {
+        
+        // Update title if it's the first user message and title is default
+        if ("user".equals(sender) && ("New chat".equals(conversation.getTitle()) || "New Conversation".equalsIgnoreCase(conversation.getTitle())) && StringUtils.hasText(text)) {
             conversation.setTitle(titleFromMessage(text));
         }
+
+        // Force updatedAt to change so conversation moves to top of list
+        conversation.setUpdatedAt(LocalDateTime.now());
 
         ChatMessage message = new ChatMessage();
         message.setConversation(conversation);

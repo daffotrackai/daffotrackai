@@ -4,16 +4,19 @@ import {
   BookOpen, Bot, Bell, TrendingUp, Sparkles, Clock,
   ArrowRight, ChevronRight, Menu, X, Terminal, Cpu,
   GraduationCap, ShieldCheck, Award, BookMarked,
-  MessageSquareCode, Zap
+  MessageSquareCode, Zap, Sun, Moon
 } from 'lucide-react';
 import PageTopBar from '../components/PageTopBar';
 import AppLogo from '../components/AppLogo';
+import { useTheme } from '../lib/ThemeContext';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const { drawerOpen, setDrawerOpen } = useOutletContext();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('advisor');
+  const [activeSection, setActiveSection] = useState('');
   const [simulatedChat, setSimulatedChat] = useState([
     { sender: 'user', text: 'How do I maintain my semester waiver at DIU?' },
     { sender: 'ai', text: 'To maintain your waiver, DIU policy requires you to complete a minimum of 12 credits in the previous semester with a GPA of 3.00 or higher (no "F" or "I" grades). The waiver rate is based on your CGPA: 3.80–3.89 gives 40%, 3.90–3.99 gives 60%, and a perfect 4.00 grants a 100% tuition fee waiver!' }
@@ -22,9 +25,51 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+    const scrollContainer = document.querySelector('main');
+
+    const onScroll = () => {
+      if (scrollContainer) {
+        setScrolled(scrollContainer.scrollTop > 20);
+        if (scrollContainer.scrollTop < 100) {
+          setActiveSection('');
+        }
+      }
+    };
+
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', onScroll);
+    }
+
+    // Scroll Spy Logic
+    const sections = ['features', 'sandbox', 'diu-rules', 'about'];
+    const observerOptions = {
+      root: scrollContainer,
+      rootMargin: '-10% 0px -60% 0px',
+      threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    }, observerOptions);
+
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', onScroll);
+      }
+      sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) observer.unobserve(el);
+      });
+    };
   }, []);
 
   const chatPresets = {
@@ -55,40 +100,72 @@ export default function Home() {
     }, 1200);
   };
 
+  const scrollToSection = (e, id) => {
+    e.preventDefault();
+    const element = document.querySelector(id);
+    if (element) {
+      // Find the scrollable container (the main tag in MainLayout)
+      const container = element.closest('main');
+      if (container) {
+        const top = element.offsetTop - 80;
+        container.scrollTo({
+          top,
+          behavior: 'smooth'
+        });
+      } else {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-(--bg-main) text-(--text-main) selection:bg-teal-500/20 selection:text-teal-500">
-      <PageTopBar
-        title="DaffoTrack AI"
-        subtitle="Smart academic companion for DIU students"
-        showBack={false}
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-      />
-
       {/* Ambient glows */}
       <div className="fixed top-0 left-1/4 w-[700px] h-[500px] bg-teal-500/6 rounded-full blur-[120px] pointer-events-none -z-10" />
       <div className="fixed top-[600px] right-0 w-[500px] h-[400px] bg-indigo-600/5 rounded-full blur-[100px] pointer-events-none -z-10" />
 
       {/* NAVBAR */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-(--bg-header) backdrop-blur-xl border-b border-(--border-main) py-3' : 'bg-transparent py-5'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-500 ${scrolled ? 'bg-(--bg-header) backdrop-blur-xl py-3' : 'bg-transparent py-5'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate(getCurrentUser()?.userId ? '/dashboard' : '/')}>
-            <AppLogo size="lg" />
+          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
+            <AppLogo size="lg" className="group-hover:scale-110 transition-transform" />
             <div>
               <span className={`text-[17px] font-bold tracking-tight text-(--text-main)`}>DaffoTrack <span className="text-teal-500">AI</span></span>
               <span className="block text-[9px] text-(--text-muted) font-semibold tracking-widest uppercase">by Metamorph X</span>
             </div>
           </div>
 
-          <nav className="hidden md:flex items-center gap-8">
-            {['#features', '#sandbox', '#diu-rules', '#about'].map((href, i) => (
-              <a key={href} href={href} className="text-sm text-(--text-muted) hover:text-teal-500 transition-colors font-medium">
-                {['Features', 'Live Demo', 'DIU Guides', 'About'][i]}
+          <nav className="hidden md:flex items-center gap-1 bg-white/5 dark:bg-white/5 light:bg-black/5 p-1 rounded-2xl border border-(--border-main)">
+            {[
+              { id: 'features', label: 'Features' },
+              { id: 'sandbox', label: 'Live Demo' },
+              { id: 'diu-rules', label: 'DIU Guides' },
+              { id: 'about', label: 'About' }
+            ].map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                onClick={(e) => scrollToSection(e, `#${item.id}`)}
+                className={`px-5 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all ${
+                  activeSection === item.id
+                    ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/20'
+                    : 'text-(--text-muted) hover:text-(--text-main) hover:bg-white/5'
+                }`}
+              >
+                {item.label}
               </a>
             ))}
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="w-10 h-10 rounded-xl border border-(--border-main) bg-white/5 dark:bg-white/5 light:bg-black/5 flex items-center justify-center text-(--text-muted) hover:text-teal-500 hover:border-teal-500/20 transition-all"
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            </button>
             <Link to="/login" className="text-sm font-semibold text-(--text-muted) hover:text-(--text-main) transition-colors">Sign In</Link>
             <Link to="/login" className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-teal-500 text-white font-bold text-sm hover:bg-teal-400 transition-all shadow-[0_0_20px_rgba(45,212,191,0.3)] hover:shadow-[0_0_30px_rgba(45,212,191,0.5)]">
               Launch App <ArrowRight className="w-3.5 h-3.5" />
@@ -100,12 +177,39 @@ export default function Home() {
           </button>
         </div>
 
+        {/* Divider bar under the header */}
+        <div className={`absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-(--border-main) to-transparent transition-opacity duration-500 ${scrolled ? 'opacity-100' : 'opacity-0'}`} />
+
+        {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-(--bg-card) backdrop-blur-xl border-b border-(--border-main) px-4 pt-3 pb-5 space-y-1">
-            {[['#features','Features'],['#sandbox','Live Demo'],['#diu-rules','DIU Guides'],['#about','About']].map(([href, label]) => (
-              <a key={href} href={href} onClick={() => setIsMobileMenuOpen(false)} className="block py-2.5 px-3 text-sm text-(--text-muted) hover:text-teal-500 rounded-lg hover:bg-white/5 transition-all">{label}</a>
+          <div className="md:hidden absolute top-full left-0 right-0 bg-(--bg-card) backdrop-blur-xl border-b border-(--border-main) px-4 pt-3 pb-5 space-y-1 animate-in slide-in-from-top-4 duration-300">
+            {[
+              { id: 'features', label: 'Features' },
+              { id: 'sandbox', label: 'Live Demo' },
+              { id: 'diu-rules', label: 'DIU Guides' },
+              { id: 'about', label: 'About' }
+            ].map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                onClick={(e) => { setIsMobileMenuOpen(false); scrollToSection(e, `#${item.id}`); }}
+                className={`block py-2.5 px-3 text-sm rounded-lg transition-all ${
+                  activeSection === item.id
+                    ? 'bg-teal-500/10 text-teal-500 font-bold'
+                    : 'text-(--text-muted) hover:text-teal-500 hover:bg-white/5'
+                }`}
+              >
+                {item.label}
+              </a>
             ))}
             <div className="pt-3 flex flex-col gap-2 border-t border-(--border-main)">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="flex items-center justify-center gap-2 py-2.5 text-sm text-(--text-muted) bg-white/5 rounded-xl font-medium"
+              >
+                {theme === 'light' ? <><Moon className="w-4 h-4" /> Dark Mode</> : <><Sun className="w-4 h-4" /> Light Mode</>}
+              </button>
               <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-center py-2.5 text-sm text-(--text-muted) bg-white/5 rounded-xl font-medium">Sign In</Link>
               <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-center py-2.5 text-sm text-white bg-teal-500 rounded-xl font-bold">Launch App</Link>
             </div>
@@ -160,40 +264,40 @@ export default function Home() {
             {/* Dashboard mockup */}
             <div className="lg:col-span-6 relative">
               <div className="absolute -inset-4 bg-teal-500/8 rounded-3xl blur-2xl" />
-              <div className="relative bg-[#0d1e35] border border-white/8 rounded-2xl shadow-2xl overflow-hidden">
+              <div className="relative bg-(--bg-card) border border-(--border-main) rounded-2xl shadow-2xl overflow-hidden">
                 {/* Browser bar */}
-                <div className="bg-[#080f1c] border-b border-white/6 px-4 py-3 flex items-center justify-between">
+                <div className="bg-(--bg-main) border-b border-(--border-main) px-4 py-3 flex items-center justify-between">
                   <div className="flex gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
                     <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
                   </div>
                   <div className="flex items-center gap-1.5 bg-teal-500/8 border border-teal-500/15 px-3 py-1 rounded-md">
-                    <Terminal className="w-3 h-3 text-teal-400" />
-                    <span className="text-[10px] text-teal-400 font-mono">DAFFOTRACK-PORTAL_V4</span>
+                    <Terminal className="w-3 h-3 text-teal-500" />
+                    <span className="text-[10px] text-teal-500 font-mono">DAFFOTRACK-PORTAL_V4</span>
                   </div>
                   <div className="w-8" />
                 </div>
 
                 <div className="p-5 space-y-4">
                   {/* CGPA bar */}
-                  <div className="bg-white/3 border border-white/6 rounded-xl p-4">
+                  <div className="bg-(--bg-main) border border-(--border-main) rounded-xl p-4">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">CGPA Projection</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />Safe
+                      <span className="text-xs font-semibold text-(--text-muted) uppercase tracking-wider">CGPA Projection</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />Safe
                       </span>
                     </div>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-black text-white">3.92</span>
-                      <span className="text-sm text-teal-400 font-semibold flex items-center gap-0.5">
+                      <span className="text-3xl font-black text-(--text-main)">3.92</span>
+                      <span className="text-sm text-teal-500 font-semibold flex items-center gap-0.5">
                         <TrendingUp className="w-3.5 h-3.5" /> +0.12 this term
                       </span>
                     </div>
-                    <div className="mt-3 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div className="mt-3 h-1.5 bg-white/10 dark:bg-white/10 light:bg-black/10 rounded-full overflow-hidden">
                       <div className="h-full w-[92%] bg-gradient-to-r from-teal-500 to-cyan-400 rounded-full" />
                     </div>
-                    <div className="flex justify-between text-[10px] text-slate-500 mt-1.5">
+                    <div className="flex justify-between text-[10px] text-(--text-muted) mt-1.5">
                       <span>Min (3.80)</span><span>Target</span><span>Max (4.00)</span>
                     </div>
                   </div>
@@ -201,23 +305,23 @@ export default function Home() {
                   {/* AI bubble */}
                   <div className="flex items-start gap-3">
                     <div className="w-7 h-7 rounded-lg bg-teal-500/15 border border-teal-500/25 flex items-center justify-center shrink-0 mt-0.5">
-                      <Bot className="w-3.5 h-3.5 text-teal-400" />
+                      <Bot className="w-3.5 h-3.5 text-teal-500" />
                     </div>
-                    <div className="bg-[#0d1e35] border border-white/8 rounded-xl rounded-tl-none p-3 text-xs text-slate-200 leading-relaxed">
-                      <span className="block text-[10px] font-bold text-teal-400 mb-1">DaffoTrack AI</span>
+                    <div className="bg-(--bg-main) border border-(--border-main) rounded-xl rounded-tl-none p-3 text-xs text-(--text-main) leading-relaxed">
+                      <span className="block text-[10px] font-bold text-teal-500 mb-1">DaffoTrack AI</span>
                       You need 14 more attendance counts in SWE-312 to meet the 75% eligibility threshold. Don't miss Monday's lecture!
                     </div>
                   </div>
 
                   {/* Alert */}
-                  <div className="flex items-center gap-2 bg-amber-500/8 border border-amber-500/20 rounded-lg px-3 py-2.5 text-[11px] text-amber-300">
-                    <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0 animate-pulse" />
+                  <div className="flex items-center gap-2 bg-amber-500/8 border border-amber-500/20 rounded-lg px-3 py-2.5 text-[11px] text-amber-600 dark:text-amber-300">
+                    <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0 animate-pulse" />
                     <span>Makeup registration deadline is tomorrow at 4:00 PM!</span>
                   </div>
                 </div>
 
-                <div className="bg-[#080f1c]/60 border-t border-white/5 py-2 px-4 text-center">
-                  <span className="text-[10px] text-slate-500">Synchronized with DIU Smart Portal API • 100% Secure</span>
+                <div className="bg-(--bg-main)/60 border-t border-(--border-main) py-2 px-4 text-center">
+                  <span className="text-[10px] text-(--text-muted)">Synchronized with DIU Smart Portal API • 100% Secure</span>
                 </div>
               </div>
             </div>
@@ -458,13 +562,24 @@ export default function Home() {
             </div>
             <div className="flex flex-wrap justify-center gap-6 text-xs font-semibold">
               {[['#features','Features'],['#sandbox','AI Sandbox'],['#diu-rules','DIU Rules'],['#about','About']].map(([href, label]) => (
-                <a key={href} href={href} className="hover:text-(--text-main) transition-colors">{label}</a>
+                <a
+                  key={href}
+                  href={href}
+                  onClick={(e) => scrollToSection(e, href)}
+                  className="hover:text-teal-500 transition-all hover:-translate-y-1 active:translate-y-0"
+                >
+                  {label}
+                </a>
               ))}
             </div>
           </div>
           <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-            <p>© {new Date().getFullYear()} DaffoTrack AI. Crafted with passion by <span className="text-(--text-main) font-semibold">Metamorph X</span>.</p>
-            <p className="text-(--text-muted) text-center sm:text-right">Independent project — not officially affiliated with DIU.</p>
+            <p>© {new Date().getFullYear()} DaffoTrack AI. Crafted with passion by <a href="https://metamorph-x.github.io/portfolio/" target="_blank" rel="noopener noreferrer" className="text-(--text-main) font-bold hover:text-teal-500 transition-colors">Metamorph X</a>.</p>
+            <p className="text-(--text-muted) text-center sm:text-right">
+              <a href="https://daffodilvarsity.edu.bd/" target="_blank" rel="noopener noreferrer" className="hover:text-teal-500 transition-colors">
+                Officially affiliated with DIU.
+              </a>
+            </p>
           </div>
         </div>
       </footer>
