@@ -154,7 +154,8 @@ export default function Profile() {
     );
   }
 
-  const imageUrl = displayedProfile.profileImageUrl ? buildApiUrl(displayedProfile.profileImageUrl) : null;
+  const hasActualImage = displayedProfile?.hasProfileImage === true || displayedProfile?.hasProfileImage === 'true';
+  const imageUrl = hasActualImage ? buildApiUrl(displayedProfile.profileImageUrl) : null;
 
   const infoFields = [
     { icon: IdCard, label: 'Student ID', value: displayedProfile.studentId },

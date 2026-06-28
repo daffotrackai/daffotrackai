@@ -23,7 +23,8 @@ function resolveImageUrl(path) {
 
 export default function UserAvatar({ user, size = 'sm', className = '' }) {
   const classes = sizeClasses[size] ?? sizeClasses.sm;
-  const imageUrl = resolveImageUrl(user?.profileImageUrl);
+  const hasActualImage = user?.hasProfileImage === true || user?.hasProfileImage === 'true';
+  const imageUrl = hasActualImage ? resolveImageUrl(user?.profileImageUrl) : null;
   const isGuest = !user?.userId;
 
   return (
