@@ -1,4 +1,5 @@
-export const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
+// export const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
+export const apiBaseUrl = 'https://daffotrackai-production.up.railway.app';
 
 export async function apiRequest(path, options = {}) {
   const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
