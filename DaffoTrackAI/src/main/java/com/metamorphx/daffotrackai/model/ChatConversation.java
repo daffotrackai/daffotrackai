@@ -94,6 +94,10 @@ public class ChatConversation {
         return updatedAt;
     }
 
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public List<ChatMessage> getMessages() {
         return messages;
     }
