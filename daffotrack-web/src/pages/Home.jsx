@@ -484,9 +484,9 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { icon: Award, color: 'emerald', title: 'Tuition Waiver Eligibility', desc: 'Unlock up to 100% discount. Requires registration of 12+ credits, SGPA ≥ 3.00, and zero failed or incomplete courses in the previous consecutive term.', code: 'REG_CLAUSE_7.2' },
-              { icon: BookMarked, color: 'amber', title: 'Grade Improvement Limit', desc: 'Allowed for any course with grade B- or below. Retaking is permitted once per course, and only the highest grade is updated in the final CGPA calculator.', code: 'ACAD_REG_4.12' },
-              { icon: ShieldCheck, color: 'rose', title: 'Midterm Makeup Criteria', desc: 'Application must be filed within 3 days of missed examination with authorized proof. Non-refundable BDT 1,000 makeup fees apply.', code: 'EXAM_POL_11.5' }
+              { icon: Award, color: 'emerald', title: 'Tuition Waiver Eligibility', desc: 'Unlock up to 100% discount. Requires registration of 12+ credits, SGPA ≥ 3.00, and zero failed or incomplete courses in the previous consecutive term.' },
+              { icon: BookMarked, color: 'amber', title: 'Grade Improvement Limit', desc: 'Allowed for any course with grade B- or below. Retaking is permitted once per course, and only the highest grade is updated in the final CGPA calculator.' },
+              { icon: ShieldCheck, color: 'rose', title: 'Midterm Makeup Criteria', desc: 'Application must be filed within 3 days of missed examination with authorized proof. Non-refundable BDT 1,000 makeup fees apply.' }
             ].map(({ icon: Icon, color, title, desc, code }) => {
               const colors = {
                 emerald: { bg: 'bg-emerald-500/8', text: 'text-emerald-500', border: 'border-emerald-500/15' },
