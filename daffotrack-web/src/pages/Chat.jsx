@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import {
   Bell, BookOpen, Bot, Check, Copy, FileText, GraduationCap, Image as ImageIcon,
   Mic2, Paperclip, Plus, Send, Share2, ShieldAlert, Sparkles, Trash2, User,
@@ -146,10 +147,10 @@ function TypewriterText({ text, speed = 12, onComplete }) {
   }, [text, speed, onComplete]);
 
   return (
-    <>
-      {displayedText}
+    <div className="markdown-content">
+      <ReactMarkdown>{displayedText}</ReactMarkdown>
       {!isDone && <span className="inline-block w-1.5 h-4 bg-teal-500 ml-1 animate-pulse align-middle" />}
-    </>
+    </div>
   );
 }
 
@@ -735,7 +736,9 @@ export default function Chat() {
                     {msg.sender === 'ai' && typingMessageId === msg.id ? (
                       <TypewriterText text={msg.text} onComplete={() => setTypingMessageId(null)} />
                     ) : (
-                      msg.text
+                      <div className="markdown-content">
+                        <ReactMarkdown>{msg.text}</ReactMarkdown>
+                      </div>
                     )}
 
                     {!!msg.attachments?.length && (
