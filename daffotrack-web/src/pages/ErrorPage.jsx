@@ -35,11 +35,6 @@ export default function ErrorPage() {
            <h1 className="text-[120px] sm:text-[180px] font-black leading-none tracking-tighter opacity-10 select-none">
              {is404 ? '404' : 'ERR'}
            </h1>
-           <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-500 shadow-2xl shadow-teal-500/10 animate-bounce duration-[3s]">
-                 <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12" />
-              </div>
-           </div>
         </div>
 
         {/* Messaging */}
