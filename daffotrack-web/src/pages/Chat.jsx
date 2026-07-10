@@ -3,12 +3,13 @@ import { useOutletContext } from 'react-router-dom';
 import {
   Bell, BookOpen, Bot, Check, Copy, FileText, GraduationCap, Image as ImageIcon,
   Mic2, Paperclip, Plus, Send, Share2, ShieldAlert, Sparkles, Trash2, User,
-  Volume2, VolumeX, X, Edit2
+  Volume2, VolumeX, X, Edit2, Info
 } from 'lucide-react';
 import { apiRequest, buildApiUrl } from '../lib/api';
 import PageTopBar from '../components/PageTopBar';
 import UserAvatar from '../components/UserAvatar';
 import useCurrentUserProfile from '../lib/useCurrentUserProfile';
+import { useToast } from '../lib/ToastContext';
 
 const GUEST_HISTORY_KEY = 'daffotrack.guest_chats';
 
@@ -123,8 +124,38 @@ function readAsText(file) {
   });
 }
 
+function TypewriterText({ text, speed = 12, onComplete }) {
+  const [displayedText, setDisplayedText] = useState('');
+  const [isDone, setIsDone] = useState(false);
+
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      // Type 2 characters at a time for a snappier, ChatGPT-like stream feel
+      const nextIndex = Math.min(i + 2, text.length);
+      setDisplayedText(text.slice(0, nextIndex));
+      i = nextIndex;
+
+      if (i >= text.length) {
+        clearInterval(interval);
+        setIsDone(true);
+        if (onComplete) onComplete();
+      }
+    }, speed);
+    return () => clearInterval(interval);
+  }, [text, speed, onComplete]);
+
+  return (
+    <>
+      {displayedText}
+      {!isDone && <span className="inline-block w-1.5 h-4 bg-teal-500 ml-1 animate-pulse align-middle" />}
+    </>
+  );
+}
+
 export default function Chat() {
   const { drawerOpen, setDrawerOpen } = useOutletContext();
+  const { addToast } = useToast();
   const currentUser = useCurrentUserProfile();
   const isGuest = !currentUser?.userId;
   const ownerQuery = useMemo(() => historyKey(currentUser), [currentUser?.userId, currentUser?.studentId]);
@@ -141,6 +172,9 @@ export default function Chat() {
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editingTitle, setEditingTitle] = useState('');
+  const [typingMessageId, setTypingMessageId] = useState(null);
+  const [isListening, setIsListening] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -391,6 +425,7 @@ export default function Chat() {
 
     appendMessage(userMessage);
     setInputText('');
+    if (inputRef.current) inputRef.current.style.height = 'auto';
     setAttachments([]);
     setIsTyping(true);
     setError('');
@@ -414,6 +449,7 @@ export default function Chat() {
         text: data.response || 'No response received from backend.',
         time: nowTime(),
       };
+      setTypingMessageId(aiMessage.id);
       appendMessage(aiMessage);
       if (ttsEnabled) speak(aiMessage.id, aiMessage.text);
     } catch (err) {
@@ -471,6 +507,76 @@ export default function Chat() {
     if (!next) {
       window.speechSynthesis?.cancel();
       setSpeakingId(null);
+    }
+  };
+
+  const toggleListening = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      addToast('Voice recognition is not supported in this browser. Please use Chrome.', 'error');
+      return;
+    }
+
+    if (isListening) {
+      if (window._recognition) {
+        window._recognition.stop();
+      }
+      setIsListening(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          setInputText((prev) => {
+            const space = prev && !prev.endsWith(' ') ? ' ' : '';
+            return prev + space + transcript;
+          });
+
+          // Trigger height update
+          if (inputRef.current) {
+            setTimeout(() => {
+              inputRef.current.style.height = 'auto';
+              inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 120) + 'px';
+            }, 50);
+          }
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech error:', event.error);
+        setIsListening(false);
+        if (event.error === 'not-allowed') {
+          addToast('Microphone access denied. Please allow it in browser settings.', 'error');
+        } else if (event.error === 'no-speech') {
+          addToast('No speech detected. Please try again.', 'warning');
+        } else {
+          addToast(`Error: ${event.error}`, 'error');
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      window._recognition = recognition;
+      recognition.start();
+    } catch (err) {
+      console.error('Failed to start recognition:', err);
+      setIsListening(false);
+      addToast('Could not start microphone.', 'error');
     }
   };
 
@@ -626,7 +732,11 @@ export default function Chat() {
                     }`}>
                       {msg.sender === 'ai' ? 'DaffoTrack AI' : 'You'}
                     </span>
-                    {msg.text}
+                    {msg.sender === 'ai' && typingMessageId === msg.id ? (
+                      <TypewriterText text={msg.text} onComplete={() => setTypingMessageId(null)} />
+                    ) : (
+                      msg.text
+                    )}
 
                     {!!msg.attachments?.length && (
                       <div className="mt-3 grid gap-2">
@@ -682,18 +792,21 @@ export default function Chat() {
 
           <div className="bg-(--bg-header) backdrop-blur-sm border-t border-(--border-main) p-4 shrink-0">
             <div className="mx-auto max-w-4xl space-y-3">
-              {hasOnlyWelcome && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {(hasOnlyWelcome || showSuggestions) && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   {SUGGESTED.map(({ icon: Icon, category, text }) => (
                     <button
                       key={text}
                       type="button"
-                      onClick={() => sendMessage(text)}
+                      onClick={() => {
+                        sendMessage(text);
+                        setShowSuggestions(false);
+                      }}
                       disabled={isTyping}
-                      className="text-left rounded-xl border border-(--border-main) bg-(--bg-main) p-3 transition-all hover:border-teal-500/30 hover:bg-teal-500/5"
+                      className="text-left rounded-xl border border-(--border-main) bg-(--bg-main) p-3 transition-all hover:border-teal-500/30 hover:bg-teal-500/5 group"
                     >
                       <div className="mb-1.5 flex items-center gap-2">
-                        <Icon className="h-3.5 w-3.5 text-teal-500" />
+                        <Icon className="h-3.5 w-3.5 text-teal-500 group-hover:scale-110 transition-transform" />
                         <span className="text-[9px] font-bold uppercase tracking-wider text-(--text-muted)">{category}</span>
                       </div>
                       <p className="text-xs leading-relaxed text-(--text-main)">{text}</p>
@@ -730,24 +843,58 @@ export default function Chat() {
                 </button>
                 <button
                   type="button"
-                  onClick={toggleTts}
+                  onClick={toggleListening}
                   className={`flex h-12 w-12 items-center justify-center rounded-2xl border transition-all ${
-                    ttsEnabled
-                      ? 'border-teal-500/30 bg-teal-500/10 text-teal-500'
+                    isListening
+                      ? 'border-red-500/30 bg-red-500/10 text-red-500 animate-pulse'
                       : 'border-(--border-main) bg-(--bg-card) text-(--text-muted) hover:text-teal-500'
                   }`}
+                  title="Voice Input"
                 >
                   <Mic2 className="h-5 w-5" />
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setShowSuggestions(!showSuggestions)}
+                  className={`flex h-12 w-12 items-center justify-center rounded-2xl border transition-all ${
+                    showSuggestions
+                      ? 'border-teal-500/30 bg-teal-500/10 text-teal-500'
+                      : 'border-(--border-main) bg-(--bg-card) text-(--text-muted) hover:text-teal-500'
+                  }`}
+                  title="Suggested Questions"
+                >
+                  <Info className="h-5 w-5" />
+                </button>
                 <div className="flex-1 relative">
-                  <input
+                  <textarea
                     ref={inputRef}
-                    type="text"
+                    rows="1"
                     value={inputText}
-                    onChange={(event) => setInputText(event.target.value)}
+                    onChange={(event) => {
+                      setInputText(event.target.value);
+                      event.target.style.height = 'auto';
+                      event.target.style.height = Math.min(event.target.scrollHeight, 120) + 'px';
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                        e.target.style.height = 'auto';
+                      }
+                    }}
                     placeholder="Ask about DIU waiver rules, upload files, or plan your CGPA..."
-                    className="w-full bg-(--bg-main) border border-(--border-main) rounded-2xl px-4 py-3.5 text-sm text-(--text-main) placeholder-(--text-muted) focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/20 transition-all"
+                    className={`w-full bg-(--bg-main) border rounded-2xl px-4 py-3 text-sm text-(--text-main) placeholder-(--text-muted) focus:outline-none focus:ring-1 transition-all resize-none overflow-y-auto ${
+                      isListening
+                        ? 'border-teal-500 ring-2 ring-teal-500/20 shadow-[0_0_15px_rgba(45,212,191,0.2)]'
+                        : 'border-(--border-main) focus:border-teal-500/50 focus:ring-teal-500/20'
+                    }`}
                   />
+                  {isListening && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none animate-in fade-in duration-300">
+                       <span className="text-[9px] font-black text-teal-500 uppercase tracking-widest animate-pulse">Listening</span>
+                       <div className="w-1 h-5 bg-teal-500 animate-pulse rounded-full" />
+                    </div>
+                  )}
                 </div>
                 <button
                   type="submit"

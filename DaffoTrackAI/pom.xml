@@ -65,10 +65,16 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Spring AI Core -->
+        <!-- Pinecone Vector Store -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-core</artifactId>
+            <artifactId>spring-ai-pinecone-store-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Google Gemini AI (For Embeddings) -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-vertex-ai-gemini-spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
 

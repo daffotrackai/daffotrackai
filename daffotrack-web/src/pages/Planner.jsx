@@ -41,7 +41,7 @@ export default function Planner() {
 
           // Set a reasonable target if current is very low/zero
           if (data.cgpa > 0) {
-             setTargetCgpa(Math.min(4.0, Number((data.cgpa + 0.1).toFixed(2))));
+            setTargetCgpa(Math.min(4.0, Number((data.cgpa + 0.1).toFixed(2))));
           }
         }
       })
@@ -92,7 +92,7 @@ export default function Planner() {
                   </div>
                 </div>
                 {loading && currentUser?.userId && (
-                   <div className="w-4 h-4 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
                 )}
               </div>
 
@@ -184,7 +184,7 @@ function Field({ label, value, setValue, min, max, step, highlight }) {
       <div className="flex justify-between items-center mb-2">
         <span className="text-[10px] font-bold uppercase tracking-wider text-(--text-muted)">{label}</span>
         {highlight && (
-           <span className="text-[8px] font-black text-teal-500 bg-teal-500/10 px-1.5 py-0.5 rounded border border-teal-500/20">SYNCED</span>
+          <span className="text-[8px] font-black text-teal-500 bg-teal-500/10 px-1.5 py-0.5 rounded border border-teal-500/20">SYNCED</span>
         )}
       </div>
       <input

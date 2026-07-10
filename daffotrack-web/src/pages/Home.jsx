@@ -519,7 +519,7 @@ export default function Home() {
             Metamorph X is a forward-thinking group of elite student engineers at Daffodil International University. We specialize in next-generation AI interfaces that simplify complex university frameworks.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            {[[MessageSquareCode,'100% LLM Engineered','teal'],[GraduationCap,'For DIU Students','indigo'],[Cpu,'Self-Refined AI Hub','emerald']].map(([Icon, label, c]) => (
+            {[[GraduationCap,'For DIU Students','indigo'],[Cpu,'Self-Refined AI Hub','emerald']].map(([Icon, label, c]) => (
               <div key={label} className="flex items-center gap-2 bg-(--bg-card) border border-(--border-main) px-5 py-2.5 rounded-xl">
                 <Icon className={`w-4 h-4 text-${c}-500`} />
                 <span className="text-sm font-semibold text-(--text-main)">{label}</span>
