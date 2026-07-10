@@ -11,6 +11,7 @@ import Profile from './pages/Profile';
 import Courses from './pages/Courses';
 import Planner from './pages/Planner';
 import Policies from './pages/Policies';
+import ErrorPage from './pages/ErrorPage';
 import { ToastProvider } from './lib/ToastContext';
 import { ThemeProvider } from './lib/ThemeContext';
 
@@ -33,6 +34,8 @@ function App() {
               <Route path="/policies" element={<Policies />} />
               <Route path="/profile" element={<Profile />} />
             </Route>
+
+            <Route path="*" element={<ErrorPage />} />
           </Routes>
         </Router>
       </ToastProvider>
